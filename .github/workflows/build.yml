@@ -1,0 +1,51 @@
+name: ndto ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - image: erlang:24
+          - image: erlang:25
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.image }}
+      options: "--entrypoint /bin/bash"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: nomasystems/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Rebar version
+        run: rebar3 --version
+
+      - name: Checks
+        run: rebar3 check
+
+      - name: Compile
+        run: rebar3 compile
+
+      - name: Run tests
+        run: rebar3 test
+
+      - name: Store test logs
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: ct-logs
+          path: _build/test/logs
+
+      - name: Create test summary
+        uses: test-summary/action@v1
+        if: always()
+        with:
+          paths: '_build/test/logs/**/report.xml'
