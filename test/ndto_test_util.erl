@@ -11,34 +11,29 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License
--module(ndto).
-
-%%% INCLUDE FILES
--include("ndto.hrl").
+-module(ndto_test_util).
 
 %%% EXTERNAL EXPORTS
 -export([
-    generate/2,
-    generate/3
+    compile/2,
+    test/3
 ]).
-
-%%% TYPE EXPORTS
--export_type([ndto/0]).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec generate(Name, Schema) -> Result when
-    Name :: binary(),
-    Schema :: schema(),
-    Result :: ndto().
-generate(Name, Schema) ->
-    generate(Name, Schema, openapi).
+compile(Name, Schema) ->
+    {tree, form_list, Attr, CommentedForms} = ndto:generate(Name, Schema),
+    Forms = lists:filter(
+        fun
+            ({tree, comment, _Attr, _Comment}) -> false;
+            (_) -> true
+        end,
+        CommentedForms
+    ),
+    NDto = {tree, form_list, Attr, Forms},
+    {ok, _Bin} = merl:compile_and_load(NDto).
 
--spec generate(Name, Schema, Format) -> Result when
-    Name :: binary(),
-    Schema :: schema(),
-    Format :: schema_format(),
-    Result :: ndto().
-generate(Name, Schema, Format) ->
-    ndto_generator:generate(Name, Schema, Format).
+test(Name, Schema, Object) ->
+    compile(Name, Schema),
+    (erlang:binary_to_atom(Name)):is_valid(Object).
