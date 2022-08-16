@@ -154,9 +154,5 @@ type_guard(array, Var) ->
     guard(is_list, Var);
 type_guard(object, Var) ->
     guard(is_map, Var);
-type_guard(all_of, _Var) ->
-    none;
 type_guard(any_of, _Var) ->
-    none;
-type_guard('not', _Var) ->
     none.
