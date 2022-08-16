@@ -104,19 +104,16 @@ false_clause() ->
         [erl_syntax:atom(false)]
     ).
 
-optional_clause(Schema) ->
-    case maps:get(<<"nullable">>, Schema, undefined) of
-        true ->
-            [
-                erl_syntax:clause(
-                    [erl_syntax:atom('undefined')],
-                    none,
-                    [erl_syntax:atom(true)]
-                )
-            ];
-        _Otherwise ->
-            []
-    end.
+optional_clause(#{<<"nullable">> := true}) ->
+    [
+        erl_syntax:clause(
+            [erl_syntax:atom('undefined')],
+            none,
+            [erl_syntax:atom(true)]
+        )
+    ];
+optional_clause(_Schema) ->
+    [].
 
 type_guard(Type) ->
     type_guard(Type, 'Val').
