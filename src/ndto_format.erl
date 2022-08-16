@@ -11,34 +11,17 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License
--module(ndto).
+-module(ndto_format).
 
 %%% INCLUDE FILES
 -include("ndto.hrl").
 
-%%% EXTERNAL EXPORTS
--export([
-    generate/2,
-    generate/3
-]).
-
-%%% TYPE EXPORTS
--export_type([ndto/0]).
-
 %%%-----------------------------------------------------------------------------
-%%% EXTERNAL EXPORTS
+%%% BEHAVIOUR CALLBACKS
 %%%-----------------------------------------------------------------------------
--spec generate(Name, Schema) -> Result when
-    Name :: binary(),
+-callback is_valid(Prefix, Schema) -> Result when
+    Prefix :: binary(),
     Schema :: schema(),
-    Result :: ndto().
-generate(Name, Schema) ->
-    generate(Name, Schema, openapi).
-
--spec generate(Name, Schema, Format) -> Result when
-    Name :: binary(),
-    Schema :: schema(),
-    Format :: schema_format(),
-    Result :: ndto().
-generate(Name, Schema, Format) ->
-    ndto_generator:generate(Name, Schema, Format).
+    Result :: {IsValidFuns, ExtraFuns},
+    IsValidFuns :: erl_syntax:syntaxTree(),
+    ExtraFuns :: erl_syntax:syntaxTree().
