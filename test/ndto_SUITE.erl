@@ -30,12 +30,12 @@ groups() ->
         {types, [parallel], [
             any,
             ref,
-            string,
-            number,
-            integer,
-            boolean,
-            array,
-            object
+            string
+            % number,
+            % integer,
+            % boolean,
+            % array,
+            % object
         ]},
         {string_formats, [parallel], [
             iso8601,
@@ -130,7 +130,7 @@ iso8601(_Conf) ->
     String = ncalendar:now(iso8601),
     Schema = #{
         <<"type">> => <<"string">>,
-        <<"format">> => <<"iso8601">>
+        <<"format">> => <<"iso8601-datetime">>
     },
     true = ndto_test_util:is_valid(<<"test_iso8601">>, Schema, String).
 
