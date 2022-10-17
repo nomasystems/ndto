@@ -59,7 +59,13 @@ is_valid(_Prefix, #{<<"type">> := <<"array">>} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"type">> := <<"object">>} = _Schema) ->
     erlang:throw(not_implemented);
+is_valid(_Prefix, #{<<"oneOf">> := _Subschemas} = _Schema) ->
+    erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"anyOf">> := _Subschemas} = _Schema) ->
+    erlang:throw(not_implemented);
+is_valid(_Prefix, #{<<"allOf">> := _Subschemas} = _Schema) ->
+    erlang:throw(not_implemented);
+is_valid(_Prefix, #{<<"not">> := _Subschemas} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(Prefix, Schema) ->
     FunName = <<Prefix/binary, "any">>,

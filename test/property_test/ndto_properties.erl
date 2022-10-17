@@ -25,7 +25,7 @@ prop_any() ->
         ndto_dom:any_value(),
         begin
             Schema = #{},
-            true = ndto_test_util:test(<<"test_any">>, Schema, Any),
+            true = ndto_test_util:is_valid(<<"test_any">>, Schema, Any),
             true
         end
     ).
@@ -42,7 +42,7 @@ prop_ref() ->
                 <<"$ref">> => <<"/components/schemas/", ReferencedName/binary>>
             },
             ndto_test_util:compile(ReferencedName, ReferencedSchema),
-            true = ndto_test_util:test(Name, Schema, Any),
+            true = ndto_test_util:is_valid(Name, Schema, Any),
             true
         end
     ).
@@ -58,7 +58,7 @@ prop_string() ->
                 <<"maxLength">> => string:length(String),
                 <<"pattern">> => <<".*">>
             },
-            true = ndto_test_util:test(<<"test_string">>, Schema, String),
+            true = ndto_test_util:is_valid(<<"test_string">>, Schema, String),
             true
         end
     ).
@@ -77,7 +77,7 @@ prop_number() ->
                 <<"maximum">> => Number,
                 <<"exclusiveMaximum">> => Number + 1
             },
-            true = ndto_test_util:test(<<"test_number">>, Schema, Number),
+            true = ndto_test_util:is_valid(<<"test_number">>, Schema, Number),
             true
         end
     ).
@@ -96,7 +96,7 @@ prop_integer() ->
                 <<"maximum">> => Integer,
                 <<"exclusiveMaximum">> => Integer + 1
             },
-            true = ndto_test_util:test(<<"test_integer">>, Schema, Integer),
+            true = ndto_test_util:is_valid(<<"test_integer">>, Schema, Integer),
             true
         end
     ).
@@ -109,7 +109,7 @@ prop_boolean() ->
             Schema = #{
                 <<"type">> => <<"boolean">>
             },
-            true = ndto_test_util:test(<<"test_boolean">>, Schema, Boolean),
+            true = ndto_test_util:is_valid(<<"test_boolean">>, Schema, Boolean),
             true
         end
     ).
@@ -134,7 +134,7 @@ prop_array() ->
                 <<"minItems">> => erlang:length(Array),
                 <<"maxItems">> => erlang:length(Array)
             },
-            true = ndto_test_util:test(<<"test_array">>, Schema, Array),
+            true = ndto_test_util:is_valid(<<"test_array">>, Schema, Array),
             true
         end
     ).
@@ -155,7 +155,7 @@ prop_object() ->
                 ),
                 <<"required">> => maps:keys(Object)
             },
-            true = ndto_test_util:test(<<"test_object">>, Schema, Object),
+            true = ndto_test_util:is_valid(<<"test_object">>, Schema, Object),
             true
         end
     ).

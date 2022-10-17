@@ -132,7 +132,7 @@ iso8601(_Conf) ->
         <<"type">> => <<"string">>,
         <<"format">> => <<"iso8601">>
     },
-    true = ndto_test_util:test(<<"test_iso8601">>, Schema, String).
+    true = ndto_test_util:is_valid(<<"test_iso8601">>, Schema, String).
 
 base64(_Conf) ->
     String = base64:encode(<<"this is a test">>),
@@ -140,23 +140,4 @@ base64(_Conf) ->
         <<"type">> => <<"string">>,
         <<"format">> => <<"base64">>
     },
-    true = ndto_test_util:test(<<"test_base64">>, Schema, String).
-
-%%%-----------------------------------------------------------------------------
-%%% INTERNAL FUNCTIONS
-%%%-----------------------------------------------------------------------------
-compile(Name, Schema) ->
-    {tree, form_list, Attr, CommentedForms} = ndto:generate(Name, Schema),
-    Forms = lists:filter(
-        fun
-            ({tree, comment, _Attr, _Comment}) -> false;
-            (_) -> true
-        end,
-        CommentedForms
-    ),
-    NDto = {tree, form_list, Attr, Forms},
-    {ok, _Bin} = merl:compile_and_load(NDto).
-
-test(Name, Schema, Object) ->
-    compile(Name, Schema),
-    (erlang:binary_to_atom(Name)):is_valid(Object).
+    true = ndto_test_util:is_valid(<<"test_base64">>, Schema, String).

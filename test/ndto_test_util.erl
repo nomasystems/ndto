@@ -16,7 +16,7 @@
 %%% EXTERNAL EXPORTS
 -export([
     compile/2,
-    test/3
+    is_valid/3
 ]).
 
 %%%-----------------------------------------------------------------------------
@@ -34,6 +34,6 @@ compile(Name, Schema) ->
     NDto = {tree, form_list, Attr, Forms},
     {ok, _Bin} = merl:compile_and_load(NDto).
 
-test(Name, Schema, Object) ->
+is_valid(Name, Schema, Object) ->
     compile(Name, Schema),
     (erlang:binary_to_atom(Name)):is_valid(Object).

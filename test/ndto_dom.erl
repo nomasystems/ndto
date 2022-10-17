@@ -28,9 +28,10 @@
 ]).
 
 %%% UTIL EXPORTS
--export([
-    types/0
-]).
+-export([types/0]).
+
+%%% MACROS
+-define(NON_RECURSIVE_TYPES, lists:subtract(types(), [<<"array">>, <<"object">>])).
 
 %%%-----------------------------------------------------------------------------
 %%% SCHEMAS EXPORTS
@@ -62,36 +63,51 @@ array_value() ->
         ?LET(Type, triq_dom:elements(types()), array_value(Type))
     ).
 
-array_value(Type) ->
+array_value(<<"array">>) ->
     triq_dom:list(
-        non_recursive_type(Type)
-    ).
+        ?LET(Type, triq_dom:elements(?NON_RECURSIVE_TYPES), array_value(Type))
+    );
+array_value(<<"object">>) ->
+    triq_dom:list(
+        ?LET(Type, triq_dom:elements(?NON_RECURSIVE_TYPES), object_value(Type))
+    );
+array_value(Type) ->
+    Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
+    triq_dom:list(erlang:apply(?MODULE, Fun, [])).
 
 object_value() ->
+    ?LET(Type, triq_dom:elements(types()), object_value(Type)).
+
+object_value(<<"array">>) ->
     ?LET(
         Proplist,
-        triq_dom:list({
-            triq_dom:unicode_binary(),
-            ?LET(Type, triq_dom:elements(types()), non_recursive_type(Type))
-        }),
+        ?LET(
+            Type,
+            triq_dom:elements(?NON_RECURSIVE_TYPES),
+            triq_dom:list({triq_dom:unicode_binary(), array_value(Type)})
+        ),
+        maps:from_list(Proplist)
+    );
+object_value(<<"object">>) ->
+    ?LET(
+        Proplist,
+        ?LET(
+            Type,
+            triq_dom:elements(?NON_RECURSIVE_TYPES),
+            triq_dom:list({triq_dom:unicode_binary(), object_value(Type)})
+        ),
+        maps:from_list(Proplist)
+    );
+object_value(Type) ->
+    Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
+    ?LET(
+        Proplist,
+        triq_dom:list({triq_dom:unicode_binary(), erlang:apply(?MODULE, Fun, [])}),
         maps:from_list(Proplist)
     ).
 
+%%%-----------------------------------------------------------------------------
+%%% UTIL EXPORTS
+%%%-----------------------------------------------------------------------------
 types() ->
     [<<"string">>, <<"number">>, <<"integer">>, <<"boolean">>, <<"array">>, <<"object">>].
-
-%%%-----------------------------------------------------------------------------
-%%% INTERNAL FUNCTIONS
-%%%-----------------------------------------------------------------------------
-non_recursive_type(<<"string">>) ->
-    string_value();
-non_recursive_type(<<"number">>) ->
-    number_value();
-non_recursive_type(<<"integer">>) ->
-    integer_value();
-non_recursive_type(<<"boolean">>) ->
-    boolean_value();
-non_recursive_type(<<"array">>) ->
-    triq_dom:return([<<"string">>, 1.0, 2, #{<<"key">> => <<"value">>}]);
-non_recursive_type(<<"object">>) ->
-    triq_dom:return(#{<<"key">> => <<"value">>}).
