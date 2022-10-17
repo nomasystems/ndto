@@ -25,7 +25,13 @@
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 is_valid(Prefix, #{<<"$ref">> := RawRef} = Schema) ->
-    Ref = filename:basename(RawRef),
+    Ref =
+        case filename:basename(RawRef) of
+            ListBasename when is_list(ListBasename) ->
+                erlang:list_to_binary(ListBasename);
+            BinBasename ->
+                BinBasename
+        end,
     FunName = <<Prefix/binary, "ref_", Ref/binary>>,
     OptionalClause = ndto_generator:optional_clause(Schema),
     TrueClause =
