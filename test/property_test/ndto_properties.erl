@@ -159,3 +159,24 @@ prop_object() ->
             true
         end
     ).
+
+prop_enum() ->
+    ?FORALL(
+        {Values, Type},
+        ?LET(
+            Type,
+            triq_dom:elements([<<"string">>]),
+            begin
+                Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
+                {triq_dom:non_empty(triq_dom:list(ndto_dom:Fun())), Type}
+            end
+        ),
+        begin
+            Schema = #{
+                <<"type">> => Type,
+                <<"enum">> => Values
+            },
+            true = ndto_test_util:is_valid(<<"test_enum">>, Schema, erlang:hd(Values)),
+            true
+        end
+    ).
