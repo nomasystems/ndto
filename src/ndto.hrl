@@ -15,7 +15,7 @@
 -define(ndto, true).
 
 -type ndto() :: erl_syntax:syntaxTree().
--type schema() :: map().
+-type schema() :: #{binary() => term()}.
 -type schema_format() :: openapi.
 
 % -ifndef(ndto)

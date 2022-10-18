@@ -53,8 +53,21 @@ is_valid(Prefix, #{<<"$ref">> := RawRef} = Schema) ->
         OptionalClause ++ [TrueClause]
     ),
     {[Fun], []};
-is_valid(_Prefix, #{<<"type">> := <<"string">>} = _Schema) ->
-    erlang:throw(not_implemented);
+is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
+    Funs =
+        lists:foldl(
+            fun(Keyword, Acc) ->
+                case maps:get(Keyword, Schema, undefined) of
+                    undefined ->
+                        Acc;
+                    Value ->
+                        [is_valid_string(Prefix, Keyword, Value) | Acc]
+                end
+            end,
+            [],
+            [<<"enum">>, <<"minLength">>, <<"maxLength">>, <<"format">>]
+        ),
+    {Funs, []};
 is_valid(_Prefix, #{<<"type">> := <<"number">>} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"type">> := <<"integer">>} = _Schema) ->
@@ -88,3 +101,216 @@ is_valid(Prefix, Schema) ->
         OptionalClause ++ [TrueClause, FalseClause]
     ),
     {[Fun], []}.
+
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
+-spec is_valid_string(Prefix, Keyword, Value) -> Result when
+    Prefix :: binary(),
+    Keyword :: binary(),
+    Value :: term(),
+    Result :: erl_syntax:syntaxTree().
+is_valid_string(Prefix, <<"enum">>, Enum) ->
+    FunName = <<Prefix/binary, "enum">>,
+    TrueClauses = lists:map(
+        fun(EnumVal) ->
+            erl_syntax:clause(
+                [erl_syntax:binary([erl_syntax:string(erlang:binary_to_list(EnumVal))])],
+                none,
+                [erl_syntax:atom(true)]
+            )
+        end,
+        Enum
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    Clauses = lists:append(TrueClauses, [FalseClause]),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        Clauses
+    );
+is_valid_string(Prefix, <<"minLength">>, MinLength) ->
+    FunName = <<Prefix/binary, "minLength">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:infix_expr(
+                erl_syntax:application(erl_syntax:atom(string), erl_syntax:atom(length), [
+                    erl_syntax:variable('Val')
+                ]),
+                erl_syntax:operator('>='),
+                erl_syntax:integer(MinLength)
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(Prefix, <<"maxLength">>, MaxLength) ->
+    FunName = <<Prefix/binary, "maxLength">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:infix_expr(
+                erl_syntax:application(erl_syntax:atom(string), erl_syntax:atom(length), [
+                    erl_syntax:variable('Val')
+                ]),
+                erl_syntax:operator('=<'),
+                erl_syntax:integer(MaxLength)
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(Prefix, <<"format">>, <<"iso8601-datetime">>) ->
+    FunName = <<Prefix/binary, "format">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:application(
+                erl_syntax:atom(ncalendar),
+                erl_syntax:atom(is_valid),
+                [
+                    erl_syntax:atom(iso8601),
+                    erl_syntax:variable('Val')
+                ]
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(Prefix, <<"format">>, <<"base64">>) ->
+    FunName = <<Prefix/binary, "format">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:case_expr(
+                erl_syntax:application(erl_syntax:atom(string), erl_syntax:atom(length), [
+                    erl_syntax:variable('Val')
+                ]),
+                [
+                    erl_syntax:clause(
+                        [erl_syntax:variable('Length')],
+                        erl_syntax:infix_expr(
+                            erl_syntax:infix_expr(
+                                erl_syntax:variable('Length'),
+                                erl_syntax:operator('rem'),
+                                erl_syntax:integer(4)
+                            ),
+                            erl_syntax:operator('=:='),
+                            erl_syntax:integer(0)
+                        ),
+                        [
+                            erl_syntax:match_expr(
+                                erl_syntax:variable('Unpad'),
+                                erl_syntax:application(
+                                    erl_syntax:atom(string),
+                                    erl_syntax:atom(trim),
+                                    [
+                                        erl_syntax:variable('Val'),
+                                        erl_syntax:atom(trailing),
+                                        erl_syntax:list([erl_syntax:char($=)])
+                                    ]
+                                )
+                            ),
+                            erl_syntax:application(
+                                erl_syntax:atom(lists),
+                                erl_syntax:atom(all),
+                                [
+                                    erl_syntax:fun_expr([
+                                        erl_syntax:clause(
+                                            [erl_syntax:integer(43)],
+                                            none,
+                                            [erl_syntax:atom(true)]
+                                        ),
+                                        erl_syntax:clause(
+                                            [erl_syntax:variable('Char')],
+                                            erl_syntax:infix_expr(
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('>='),
+                                                    erl_syntax:integer(47)
+                                                ),
+                                                erl_syntax:operator('andalso'),
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('=<'),
+                                                    erl_syntax:integer(57)
+                                                )
+                                            ),
+                                            [erl_syntax:atom(true)]
+                                        ),
+                                        erl_syntax:clause(
+                                            [erl_syntax:variable('Char')],
+                                            erl_syntax:infix_expr(
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('>='),
+                                                    erl_syntax:integer(65)
+                                                ),
+                                                erl_syntax:operator('andalso'),
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('=<'),
+                                                    erl_syntax:integer(90)
+                                                )
+                                            ),
+                                            [erl_syntax:atom(true)]
+                                        ),
+                                        erl_syntax:clause(
+                                            [erl_syntax:variable('Char')],
+                                            erl_syntax:infix_expr(
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('>='),
+                                                    erl_syntax:integer(97)
+                                                ),
+                                                erl_syntax:operator('andalso'),
+                                                erl_syntax:infix_expr(
+                                                    erl_syntax:variable('Char'),
+                                                    erl_syntax:operator('=<'),
+                                                    erl_syntax:integer(122)
+                                                )
+                                            ),
+                                            [erl_syntax:atom(true)]
+                                        ),
+                                        erl_syntax:clause(
+                                            [erl_syntax:variable('_Char')],
+                                            none,
+                                            [erl_syntax:atom(false)]
+                                        )
+                                    ]),
+                                    erl_syntax:application(
+                                        erl_syntax:atom(string),
+                                        erl_syntax:atom(to_graphemes),
+                                        [erl_syntax:variable('Unpad')]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    erl_syntax:clause(
+                        [erl_syntax:variable('_Length')],
+                        none,
+                        [
+                            erl_syntax:atom(false)
+                        ]
+                    )
+                ]
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(_Prefix, _Keyword, _Value) ->
+    erlang:throw(not_implemented).
