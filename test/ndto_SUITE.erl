@@ -22,6 +22,8 @@
 all() ->
     [
         {group, types},
+        enum,
+        pattern,
         {group, string_formats}
     ].
 
@@ -73,7 +75,7 @@ end_per_testcase(Case, Conf) ->
     Conf.
 
 %%%-----------------------------------------------------------------------------
-%%% PROPERTIES
+%%% TEST CASES
 %%%-----------------------------------------------------------------------------
 any(Conf) ->
     ct_property_test:quickcheck(
@@ -123,9 +125,19 @@ object(Conf) ->
         Conf
     ).
 
-%%%-----------------------------------------------------------------------------
-%%% STRING FORMATS
-%%%-----------------------------------------------------------------------------
+enum(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_properties:prop_enum(),
+        Conf
+    ).
+
+pattern(_Conf) ->
+    Schema = #{
+        <<"type">> => <<"string">>,
+        <<"pattern">> => <<"[a-z]+@[a-z]+\.[a-z]+">>
+    },
+    true = ndto_test_util:is_valid(<<"test_base64">>, Schema, <<"test@ndto.erl">>).
+
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),
     Schema = #{

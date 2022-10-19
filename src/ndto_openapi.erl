@@ -65,7 +65,7 @@ is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
                 end
             end,
             [],
-            [<<"enum">>, <<"minLength">>, <<"maxLength">>, <<"format">>]
+            [<<"enum">>, <<"minLength">>, <<"maxLength">>, <<"format">>, <<"pattern">>]
         ),
     {Funs, []};
 is_valid(_Prefix, #{<<"type">> := <<"number">>} = _Schema) ->
@@ -115,7 +115,11 @@ is_valid_string(Prefix, <<"enum">>, Enum) ->
     TrueClauses = lists:map(
         fun(EnumVal) ->
             erl_syntax:clause(
-                [erl_syntax:binary([erl_syntax:string(erlang:binary_to_list(EnumVal))])],
+                [
+                    erl_syntax:binary([
+                        erl_syntax:binary_field(erl_syntax:string(erlang:binary_to_list(EnumVal)))
+                    ])
+                ],
                 none,
                 [erl_syntax:atom(true)]
             )
@@ -303,6 +307,48 @@ is_valid_string(Prefix, <<"format">>, <<"base64">>) ->
                         [
                             erl_syntax:atom(false)
                         ]
+                    )
+                ]
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(Prefix, <<"pattern">>, Pattern) ->
+    FunName = <<Prefix/binary, "pattern">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:case_expr(
+                erl_syntax:application(
+                    erl_syntax:atom(re),
+                    erl_syntax:atom(run),
+                    [
+                        erl_syntax:variable('Val'),
+                        erl_syntax:binary([
+                            erl_syntax:binary_field(
+                                erl_syntax:string(erlang:binary_to_list(Pattern))
+                            )
+                        ])
+                    ]
+                ),
+                [
+                    erl_syntax:clause(
+                        [
+                            erl_syntax:tuple([
+                                erl_syntax:atom(match), erl_syntax:variable('_Captured')
+                            ])
+                        ],
+                        none,
+                        [erl_syntax:atom(true)]
+                    ),
+                    erl_syntax:clause(
+                        [erl_syntax:variable('_nomatch')],
+                        none,
+                        [erl_syntax:atom(false)]
                     )
                 ]
             )
