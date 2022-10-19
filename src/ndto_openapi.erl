@@ -72,8 +72,21 @@ is_valid(_Prefix, #{<<"type">> := <<"number">>} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"type">> := <<"integer">>} = _Schema) ->
     erlang:throw(not_implemented);
-is_valid(_Prefix, #{<<"type">> := <<"boolean">>} = _Schema) ->
-    erlang:throw(not_implemented);
+is_valid(Prefix, #{<<"type">> := <<"boolean">>} = Schema) ->
+    FunName = <<Prefix/binary, "any">>,
+    OptionalClause = ndto_generator:optional_clause(Schema),
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            ndto_generator:type_guard(boolean),
+            [erl_syntax:atom(true)]
+        ),
+    FalseClause = ndto_generator:false_clause(),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        OptionalClause ++ [TrueClause, FalseClause]
+    ),
+    {[Fun], []};
 is_valid(_Prefix, #{<<"type">> := <<"array">>} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"type">> := <<"object">>} = _Schema) ->

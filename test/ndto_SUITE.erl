@@ -32,10 +32,10 @@ groups() ->
         {types, [parallel], [
             any,
             ref,
-            string
+            string,
             % number,
             % integer,
-            % boolean,
+            boolean
             % array,
             % object
         ]},
