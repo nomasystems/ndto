@@ -33,8 +33,8 @@ groups() ->
             any,
             ref,
             string,
-            % number,
-            % integer,
+            number,
+            integer,
             boolean
             % array,
             % object
