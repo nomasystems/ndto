@@ -16,6 +16,9 @@
 %%% BEHAVIOURS
 -behaviour(ndto_format).
 
+%%% INCLUDE FILES
+-include("ndto.hrl").
+
 %%% EXTERNAL EXPORTS
 -export([
     is_valid/2
@@ -68,10 +71,10 @@ is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
             [<<"enum">>, <<"minLength">>, <<"maxLength">>, <<"format">>, <<"pattern">>]
         ),
     {Funs, []};
-is_valid(_Prefix, #{<<"type">> := <<"number">>} = _Schema) ->
-    erlang:throw(not_implemented);
-is_valid(_Prefix, #{<<"type">> := <<"integer">>} = _Schema) ->
-    erlang:throw(not_implemented);
+is_valid(Prefix, #{<<"type">> := <<"number">>} = Schema) ->
+    is_valid_number(float, Prefix, Schema);
+is_valid(Prefix, #{<<"type">> := <<"integer">>} = Schema) ->
+    is_valid_number(integer, Prefix, Schema);
 is_valid(Prefix, #{<<"type">> := <<"boolean">>} = Schema) ->
     FunName = <<Prefix/binary, "any">>,
     OptionalClause = ndto_generator:optional_clause(Schema),
@@ -118,6 +121,167 @@ is_valid(Prefix, Schema) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
+-spec is_valid_number(Type, Prefix, Schema) -> Result when
+    Type :: integer | float,
+    Prefix :: binary(),
+    Schema :: schema(),
+    Result :: {IsValidFuns, ExtraFuns},
+    IsValidFuns :: [erl_syntax:syntaxTree()],
+    ExtraFuns :: [erl_syntax:syntaxTree()].
+is_valid_number(Type, Prefix, Schema) ->
+    Funs =
+        lists:foldl(
+            fun(Keyword, Acc) ->
+                case maps:get(Keyword, Schema, undefined) of
+                    undefined ->
+                        Acc;
+                    Value ->
+                        [is_valid_number(Type, Prefix, Keyword, Value) | Acc]
+                end
+            end,
+            [],
+            [
+                <<"minimum">>,
+                <<"maximum">>,
+                <<"exclusiveMinimum">>,
+                <<"exclusiveMaximum">>,
+                <<"multipleOf">>
+            ]
+        ),
+    {Funs, []}.
+-spec is_valid_number(Type, Prefix, Keyword, Value) -> Result when
+    Type :: integer | float,
+    Prefix :: binary(),
+    Keyword :: binary(),
+    Value :: term(),
+    Result :: erl_syntax:syntaxTree().
+is_valid_number(Type, Prefix, <<"minimum">>, Minimum) ->
+    FunName = <<Prefix/binary, "minimum">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('>='),
+            erl_syntax:Type(Minimum)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    );
+is_valid_number(Type, Prefix, <<"maximum">>, Maximum) ->
+    FunName = <<Prefix/binary, "maximum">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('=<'),
+            erl_syntax:Type(Maximum)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    );
+is_valid_number(Type, Prefix, <<"exclusiveMinimum">>, ExclusiveMinimum) ->
+    FunName = <<Prefix/binary, "exclusiveMinimum">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('>'),
+            erl_syntax:Type(ExclusiveMinimum)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    );
+is_valid_number(Type, Prefix, <<"exclusiveMaximum">>, ExclusiveMaximum) ->
+    FunName = <<Prefix/binary, "exclusiveMaximum">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('<'),
+            erl_syntax:Type(ExclusiveMaximum)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    );
+is_valid_number(integer, Prefix, <<"multipleOf">>, MultipleOf) ->
+    FunName = <<Prefix/binary, "multipleOf">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:infix_expr(
+                erl_syntax:infix_expr(
+                    erl_syntax:variable('Val'),
+                    erl_syntax:operator('rem'),
+                    erl_syntax:integer(MultipleOf)
+                ),
+                erl_syntax:operator('=:='),
+                erl_syntax:integer(0)
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_number(float, Prefix, <<"multipleOf">>, MultipleOf) ->
+    MultipleOfST =
+        case MultipleOf of
+            Integer when is_integer(Integer) ->
+                erl_syntax:integer(MultipleOf);
+            _Float ->
+                erl_syntax:float(MultipleOf)
+        end,
+    FunName = <<Prefix/binary, "multipleOf">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('>='),
+            MultipleOfST
+        ),
+        [
+            erl_syntax:match_expr(
+                erl_syntax:variable('Quotient'),
+                erl_syntax:infix_expr(
+                    erl_syntax:variable('Val'),
+                    erl_syntax:operator('/'),
+                    MultipleOfST
+                )
+            ),
+            erl_syntax:infix_expr(
+                erl_syntax:variable('Quotient'),
+                erl_syntax:operator('=='),
+                erl_syntax:application(
+                    erl_syntax:atom(erlang),
+                    erl_syntax:atom(trunc),
+                    [erl_syntax:variable('Quotient')]
+                )
+            )
+        ]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    ).
+
 -spec is_valid_string(Prefix, Keyword, Value) -> Result when
     Prefix :: binary(),
     Keyword :: binary(),

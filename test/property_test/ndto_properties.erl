@@ -65,13 +65,11 @@ prop_string() ->
 
 prop_number() ->
     ?FORALL(
-        RawNumber,
+        Number,
         ndto_dom:number_value(),
         begin
-            Number = RawNumber * 2,
             Schema = #{
                 <<"type">> => <<"number">>,
-                <<"multipleOf">> => 2,
                 <<"minimum">> => Number,
                 <<"exclusiveMinimum">> => Number - 1,
                 <<"maximum">> => Number,
@@ -84,17 +82,17 @@ prop_number() ->
 
 prop_integer() ->
     ?FORALL(
-        RawInteger,
-        ndto_dom:integer_value(),
+        {RawInteger, MultipleOf},
+        ?SUCHTHAT({N, M}, {ndto_dom:integer_value(), ndto_dom:integer_value()}, N > 0 andalso M > 0 andalso N > M),
         begin
-            Integer = RawInteger * 2,
+            Integer = RawInteger * MultipleOf,
             Schema = #{
                 <<"type">> => <<"integer">>,
-                <<"multipleOf">> => 2,
                 <<"minimum">> => Integer,
                 <<"exclusiveMinimum">> => Integer - 1,
                 <<"maximum">> => Integer,
-                <<"exclusiveMaximum">> => Integer + 1
+                <<"exclusiveMaximum">> => Integer + 1,
+                <<"multipleOf">> => MultipleOf
             },
             true = ndto_test_util:is_valid(<<"test_integer">>, Schema, Integer),
             true
