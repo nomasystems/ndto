@@ -83,7 +83,11 @@ prop_number() ->
 prop_integer() ->
     ?FORALL(
         {RawInteger, MultipleOf},
-        ?SUCHTHAT({N, M}, {ndto_dom:integer_value(), ndto_dom:integer_value()}, N > 0 andalso M > 0 andalso N > M),
+        ?SUCHTHAT(
+            {N, M},
+            {ndto_dom:integer_value(), ndto_dom:integer_value()},
+            N > 0 andalso M > 0 andalso N > M
+        ),
         begin
             Integer = RawInteger * MultipleOf,
             Schema = #{
@@ -117,20 +121,20 @@ prop_array() ->
         {Array, Type},
         ?LET(
             Type,
-            triq_dom:elements(ndto_dom:types()),
+            %% TODO: remove subtract when object schema is supported
+            triq_dom:elements(lists:subtract(ndto_dom:types(), [<<"object">>])),
             {ndto_dom:array_value(Type), Type}
         ),
         begin
             Schema = #{
                 <<"type">> => <<"array">>,
                 <<"items">> => #{
-                    <<"type">> => Type
-                },
-                <<"contains">> => #{
-                    <<"type">> => Type
+                    <<"type">> => Type,
+                    <<"nullable">> => false
                 },
                 <<"minItems">> => erlang:length(Array),
-                <<"maxItems">> => erlang:length(Array)
+                <<"maxItems">> => erlang:length(Array),
+                <<"uniqueItems">> => false
             },
             true = ndto_test_util:is_valid(<<"test_array">>, Schema, Array),
             true
@@ -163,6 +167,7 @@ prop_enum() ->
         {Values, Type},
         ?LET(
             Type,
+            %% TODO: extend to all basic types when supported
             triq_dom:elements([<<"string">>]),
             begin
                 Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),

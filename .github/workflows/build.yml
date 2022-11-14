@@ -37,13 +37,6 @@ jobs:
       - name: Run tests
         run: rebar3 test
 
-      - name: Store test logs
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: ct-logs
-          path: _build/test/logs
-
       - name: Create test summary
         uses: test-summary/action@v1
         if: always()
