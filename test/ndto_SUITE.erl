@@ -24,6 +24,7 @@ all() ->
         {group, types},
         enum,
         pattern,
+        unique_items,
         {group, string_formats}
     ].
 
@@ -35,8 +36,8 @@ groups() ->
             string,
             number,
             integer,
-            boolean
-            % array,
+            boolean,
+            array
             % object
         ]},
         {string_formats, [parallel], [
@@ -137,6 +138,15 @@ pattern(_Conf) ->
         <<"pattern">> => <<"[a-z]+@[a-z]+\.[a-z]+">>
     },
     true = ndto_test_util:is_valid(<<"test_base64">>, Schema, <<"test@ndto.erl">>).
+
+unique_items(_Conf) ->
+    Schema = #{
+        <<"type">> => <<"array">>,
+        <<"uniqueItems">> => true
+    },
+    true = ndto_test_util:is_valid(<<"test_unique_items">>, Schema, [
+        0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}
+    ]).
 
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),

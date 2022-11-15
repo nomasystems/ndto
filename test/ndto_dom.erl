@@ -16,7 +16,7 @@
 %%% INCLUDE FILES
 -include_lib("triq/include/triq.hrl").
 
-%%% SCHEMAS EXPORTS
+%%% VALUE EXPORTS
 -export([
     any_value/0,
     string_value/0,
@@ -34,7 +34,7 @@
 -define(NON_RECURSIVE_TYPES, lists:subtract(types(), [<<"array">>, <<"object">>])).
 
 %%%-----------------------------------------------------------------------------
-%%% SCHEMAS EXPORTS
+%%% VALUE EXPORTS
 %%%-----------------------------------------------------------------------------
 any_value() ->
     triq_dom:oneof([
@@ -42,7 +42,7 @@ any_value() ->
         number_value(),
         integer_value(),
         boolean_value(),
-        array_value(),
+        ?LET(Type, triq_dom:elements(types()), array_value(Type)),
         object_value()
     ]).
 
@@ -57,11 +57,6 @@ integer_value() ->
 
 boolean_value() ->
     triq_dom:bool().
-
-array_value() ->
-    triq_dom:list(
-        ?LET(Type, triq_dom:elements(types()), array_value(Type))
-    ).
 
 array_value(<<"array">>) ->
     triq_dom:list(

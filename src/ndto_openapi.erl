@@ -135,7 +135,7 @@ is_valid(Prefix, #{<<"type">> := Type} = Schema) when Type == <<"number">>; Type
     ),
     {[Fun], ExtraFuns};
 is_valid(Prefix, #{<<"type">> := <<"boolean">>} = Schema) ->
-    FunName = <<Prefix/binary, "any">>,
+    FunName = <<Prefix/binary, "boolean">>,
     OptionalClause = ndto_generator:optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -149,8 +149,58 @@ is_valid(Prefix, #{<<"type">> := <<"boolean">>} = Schema) ->
         OptionalClause ++ [TrueClause, FalseClause]
     ),
     {[Fun], []};
-is_valid(_Prefix, #{<<"type">> := <<"array">>} = _Schema) ->
-    erlang:throw(not_implemented);
+is_valid(Prefix, #{<<"type">> := <<"array">>} = Schema) ->
+    FunName = <<Prefix/binary, "array">>,
+    {IsValidFuns, ExtraFuns} =
+        lists:foldl(
+            fun(Keyword, {IsValidFunsAcc, ExtraFunsAcc} = Acc) ->
+                case maps:get(Keyword, Schema, undefined) of
+                    undefined ->
+                        Acc;
+                    Value ->
+                        case is_valid_array(<<FunName/binary, "_">>, Keyword, Value) of
+                            {undefined, _EmptyList} ->
+                                Acc;
+                            {NewIsValidFun, NewExtraFuns} ->
+                                {
+                                    [NewIsValidFun | IsValidFunsAcc],
+                                    % TODO: replace with `++` for consistency
+                                    % Currently `gradualizer` complains:
+                                    % - The operator '++' on line 165 at column 81 is expected to have type
+                                    % _TyVar-576460752303422687 which is too precise to be statically checked
+                                    lists:append(NewExtraFuns, ExtraFunsAcc)
+                                }
+                        end
+                end
+            end,
+            {[], []},
+            [
+                <<"items">>,
+                <<"minItems">>,
+                <<"maxItems">>,
+                <<"uniqueItems">>
+            ]
+        ),
+    BodyFunCalls = [
+        erl_syntax:application(
+            erl_syntax:function_name(Fun),
+            [erl_syntax:variable('Val')]
+        )
+     || Fun <- IsValidFuns
+    ],
+    OptionalClause = ndto_generator:optional_clause(Schema),
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            ndto_generator:type_guard(array),
+            [ndto_generator:chain_conditions(BodyFunCalls, 'andalso')]
+        ),
+    FalseClause = ndto_generator:false_clause(),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        OptionalClause ++ [TrueClause, FalseClause]
+    ),
+    {[Fun], IsValidFuns ++ ExtraFuns};
 is_valid(_Prefix, #{<<"type">> := <<"object">>} = _Schema) ->
     erlang:throw(not_implemented);
 is_valid(_Prefix, #{<<"oneOf">> := _Subschemas} = _Schema) ->
@@ -180,6 +230,117 @@ is_valid(Prefix, Schema) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
+-spec is_valid_array(Prefix, Keyword, Value) -> Result when
+    Prefix :: binary(),
+    Keyword :: binary(),
+    Value :: term(),
+    Result :: {Fun, ExtraFuns},
+    Fun :: erl_syntax:syntaxTree() | undefined,
+    ExtraFuns :: [erl_syntax:syntaxTree()].
+is_valid_array(Prefix, <<"items">>, Items) ->
+    FunName = <<Prefix/binary, "items">>,
+    {IsValidFuns, ExtraFuns} = is_valid(<<FunName/binary, "_">>, Items),
+    OptionalClause = ndto_generator:optional_clause(Items),
+    FunCalls = [
+        erl_syntax:application(
+            erl_syntax:function_name(FieldFun),
+            [erl_syntax:variable('Item')]
+        )
+     || FieldFun <- IsValidFuns
+    ],
+    FunBody = [ndto_generator:chain_conditions(FunCalls, 'andalso')],
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:application(
+                erl_syntax:atom(lists),
+                erl_syntax:atom(all),
+                [
+                    erl_syntax:fun_expr([
+                        erl_syntax:clause(
+                            [erl_syntax:variable('Item')],
+                            none,
+                            FunBody
+                        )
+                    ]),
+                    erl_syntax:variable('Val')
+                ]
+            )
+        ]
+    ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        OptionalClause ++ [TrueClause]
+    ),
+    {Fun, IsValidFuns ++ ExtraFuns};
+is_valid_array(Prefix, <<"minItems">>, MinItems) ->
+    FunName = <<Prefix/binary, "minItems">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:application(erl_syntax:atom(length), [erl_syntax:variable('Val')]),
+            erl_syntax:operator('>='),
+            erl_syntax:integer(MinItems)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    ),
+    {Fun, []};
+is_valid_array(Prefix, <<"maxItems">>, MaxItems) ->
+    FunName = <<Prefix/binary, "maxItems">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:application(erl_syntax:atom(length), [erl_syntax:variable('Val')]),
+            erl_syntax:operator('=<'),
+            erl_syntax:integer(MaxItems)
+        ),
+        [erl_syntax:atom(true)]
+    ),
+    FalseClause = ndto_generator:false_clause(),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause, FalseClause]
+    ),
+    {Fun, []};
+is_valid_array(Prefix, <<"uniqueItems">>, true) ->
+    FunName = <<Prefix/binary, "uniqueItems">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:infix_expr(
+                erl_syntax:application(erl_syntax:atom(length), [erl_syntax:variable('Val')]),
+                erl_syntax:operator('=:='),
+                erl_syntax:application(
+                    erl_syntax:atom(sets),
+                    erl_syntax:atom(size),
+                    [
+                        erl_syntax:application(
+                            erl_syntax:atom(sets),
+                            erl_syntax:atom(from_list),
+                            [erl_syntax:variable('Val')]
+                        )
+                    ]
+                )
+            )
+        ]
+    ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    {Fun, []};
+is_valid_array(_Prefix, <<"uniqueItems">>, false) ->
+    {undefined, []};
+is_valid_array(_Prefix, _Keyword, _Value) ->
+    erlang:throw(not_implemented).
+
 -spec is_valid_number(Type, Prefix, Keyword, Value) -> Result when
     Type :: binary(),
     Prefix :: binary(),
