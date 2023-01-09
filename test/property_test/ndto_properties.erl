@@ -155,7 +155,9 @@ prop_object() ->
                     #{},
                     Object
                 ),
-                <<"required">> => maps:keys(Object)
+                <<"required">> => maps:keys(Object),
+                <<"minProperties">> => erlang:length(maps:keys(Object)) - 1,
+                <<"maxProperties">> => erlang:length(maps:keys(Object)) + 1
             },
             true = ndto_test_util:is_valid(<<"test_object">>, Schema, Object),
             true

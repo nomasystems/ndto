@@ -79,7 +79,7 @@ object_value(<<"array">>) ->
         ?LET(
             Type,
             triq_dom:elements(?NON_RECURSIVE_TYPES),
-            triq_dom:list({triq_dom:unicode_binary(), array_value(Type)})
+            triq_dom:list({triq_dom:unicode_binary(5), array_value(Type)})
         ),
         maps:from_list(Proplist)
     );
@@ -89,7 +89,7 @@ object_value(<<"object">>) ->
         ?LET(
             Type,
             triq_dom:elements(?NON_RECURSIVE_TYPES),
-            triq_dom:list({triq_dom:unicode_binary(), object_value(Type)})
+            triq_dom:list({triq_dom:unicode_binary(5), object_value(Type)})
         ),
         maps:from_list(Proplist)
     );
@@ -97,7 +97,9 @@ object_value(Type) ->
     Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
     ?LET(
         Proplist,
-        triq_dom:list({triq_dom:unicode_binary(), erlang:apply(?MODULE, Fun, [])}),
+        triq_dom:list({
+            triq_dom:unicode_binary(5), erlang:apply(?MODULE, Fun, [])
+        }),
         maps:from_list(Proplist)
     ).
 
