@@ -22,6 +22,8 @@
 all() ->
     [
         {group, types},
+        {group, subschemas},
+        nullable,
         enum,
         pattern,
         unique_items,
@@ -40,6 +42,12 @@ groups() ->
             boolean,
             array,
             object
+        ]},
+        {subschemas, [parallel], [
+            oneOf,
+            anyOf,
+            allOf,
+            'not'
         ]},
         {string_formats, [parallel], [
             iso8601,
@@ -126,6 +134,68 @@ object(Conf) ->
         ndto_properties:prop_object(),
         Conf
     ).
+
+nullable(_Conf) ->
+    lists:foreach(
+        fun(Type) ->
+            Schema1 = #{
+                <<"type">> => Type
+            },
+            Schema2 = #{
+                <<"type">> => Type,
+                <<"nullable">> => true
+            },
+            false = ndto_test_util:is_valid(<<"test_nullable1">>, Schema1, undefined),
+            true = ndto_test_util:is_valid(<<"test_nullable2">>, Schema2, undefined),
+            true
+        end,
+        ndto_dom:types()
+    ).
+
+oneOf(_Conf) ->
+    Schema = #{
+        <<"oneOf">> => [
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
+            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+        ]
+    },
+    false = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, <<"0">>),
+    false = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, 0),
+    true = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, 0.0).
+
+anyOf(_Conf) ->
+    Schema = #{
+        <<"anyOf">> => [
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
+            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+        ]
+    },
+    false = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, <<"0">>),
+    true = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, 0),
+    true = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, 0.0).
+
+allOf(_Conf) ->
+    Schema = #{
+        <<"allOf">> => [
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
+            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+        ]
+    },
+    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, <<"1">>),
+    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 0),
+    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 1.0),
+    true = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 1).
+
+'not'(_Conf) ->
+    Schema = #{
+        <<"not">> => #{<<"type">> => <<"integer">>, <<"minimum">> => 0}
+    },
+    false = ndto_test_util:is_valid(<<"test_not">>, Schema, 0),
+    true = ndto_test_util:is_valid(<<"test_not">>, Schema, <<"0">>),
+    true = ndto_test_util:is_valid(<<"test_not">>, Schema, -1).
 
 enum(Conf) ->
     ct_property_test:quickcheck(
