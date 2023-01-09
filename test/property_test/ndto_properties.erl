@@ -121,8 +121,7 @@ prop_array() ->
         {Array, Type},
         ?LET(
             Type,
-            %% TODO: remove subtract when object schema is supported
-            triq_dom:elements(lists:subtract(ndto_dom:types(), [<<"object">>])),
+            triq_dom:elements(ndto_dom:types()),
             {ndto_dom:array_value(Type), Type}
         ),
         begin
