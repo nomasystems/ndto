@@ -25,6 +25,7 @@ all() ->
         enum,
         pattern,
         unique_items,
+        additional_properties,
         {group, string_formats}
     ].
 
@@ -37,8 +38,8 @@ groups() ->
             number,
             integer,
             boolean,
-            array
-            % object
+            array,
+            object
         ]},
         {string_formats, [parallel], [
             iso8601,
@@ -138,6 +139,41 @@ pattern(_Conf) ->
         <<"pattern">> => <<"[a-z]+@[a-z]+\.[a-z]+">>
     },
     true = ndto_test_util:is_valid(<<"test_base64">>, Schema, <<"test@ndto.erl">>).
+
+additional_properties(_Conf) ->
+    Schema1 = #{
+        <<"type">> => <<"object">>,
+        <<"properties">> => #{<<"foo">> => #{}},
+        <<"additionalProperties">> => false
+    },
+    true = ndto_test_util:is_valid(<<"test_additional_properties1">>, Schema1, #{
+        <<"foo">> => <<"bar">>
+    }),
+    false = ndto_test_util:is_valid(<<"test_additional_properties1">>, Schema1, #{
+        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
+    }),
+    Schema2 = #{
+        <<"type">> => <<"object">>,
+        <<"properties">> => #{<<"foo">> => #{}},
+        <<"additionalProperties">> => true
+    },
+    true = ndto_test_util:is_valid(<<"test_additional_properties2">>, Schema2, #{
+        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
+    }),
+    true = ndto_test_util:is_valid(<<"test_additional_properties2">>, Schema2, #{
+        <<"foo">> => <<"bar">>, <<"baz">> => <<"corge">>
+    }),
+    Schema3 = #{
+        <<"type">> => <<"object">>,
+        <<"properties">> => #{<<"foo">> => #{}},
+        <<"additionalProperties">> => #{<<"type">> => <<"boolean">>}
+    },
+    true = ndto_test_util:is_valid(<<"test_additional_properties3">>, Schema3, #{
+        <<"foo">> => <<"bar">>, <<"baz">> => true
+    }),
+    false = ndto_test_util:is_valid(<<"test_additional_properties3">>, Schema3, #{
+        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
+    }).
 
 unique_items(_Conf) ->
     Schema = #{

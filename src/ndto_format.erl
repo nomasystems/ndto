@@ -22,6 +22,6 @@
 -callback is_valid(Prefix, Schema) -> Result when
     Prefix :: binary(),
     Schema :: schema(),
-    Result :: {IsValidFuns, ExtraFuns},
-    IsValidFuns :: [erl_syntax:syntaxTree()],
+    Result :: {IsValidFun, ExtraFuns},
+    IsValidFun :: erl_syntax:syntaxTree(),
     ExtraFuns :: [erl_syntax:syntaxTree()].

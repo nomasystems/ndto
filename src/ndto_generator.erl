@@ -50,23 +50,20 @@ generate(Name, Schema, Format) ->
     ExportHeader2 = erl_syntax:comment([?CLINE, ?EXPORTS_HEADER, ?CLINE]),
 
     FormatModule = erlang:binary_to_atom(<<"ndto_", (erlang:atom_to_binary(Format))/binary>>),
-    {IsValidFuns, ExtraFuns} = FormatModule:is_valid(<<"is_valid_">>, Schema),
-    IsValidFunCalls = [
-        erl_syntax:application(
-            erl_syntax:function_name(Fun),
-            [erl_syntax:variable('Val')]
-        )
-     || Fun <- IsValidFuns
-    ],
-    IsValidFunBody = [chain_conditions(IsValidFunCalls, 'andalso')],
-    IsValidFun =
+    {IsValidFun, ExtraFuns} = FormatModule:is_valid(<<"is_valid_">>, Schema),
+    Fun =
         erl_syntax:function(
             erl_syntax:atom(is_valid),
             [
                 erl_syntax:clause(
                     [erl_syntax:variable('Val')],
                     none,
-                    IsValidFunBody
+                    [
+                        erl_syntax:application(
+                            erl_syntax:function_name(IsValidFun),
+                            [erl_syntax:variable('Val')]
+                        )
+                    ]
                 )
             ]
         ),
@@ -81,10 +78,10 @@ generate(Name, Schema, Format) ->
                 ExportHeader,
                 ExportAttr,
                 ExportHeader2,
-                IsValidFun,
-                InternalHeader
+                InternalHeader,
+                Fun,
+                IsValidFun
             ],
-            IsValidFuns,
             ExtraFuns
         ])
     ).
@@ -153,6 +150,4 @@ type_guard(boolean, Var) ->
 type_guard(array, Var) ->
     guard(is_list, Var);
 type_guard(object, Var) ->
-    guard(is_map, Var);
-type_guard(any_of, _Var) ->
-    none.
+    guard(is_map, Var).
