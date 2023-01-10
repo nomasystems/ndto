@@ -92,6 +92,8 @@ generate(Name, Schema, Format) ->
 chain_conditions(FunCalls, 'andalso' = Operator) ->
     chain_conditions(FunCalls, Operator, erl_syntax:atom(true));
 chain_conditions(FunCalls, 'orelse' = Operator) ->
+    chain_conditions(FunCalls, Operator, erl_syntax:atom(false));
+chain_conditions(FunCalls, 'xor' = Operator) ->
     chain_conditions(FunCalls, Operator, erl_syntax:atom(false)).
 
 false_clause() ->

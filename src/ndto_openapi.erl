@@ -257,14 +257,141 @@ is_valid(Prefix, #{<<"type">> := <<"object">>} = Schema) ->
         OptionalClause ++ [TrueClause, FalseClause]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid(_Prefix, #{<<"oneOf">> := _Subschemas} = _Schema) ->
-    erlang:throw(not_implemented);
-is_valid(_Prefix, #{<<"anyOf">> := _Subschemas} = _Schema) ->
-    erlang:throw(not_implemented);
-is_valid(_Prefix, #{<<"allOf">> := _Subschemas} = _Schema) ->
-    erlang:throw(not_implemented);
-is_valid(_Prefix, #{<<"not">> := _Subschemas} = _Schema) ->
-    erlang:throw(not_implemented);
+is_valid(Prefix, #{<<"oneOf">> := Subschemas} = _Schema) ->
+    FunName = <<Prefix/binary, "oneOf">>,
+    {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
+        fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
+            {IsValidFun, ExtraFuns} = is_valid(
+                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+            ),
+            {
+                Idx + 1,
+                [IsValidFun | IsValidFunsAcc],
+                % TODO: replace with `++` for consistency
+                % Currently `gradualizer` complains:
+                % The operator '++' on line 274 at column 27 is expected to have type
+                % _TyVar-576460752303421471 which is too precise to be statically checked
+                lists:append(ExtraFuns, ExtraFunsAcc)
+            }
+        end,
+        {0, [], []},
+        Subschemas
+    ),
+    BodyFunCalls = [
+        erl_syntax:application(
+            erl_syntax:function_name(IsValidFun),
+            [erl_syntax:variable('Val')]
+        )
+     || IsValidFun <- IsValidFuns
+    ],
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            [ndto_generator:chain_conditions(BodyFunCalls, 'xor')]
+        ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    {Fun, IsValidFuns ++ ExtraFuns};
+is_valid(Prefix, #{<<"anyOf">> := Subschemas} = _Schema) ->
+    FunName = <<Prefix/binary, "anyOf">>,
+    {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
+        fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
+            {IsValidFun, ExtraFuns} = is_valid(
+                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+            ),
+            {
+                Idx + 1,
+                [IsValidFun | IsValidFunsAcc],
+                % TODO: replace with `++` for consistency
+                % Currently `gradualizer` complains:
+                % The operator '++' on line 312 at column 27 is expected to have type
+                % _TyVar-576460752303420927 which is too precise to be statically checked
+                lists:append(ExtraFuns, ExtraFunsAcc)
+            }
+        end,
+        {0, [], []},
+        Subschemas
+    ),
+    BodyFunCalls = [
+        erl_syntax:application(
+            erl_syntax:function_name(IsValidFun),
+            [erl_syntax:variable('Val')]
+        )
+     || IsValidFun <- IsValidFuns
+    ],
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            [ndto_generator:chain_conditions(BodyFunCalls, 'orelse')]
+        ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    {Fun, IsValidFuns ++ ExtraFuns};
+is_valid(Prefix, #{<<"allOf">> := Subschemas} = _Schema) ->
+    FunName = <<Prefix/binary, "allOf">>,
+    {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
+        fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
+            {IsValidFun, ExtraFuns} = is_valid(
+                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+            ),
+            {
+                Idx + 1,
+                [IsValidFun | IsValidFunsAcc],
+                % TODO: replace with `++` for consistency
+                % Currently `gradualizer` complains:
+                % The operator '++' on line 350 at column 27 is expected to have type
+                % _TyVar-576460752303420383 which is too precise to be statically checked
+                lists:append(ExtraFuns, ExtraFunsAcc)
+            }
+        end,
+        {0, [], []},
+        Subschemas
+    ),
+    BodyFunCalls = [
+        erl_syntax:application(
+            erl_syntax:function_name(IsValidFun),
+            [erl_syntax:variable('Val')]
+        )
+     || IsValidFun <- IsValidFuns
+    ],
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            [ndto_generator:chain_conditions(BodyFunCalls, 'andalso')]
+        ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    {Fun, IsValidFuns ++ ExtraFuns};
+is_valid(Prefix, #{<<"not">> := Subschema} = _Schema) ->
+    FunName = <<Prefix/binary, "not">>,
+    {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, Subschema),
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:prefix_expr(
+                erl_syntax:operator('not'),
+                erl_syntax:application(
+                    erl_syntax:function_name(IsValidFun),
+                    [erl_syntax:variable('Val')]
+                )
+            )
+        ]
+    ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    {Fun, [IsValidFun | ExtraFuns]};
 is_valid(Prefix, Schema) ->
     FunName = <<Prefix/binary, "any">>,
     OptionalClause = ndto_generator:optional_clause(Schema),
