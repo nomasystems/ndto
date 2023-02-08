@@ -22,12 +22,18 @@
     dto/1
 ]).
 
+%%% MACROS
+%% https://www.erlang.org/doc/efficiency_guide/advanced.html
+-define(MAX_INT, 134217728).
+
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 -spec dto(Schema) -> TestDataGenerator when
     Schema :: schema(),
     TestDataGenerator :: test_data_generator().
+dto(#{<<"enum">> := _Enum} = Schema) ->
+    enum(Schema);
 dto(#{<<"type">> := <<"allOf">>} = Schema) ->
     all_of(Schema);
 dto(#{<<"type">> := <<"anyOf">>} = Schema) ->
@@ -52,7 +58,7 @@ dto(_Schema) ->
     any().
 
 %%%-----------------------------------------------------------------------------
-%%% INTERNAL FUNCTIONS
+%%% GENERATORS
 %%%-----------------------------------------------------------------------------
 -spec all_of(Schema) -> Dom when
     Schema :: schema(),
@@ -82,6 +88,12 @@ array(_Schema) ->
     Dom :: test_data_generator().
 boolean(_Schema) ->
     triq_dom:bool().
+
+-spec enum(Schema) -> Dom when
+    Schema :: schema(),
+    Dom :: test_data_generator().
+enum(#{<<"enum">> := Enum}) ->
+    triq_dom:elements(Enum).
 
 -spec integer(Schema) -> Dom when
     Schema :: schema(),
@@ -116,5 +128,128 @@ one_of(_Schema) ->
 -spec string(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-string(_Schema) ->
-    erlang:throw(not_implemented).
+string(#{<<"pattern">> := _Pattern}) ->
+    erlang:throw(not_implemented);
+string(Schema) ->
+    MinLength = maps:get(<<"minLength">>, Schema, 0),
+    MaxLength = maps:get(<<"maxLength">>, Schema, ?MAX_INT),
+    Format = maps:get(<<"format">>, Schema, undefined),
+    triq_dom:bind(
+        triq_dom:int(MinLength, MaxLength),
+        fun(Length) ->
+            string_format(Format, Length)
+        end
+    ).
+
+-spec string_format(Format, Length) -> FormatGenerator when
+    Format :: undefined | binary(),
+    Length :: non_neg_integer(),
+    FormatGenerator :: test_data_generator().
+string_format(undefined, Length) ->
+    triq_dom:unicode_binary(Length);
+string_format(<<"base64">>, Length) ->
+    triq_dom:bind(
+        triq_dom:unicode_binary(Length),
+        fun(Unicode) ->
+            base64:encode(Unicode)
+        end
+    );
+string_format(<<"iso8601-datetime">>, _Length) ->
+    triq_dom:bind(
+        {
+            triq_dom:int(9999),
+            triq_dom:int(1, 12),
+            triq_dom:int(23),
+            triq_dom:int(59),
+            triq_dom:int(59),
+            triq_dom:elements(timezones())
+        },
+        fun({Year, Month, Hour, Min, Second, Timezone}) ->
+            MaxDay =
+                case Month of
+                    2 ->
+                        case is_leap(Year) of
+                            true ->
+                                29;
+                            _false ->
+                                28
+                        end;
+                    Thirty when
+                        Thirty =:= 4 orelse
+                            Thirty =:= 6 orelse
+                            Thirty =:= 9 orelse
+                            Thirty =:= 11
+                    ->
+                        30;
+                    _Otherwise ->
+                        31
+                end,
+            triq_dom:bind(
+                triq_dom:int(MaxDay),
+                fun(Day) ->
+                    unicode:characters_to_binary(
+                        io_lib:format("~4..0B~2..0B~2..0BT~2..0B~2..0B~2..0B~s", [
+                            Year, Month, Day, Hour, Min, Second, Timezone
+                        ])
+                    )
+                end
+            )
+        end
+    ).
+
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
+is_leap(Year) when
+    Year > 0, (Year rem 4) =:= 0, ((Year rem 100) =:= 0 orelse (Year rem 400) =/= 0)
+->
+    true;
+is_leap(_Year) ->
+    false.
+
+timezones() ->
+    [
+        "Z",
+        "-1200",
+        "-1100",
+        "-1000",
+        "-0930",
+        "-0900",
+        "-0800",
+        "-0700",
+        "-0600",
+        "-0500",
+        "-0430",
+        "-0400",
+        "-0330",
+        "-0300",
+        "-0230",
+        "-0200",
+        "-0100",
+        "+0000",
+        "+0100",
+        "+0200",
+        "+0300",
+        "+0330",
+        "+0400",
+        "+0430",
+        "+0500",
+        "+0530",
+        "+0545",
+        "+0600",
+        "+0630",
+        "+0700",
+        "+0730",
+        "+0800",
+        "+0900",
+        "+0930",
+        "+1000",
+        "+1030",
+        "+1100",
+        "+1130",
+        "+1200",
+        "+1245",
+        "+1300",
+        "+1345",
+        "+1400"
+    ].
