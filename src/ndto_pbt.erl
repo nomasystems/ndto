@@ -38,4 +38,4 @@ dto(Schema) ->
     TestDataGenerator :: test_data_generator().
 dto(Schema, PBTTool) ->
     PBTToolModule = erlang:binary_to_atom(<<"ndto_pbt_", (erlang:atom_to_binary(PBTTool))/binary>>),
-    PBTToolModule:dto(Schema, PBTTool).
+    PBTToolModule:dto(Schema).
