@@ -4,5 +4,5 @@
   0},
  {<<"triq">>,
   {git,"git@github.com:nomasystems/triq.git",
-       {ref,"baed125f7415a9c37e706247cc2901c4c7cfc9cd"}},
+       {ref,"ece8fda7394b4224c9e145ed4859055bba8b544a"}},
   0}].

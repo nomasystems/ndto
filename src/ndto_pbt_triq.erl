@@ -22,10 +22,6 @@
     dto/1
 ]).
 
-%%% MACROS
-%% https://www.erlang.org/doc/efficiency_guide/advanced.html
--define(MAX_INT, 134217728).
-
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
@@ -132,7 +128,7 @@ string(#{<<"pattern">> := _Pattern}) ->
     erlang:throw(not_implemented);
 string(Schema) ->
     MinLength = maps:get(<<"minLength">>, Schema, 0),
-    MaxLength = maps:get(<<"maxLength">>, Schema, ?MAX_INT),
+    MaxLength = maps:get(<<"maxLength">>, Schema, 255),
     Format = maps:get(<<"format">>, Schema, undefined),
     triq_dom:bind(
         triq_dom:int(MinLength, MaxLength),
@@ -148,11 +144,10 @@ string(Schema) ->
 string_format(undefined, Length) ->
     triq_dom:unicode_binary(Length);
 string_format(<<"base64">>, Length) ->
-    triq_dom:bind(
-        triq_dom:unicode_binary(Length),
-        fun(Unicode) ->
-            base64:encode(Unicode)
-        end
+    0 = (Length rem 4),
+    triq_dom:vector(
+        Length,
+        triq_dom:elements(base64_chars())
     );
 string_format(<<"iso8601-datetime">>, _Length) ->
     triq_dom:bind(
@@ -185,7 +180,7 @@ string_format(<<"iso8601-datetime">>, _Length) ->
                         31
                 end,
             triq_dom:bind(
-                triq_dom:int(MaxDay),
+                triq_dom:int(1, MaxDay),
                 fun(Day) ->
                     unicode:characters_to_binary(
                         io_lib:format("~4..0B~2..0B~2..0BT~2..0B~2..0B~2..0B~s", [
@@ -200,6 +195,16 @@ string_format(<<"iso8601-datetime">>, _Length) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
+base64_chars() ->
+    lists:append(
+        [
+            [43, 47, 61],
+            lists:seq(48, 57),
+            lists:seq(65, 90),
+            lists:seq(97, 122)
+        ]
+    ).
+
 is_leap(Year) when
     Year > 0, (Year rem 4) =:= 0, ((Year rem 100) =:= 0 orelse (Year rem 400) =/= 0)
 ->
