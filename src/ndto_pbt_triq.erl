@@ -22,6 +22,11 @@
     dto/1
 ]).
 
+%%% MACROS
+%% https://www.erlang.org/doc/efficiency_guide/advanced.html
+-define(MAX_INT, 134217728).
+-define(MIN_INT, -?MAX_INT).
+
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
@@ -94,8 +99,33 @@ enum(#{<<"enum">> := Enum}) ->
 -spec integer(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-integer(_Schema) ->
-    erlang:throw(not_implemented).
+integer(Schema) ->
+    RawMin = maps:get(<<"minimum">>, Schema, ?MIN_INT),
+    ExclusiveMin = maps:get(<<"exclusiveMinimum">>, Schema, false),
+    Min =
+        case ExclusiveMin of
+            true ->
+                RawMin + 1;
+            false ->
+                RawMin
+        end,
+    RawMax = maps:get(<<"maximum">>, Schema, ?MAX_INT),
+    ExclusiveMax = maps:get(<<"exclusiveMaximum">>, Schema, false),
+    Max =
+        case ExclusiveMax of
+            true ->
+                RawMax - 1;
+            false ->
+                RawMax
+        end,
+    MultipleOf = maps:get(<<"multipleOf">>, Schema, undefined),
+    case MultipleOf of
+        undefined ->
+            triq_dom:int(Min, Max);
+        _Otherwise ->
+            Multiples = multiples(MultipleOf, Min, Max),
+            triq_dom:elements(Multiples)
+    end.
 
 -spec 'not'(Schema) -> Dom when
     Schema :: schema(),
@@ -106,8 +136,32 @@ integer(_Schema) ->
 -spec number(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-number(_Schema) ->
-    erlang:throw(not_implemented).
+number(Schema) ->
+    Min = maps:get(<<"minimum">>, Schema, ?MIN_INT),
+    ExclusiveMin = maps:get(<<"exclusiveMinimum">>, Schema, false),
+    Max = maps:get(<<"maximum">>, Schema, ?MAX_INT),
+    ExclusiveMax = maps:get(<<"exclusiveMaximum">>, Schema, false),
+    Integer = triq_dom:int(erlang:trunc(Min), erlang:trunc(Max)),
+    Float = triq_dom:bind(
+        triq_dom:int(?MAX_INT),
+        fun(Int) ->
+            Min + (Max - Min) * (Int / ?MAX_INT)
+        end
+    ),
+    RawNumber = triq_dom:oneof([Integer, Float]),
+    RawNumberMin =
+        case ExclusiveMin of
+            true ->
+                triq_dom:suchthat(RawNumber, fun(Number) -> Number > Min end);
+            false ->
+                RawNumber
+        end,
+    case ExclusiveMax of
+        true ->
+            triq_dom:suchthat(RawNumber, fun(Number) -> Number < Max end);
+        false ->
+            RawNumberMin
+    end.
 
 -spec object(Schema) -> Dom when
     Schema :: schema(),
@@ -142,7 +196,10 @@ string(Schema) ->
     Length :: non_neg_integer(),
     FormatGenerator :: test_data_generator().
 string_format(undefined, Length) ->
-    triq_dom:unicode_binary(Length);
+    triq_dom:vector(
+        Length,
+        triq_dom:unicode_char()
+    );
 string_format(<<"base64">>, Length) ->
     0 = (Length rem 4),
     triq_dom:vector(
@@ -163,7 +220,7 @@ string_format(<<"iso8601-datetime">>, _Length) ->
             MaxDay =
                 case Month of
                     2 ->
-                        case is_leap(Year) of
+                        case calendar:is_leap_year(Year) of
                             true ->
                                 29;
                             _false ->
@@ -205,12 +262,16 @@ base64_chars() ->
         ]
     ).
 
-is_leap(Year) when
-    Year > 0, (Year rem 4) =:= 0, ((Year rem 100) =:= 0 orelse (Year rem 400) =/= 0)
-->
-    true;
-is_leap(_Year) ->
-    false.
+multiples(MultipleOf, Min, Max) when MultipleOf =< 0 ->
+    multiples(MultipleOf * -1, Min, Max);
+multiples(MultipleOf, Min, Max) ->
+    FirstMultiple = MultipleOf * ((Min + MultipleOf - 1) div MultipleOf),
+    multiples(MultipleOf, Max, FirstMultiple, []).
+
+multiples(_MultipleOf, Max, Current, Acc) when Current > Max ->
+    Acc;
+multiples(MultipleOf, Max, Current, Acc) ->
+    multiples(MultipleOf, Max, Current + MultipleOf, [Current | Acc]).
 
 timezones() ->
     [

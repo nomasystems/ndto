@@ -21,13 +21,24 @@
 %%%-----------------------------------------------------------------------------
 all() ->
     [
-        enum,
         boolean,
+        enum,
+        {group, integer},
+        {group, number},
         {group, string}
     ].
 
 groups() ->
     [
+        {integer, [parallel], [
+            integer_1,
+            integer_2,
+            integer_3
+        ]},
+        {number, [parallel], [
+            number_1,
+            number_2
+        ]},
         {string, [parallel], [
             string,
             string_base64,
@@ -67,15 +78,45 @@ end_per_testcase(Case, Conf) ->
 %%%-----------------------------------------------------------------------------
 %%% TEST CASES
 %%%-----------------------------------------------------------------------------
+boolean(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_boolean(),
+        Conf
+    ).
+
 enum(Conf) ->
     ct_property_test:quickcheck(
         ndto_pbt_properties:prop_enum(),
         Conf
     ).
 
-boolean(Conf) ->
+integer_1(Conf) ->
     ct_property_test:quickcheck(
-        ndto_pbt_properties:prop_boolean(),
+        ndto_pbt_properties:prop_integer_1(),
+        Conf
+    ).
+
+integer_2(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_integer_2(),
+        Conf
+    ).
+
+integer_3(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_integer_3(),
+        Conf
+    ).
+
+number_1(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_number_1(),
+        Conf
+    ).
+
+number_2(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_number_2(),
         Conf
     ).
 
