@@ -19,6 +19,14 @@
 %%%-----------------------------------------------------------------------------
 %%% PROPERTIES
 %%%-----------------------------------------------------------------------------
+prop_boolean() ->
+    Schema = #{<<"type">> => <<"boolean">>},
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        is_boolean(Value)
+    ).
+
 prop_enum() ->
     Enum = [
         0,
@@ -34,12 +42,74 @@ prop_enum() ->
         lists:member(Value, Enum)
     ).
 
-prop_boolean() ->
-    Schema = #{<<"type">> => <<"boolean">>},
+prop_integer_1() ->
+    Schema = #{
+        <<"type">> => <<"integer">>,
+        <<"minimum">> => 0,
+        <<"maximum">> => 0
+    },
     ?FORALL(
         Value,
         ndto_pbt:dto(Schema),
-        is_boolean(Value)
+        Value =:= 0
+    ).
+
+prop_integer_2() ->
+    Schema = #{
+        <<"type">> => <<"integer">>,
+        <<"minimum">> => 2,
+        <<"exclusiveMinimum">> => false,
+        <<"maximum">> => 12,
+        <<"exclusiveMaximum">> => true,
+        <<"multipleOf">> => 3
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        Value >= 2 andalso Value < 12 andalso (Value rem 3) =:= 0
+    ).
+
+prop_integer_3() ->
+    Schema = #{
+        <<"type">> => <<"integer">>,
+        <<"minimum">> => -12,
+        <<"exclusiveMinimum">> => true,
+        <<"maximum">> => 2,
+        <<"exclusiveMaximum">> => false,
+        <<"multipleOf">> => -3
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        Value > -12 andalso Value =< 2 andalso (Value rem 3) =:= 0
+    ).
+
+prop_number_1() ->
+    Schema = #{
+        <<"type">> => <<"number">>,
+        <<"minimum">> => -2.5,
+        <<"exclusiveMinimum">> => true,
+        <<"maximum">> => 2.5,
+        <<"exclusiveMaximum">> => false
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        Value > -2.5 andalso Value =< 2.5
+    ).
+
+prop_number_2() ->
+    Schema = #{
+        <<"type">> => <<"number">>,
+        <<"minimum">> => -2.5,
+        <<"exclusiveMinimum">> => false,
+        <<"maximum">> => 2.5,
+        <<"exclusiveMaximum">> => true
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        Value > -2.5 andalso Value =< 2.5
     ).
 
 prop_string() ->
@@ -64,12 +134,7 @@ prop_string_base64() ->
     ?FORALL(
         Value,
         ndto_pbt:dto(Schema),
-        try
-            string:length(Value) =:= 4
-        catch
-            _Class:_Reason ->
-                false
-        end
+        string:length(Value) =:= 4
     ).
 
 'prop_string_iso8601-datetime'() ->
