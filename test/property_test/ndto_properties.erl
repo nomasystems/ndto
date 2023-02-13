@@ -71,9 +71,9 @@ prop_number() ->
             Schema = #{
                 <<"type">> => <<"number">>,
                 <<"minimum">> => Number,
-                <<"exclusiveMinimum">> => Number - 1,
-                <<"maximum">> => Number,
-                <<"exclusiveMaximum">> => Number + 1
+                <<"exclusiveMinimum">> => false,
+                <<"maximum">> => Number + 1,
+                <<"exclusiveMaximum">> => true
             },
             true = ndto_test_util:is_valid(<<"test_number">>, Schema, Number),
             true
@@ -92,10 +92,10 @@ prop_integer() ->
             Integer = RawInteger * MultipleOf,
             Schema = #{
                 <<"type">> => <<"integer">>,
-                <<"minimum">> => Integer,
-                <<"exclusiveMinimum">> => Integer - 1,
+                <<"minimum">> => Integer - 1,
+                <<"exclusiveMinimum">> => true,
                 <<"maximum">> => Integer,
-                <<"exclusiveMaximum">> => Integer + 1,
+                <<"exclusiveMaximum">> => false,
                 <<"multipleOf">> => MultipleOf
             },
             true = ndto_test_util:is_valid(<<"test_integer">>, Schema, Integer),
