@@ -105,15 +105,13 @@ is_valid(Prefix, #{<<"type">> := Type} = Schema) when Type == <<"number">>; Type
                 undefined ->
                     Acc;
                 Value ->
-                    [is_valid_number(Type, <<FunName/binary, "_">>, Keyword, Value) | Acc]
+                    [is_valid_number(Type, <<FunName/binary, "_">>, Keyword, Value, Schema) | Acc]
             end
         end,
         [],
         [
             <<"minimum">>,
             <<"maximum">>,
-            <<"exclusiveMinimum">>,
-            <<"exclusiveMaximum">>,
             <<"multipleOf">>
         ]
     ),
@@ -517,13 +515,14 @@ is_valid_array(Prefix, <<"uniqueItems">>, true) ->
 is_valid_array(_Prefix, <<"uniqueItems">>, false) ->
     {undefined, []}.
 
--spec is_valid_number(Type, Prefix, Keyword, Value) -> Result when
+-spec is_valid_number(Type, Prefix, Keyword, Value, Schema) -> Result when
     Type :: binary(),
     Prefix :: binary(),
     Keyword :: binary(),
     Value :: term(),
+    Schema :: schema(),
     Result :: erl_syntax:syntaxTree().
-is_valid_number(_Type, Prefix, <<"minimum">>, Minimum) ->
+is_valid_number(_Type, Prefix, <<"minimum">>, Minimum, Schema) ->
     FunName = <<Prefix/binary, "minimum">>,
     MinimumSt =
         case Minimum of
@@ -532,11 +531,18 @@ is_valid_number(_Type, Prefix, <<"minimum">>, Minimum) ->
             _Float ->
                 erl_syntax:float(Minimum)
         end,
+    Operator =
+        case maps:get(<<"exclusiveMinimum">>, Schema, false) of
+            true ->
+                erl_syntax:operator('>');
+            _false ->
+                erl_syntax:operator('>=')
+        end,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         erl_syntax:infix_expr(
             erl_syntax:variable('Val'),
-            erl_syntax:operator('>='),
+            Operator,
             MinimumSt
         ),
         [erl_syntax:atom(true)]
@@ -546,7 +552,7 @@ is_valid_number(_Type, Prefix, <<"minimum">>, Minimum) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     );
-is_valid_number(_Type, Prefix, <<"maximum">>, Maximum) ->
+is_valid_number(_Type, Prefix, <<"maximum">>, Maximum, Schema) ->
     FunName = <<Prefix/binary, "maximum">>,
     MaximumSt =
         case Maximum of
@@ -555,11 +561,18 @@ is_valid_number(_Type, Prefix, <<"maximum">>, Maximum) ->
             _Float ->
                 erl_syntax:float(Maximum)
         end,
+    Operator =
+        case maps:get(<<"exclusiveMaximum">>, Schema, false) of
+            true ->
+                erl_syntax:operator('<');
+            _false ->
+                erl_syntax:operator('=<')
+        end,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         erl_syntax:infix_expr(
             erl_syntax:variable('Val'),
-            erl_syntax:operator('=<'),
+            Operator,
             MaximumSt
         ),
         [erl_syntax:atom(true)]
@@ -569,53 +582,7 @@ is_valid_number(_Type, Prefix, <<"maximum">>, Maximum) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     );
-is_valid_number(_Type, Prefix, <<"exclusiveMinimum">>, ExclusiveMinimum) ->
-    FunName = <<Prefix/binary, "exclusiveMinimum">>,
-    ExclusiveMinimumSt =
-        case ExclusiveMinimum of
-            Integer when is_integer(Integer) ->
-                erl_syntax:integer(ExclusiveMinimum);
-            _Float ->
-                erl_syntax:float(ExclusiveMinimum)
-        end,
-    TrueClause = erl_syntax:clause(
-        [erl_syntax:variable('Val')],
-        erl_syntax:infix_expr(
-            erl_syntax:variable('Val'),
-            erl_syntax:operator('>'),
-            ExclusiveMinimumSt
-        ),
-        [erl_syntax:atom(true)]
-    ),
-    FalseClause = ndto_generator:false_clause(),
-    erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause, FalseClause]
-    );
-is_valid_number(_Type, Prefix, <<"exclusiveMaximum">>, ExclusiveMaximum) ->
-    FunName = <<Prefix/binary, "exclusiveMaximum">>,
-    ExclusiveMaximumST =
-        case ExclusiveMaximum of
-            Integer when is_integer(Integer) ->
-                erl_syntax:integer(ExclusiveMaximum);
-            _Float ->
-                erl_syntax:float(ExclusiveMaximum)
-        end,
-    TrueClause = erl_syntax:clause(
-        [erl_syntax:variable('Val')],
-        erl_syntax:infix_expr(
-            erl_syntax:variable('Val'),
-            erl_syntax:operator('<'),
-            ExclusiveMaximumST
-        ),
-        [erl_syntax:atom(true)]
-    ),
-    FalseClause = ndto_generator:false_clause(),
-    erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause, FalseClause]
-    );
-is_valid_number(Type, Prefix, <<"multipleOf">>, MultipleOf) ->
+is_valid_number(Type, Prefix, <<"multipleOf">>, MultipleOf, _Schema) ->
     FunName = <<Prefix/binary, "multipleOf">>,
     MultipleOfST =
         case MultipleOf of
