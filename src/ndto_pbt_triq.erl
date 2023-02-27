@@ -81,8 +81,32 @@ any_of(_Schema) ->
 -spec array(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-array(_Schema) ->
-    erlang:throw(not_implemented).
+array(Schema) ->
+    Items = maps:get(<<"items">>, Schema, #{}),
+    MinItems = maps:get(<<"minItems">>, Schema, 0),
+    MaxItems = maps:get(<<"maxItems">>, Schema, 250),
+    UniqueItems = maps:get(<<"uniqueItems">>, Schema, false),
+    triq_dom:bind(
+        triq_dom:int(MinItems, MaxItems),
+        fun(Length) ->
+            DTO = dto(Items),
+            Array = triq_dom:vector(Length, DTO),
+            case UniqueItems of
+                false ->
+                    Array;
+                true ->
+                    triq_dom:suchthat(
+                        triq_dom:bind(
+                            Array,
+                            fun lists:uniq/1
+                        ),
+                        fun(A) ->
+                            erlang:length(A) >= MinItems
+                        end
+                    )
+            end
+        end
+    ).
 
 -spec boolean(Schema) -> Dom when
     Schema :: schema(),

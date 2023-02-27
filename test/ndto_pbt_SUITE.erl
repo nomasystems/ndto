@@ -21,6 +21,7 @@
 %%%-----------------------------------------------------------------------------
 all() ->
     [
+        {group, array},
         boolean,
         enum,
         {group, integer},
@@ -30,6 +31,10 @@ all() ->
 
 groups() ->
     [
+        {array, [parallel], [
+            array_1,
+            array_2
+        ]},
         {integer, [parallel], [
             integer_1,
             integer_2,
@@ -78,6 +83,18 @@ end_per_testcase(Case, Conf) ->
 %%%-----------------------------------------------------------------------------
 %%% TEST CASES
 %%%-----------------------------------------------------------------------------
+array_1(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_array_1(),
+        Conf
+    ).
+
+array_2(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_array_2(),
+        Conf
+    ).
+
 boolean(Conf) ->
     ct_property_test:quickcheck(
         ndto_pbt_properties:prop_boolean(),
