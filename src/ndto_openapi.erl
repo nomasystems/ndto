@@ -27,15 +27,9 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
-is_valid(Prefix, #{<<"$ref">> := RawRef} = Schema) ->
-    Ref =
-        case filename:basename(RawRef) of
-            ListBasename when is_list(ListBasename) ->
-                erlang:list_to_binary(ListBasename);
-            BinBasename ->
-                BinBasename
-        end,
-    FunName = <<Prefix/binary, "ref_", Ref/binary>>,
+is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) ->
+    [_Path, <<DTO/binary>>] = string:split(Ref, <<"/">>, trailing),
+    FunName = <<Prefix/binary, "ref_", DTO/binary>>,
     OptionalClause = ndto_generator:optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -43,7 +37,7 @@ is_valid(Prefix, #{<<"$ref">> := RawRef} = Schema) ->
             ndto_generator:type_guard(ref),
             [
                 erl_syntax:application(
-                    erl_syntax:atom(erlang:binary_to_atom(Ref)),
+                    erl_syntax:atom(erlang:binary_to_atom(DTO)),
                     erl_syntax:atom(is_valid),
                     [
                         erl_syntax:variable('Val')
