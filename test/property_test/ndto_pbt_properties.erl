@@ -19,6 +19,36 @@
 %%%-----------------------------------------------------------------------------
 %%% PROPERTIES
 %%%-----------------------------------------------------------------------------
+prop_array_1() ->
+    Schema = #{
+        <<"type">> => <<"array">>,
+        <<"items">> => #{
+            <<"type">> => <<"number">>
+        }
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        is_list(Value)
+    ).
+
+prop_array_2() ->
+    Schema = #{
+        <<"type">> => <<"array">>,
+        <<"items">> => #{
+            <<"type">> => <<"boolean">>
+        },
+        <<"minItems">> => 1,
+        <<"maxItems">> => 5,
+        <<"uniqueItems">> => true
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        is_list(Value) andalso erlang:length(Value) >= 1 andalso is_boolean(erlang:hd(Value)) andalso
+            erlang:length(Value) =< 2
+    ).
+
 prop_boolean() ->
     Schema = #{<<"type">> => <<"boolean">>},
     ?FORALL(
