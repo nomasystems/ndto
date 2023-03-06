@@ -35,9 +35,9 @@
     TestDataGenerator :: test_data_generator().
 dto(#{<<"enum">> := _Enum} = Schema) ->
     enum(Schema);
-dto(#{<<"type">> := <<"allOf">>} = Schema) ->
+dto(#{<<"allOf">> := _Subschemas} = Schema) ->
     all_of(Schema);
-dto(#{<<"type">> := <<"anyOf">>} = Schema) ->
+dto(#{<<"anyOf">> := _Subschemas} = Schema) ->
     any_of(Schema);
 dto(#{<<"type">> := <<"array">>} = Schema) ->
     array(Schema);
@@ -45,13 +45,13 @@ dto(#{<<"type">> := <<"boolean">>} = Schema) ->
     boolean(Schema);
 dto(#{<<"type">> := <<"integer">>} = Schema) ->
     integer(Schema);
-dto(#{<<"type">> := <<"not">>} = Schema) ->
+dto(#{<<"not">> := _Subschemas} = Schema) ->
     'not'(Schema);
 dto(#{<<"type">> := <<"number">>} = Schema) ->
     number(Schema);
 dto(#{<<"type">> := <<"object">>} = Schema) ->
     object(Schema);
-dto(#{<<"type">> := <<"oneOf">>} = Schema) ->
+dto(#{<<"oneOf">> := _Subschemas} = Schema) ->
     one_of(Schema);
 dto(#{<<"type">> := <<"string">>} = Schema) ->
     string(Schema);
@@ -75,8 +75,13 @@ any() ->
 -spec any_of(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-any_of(_Schema) ->
-    erlang:throw(not_implemented).
+any_of(#{<<"anyOf">> := Subschemas} = _Schema) ->
+    triq_dom:oneof(
+        [
+            dto(SubSchema)
+         || SubSchema <- Subschemas
+        ]
+    ).
 
 -spec array(Schema) -> Dom when
     Schema :: schema(),
@@ -211,7 +216,12 @@ string(Schema) ->
     triq_dom:bind(
         triq_dom:int(MinLength, MaxLength),
         fun(Length) ->
-            string_format(Format, Length)
+            triq_dom:bind(
+                string_format(Format, Length),
+                fun(Vector) ->
+                    unicode:characters_to_binary(Vector, utf8, utf8)
+                end
+            )
         end
     ).
 

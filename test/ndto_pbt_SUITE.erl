@@ -21,6 +21,7 @@
 %%%-----------------------------------------------------------------------------
 all() ->
     [
+        any_of,
         {group, array},
         boolean,
         enum,
@@ -83,6 +84,12 @@ end_per_testcase(Case, Conf) ->
 %%%-----------------------------------------------------------------------------
 %%% TEST CASES
 %%%-----------------------------------------------------------------------------
+any_of(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_any_of(),
+        Conf
+    ).
+
 array_1(Conf) ->
     ct_property_test:quickcheck(
         ndto_pbt_properties:prop_array_1(),
