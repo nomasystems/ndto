@@ -26,6 +26,7 @@ all() ->
         enum,
         {group, integer},
         {group, number},
+        {group, object},
         {group, string}
     ].
 
@@ -43,6 +44,10 @@ groups() ->
         {number, [parallel], [
             number_1,
             number_2
+        ]},
+        {object, [parallel], [
+            object_1,
+            object_2
         ]},
         {string, [parallel], [
             string,
@@ -134,6 +139,18 @@ number_1(Conf) ->
 number_2(Conf) ->
     ct_property_test:quickcheck(
         ndto_pbt_properties:prop_number_2(),
+        Conf
+    ).
+
+object_1(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_object_1(),
+        Conf
+    ).
+
+object_2(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_pbt_properties:prop_object_2(),
         Conf
     ).
 

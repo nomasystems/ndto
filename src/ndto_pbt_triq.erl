@@ -190,8 +190,64 @@ number(Schema) ->
 -spec object(Schema) -> Dom when
     Schema :: schema(),
     Dom :: test_data_generator().
-object(_Schema) ->
-    erlang:throw(not_implemented).
+object(Schema) ->
+    Properties = maps:get(<<"properties">>, Schema, #{}),
+    RequiredKeys = maps:get(<<"required">>, Schema, []),
+    RawMinProperties = maps:get(<<"minProperties">>, Schema, 0),
+    MaxProperties = maps:get(<<"maxProperties">>, Schema, 20),
+    AdditionalProperties = maps:get(<<"additionalProperties">>, Schema, true),
+
+    MinProperties =
+        case erlang:length(RequiredKeys) of
+            LessThan when LessThan < RawMinProperties ->
+                RawMinProperties;
+            GreaterThanOrEqualTo ->
+                GreaterThanOrEqualTo
+        end,
+    Required = [{PropertyName, maps:get(PropertyName, Properties)} || PropertyName <- RequiredKeys],
+    NotRequired = maps:to_list(maps:without(RequiredKeys, Properties)),
+
+    triq_dom:bind(
+        triq_dom:int(MinProperties, MaxProperties),
+        fun(MissingSize) ->
+            object(Required ++ NotRequired, AdditionalProperties, MissingSize, triq_dom:return(#{}))
+        end
+    ).
+
+-spec object(Properties, ExtraSchema, MissingSize, Acc) -> Object when
+    Properties :: [{binary(), schema()}],
+    ExtraSchema :: boolean() | schema(),
+    MissingSize :: non_neg_integer(),
+    Acc :: test_data_generator(),
+    Object :: test_data_generator().
+object(_Properties, _ExtraSchema, 0, Acc) ->
+    Acc;
+object([], false, _Missing, Acc) ->
+    object([], false, 0, Acc);
+object([], true, Missing, Acc) ->
+    object([], #{}, Missing, Acc);
+%%% TODO: remove guard when `gradualizer` supports it
+%%% currently it complains:
+%%% - The variable on line 232 at column 65 is expected to have type #{binary() => term()}
+%%% but it has type false | true | schema()
+object([], ExtraSchema, Missing, Acc) when is_map(ExtraSchema) ->
+    NewAcc =
+        triq_dom:bind(
+            {triq_dom:non_empty(triq_dom:unicode_binary()), dto(ExtraSchema), Acc},
+            fun({PropertyName, PropertyValue, AccValue}) ->
+                maps:put(PropertyName, PropertyValue, AccValue)
+            end
+        ),
+    object([], ExtraSchema, Missing - 1, NewAcc);
+object([{PropertyName, PropertySchema} | Properties], ExtraSchema, Missing, Acc) ->
+    NewAcc =
+        triq_dom:bind(
+            {dto(PropertySchema), Acc},
+            fun({PropertyValue, AccValue}) ->
+                maps:put(PropertyName, PropertyValue, AccValue)
+            end
+        ),
+    object(Properties, ExtraSchema, Missing - 1, NewAcc).
 
 -spec one_of(Schema) -> Dom when
     Schema :: schema(),

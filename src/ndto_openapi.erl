@@ -851,8 +851,6 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
     ),
     merl:print(Fun),
     {Fun, []};
-is_valid_object(_Prefix, <<"additionalProperties">>, #{<<"additionalProperties">> := true}) ->
-    {undefined, []};
 is_valid_object(Prefix, <<"additionalProperties">>, #{
     <<"additionalProperties">> := AdditionalProperties, <<"properties">> := Properties
 }) ->
@@ -921,7 +919,9 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    {Fun, [IsValidFun | ExtraFuns]}.
+    {Fun, [IsValidFun | ExtraFuns]};
+is_valid_object(_Prefix, <<"additionalProperties">>, _Schema) ->
+    {undefined, []}.
 
 -spec is_valid_string(Prefix, Keyword, Value) -> Result when
     Prefix :: binary(),
