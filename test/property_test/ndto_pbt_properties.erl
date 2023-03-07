@@ -142,6 +142,41 @@ prop_number_2() ->
         Value > -2.5 andalso Value =< 2.5
     ).
 
+prop_object_1() ->
+    Schema = #{
+        <<"type">> => <<"object">>,
+        <<"minProperties">> => 10,
+        <<"maxProperties">> => 20,
+        <<"additionalProperties">> => #{<<"type">> => <<"boolean">>}
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        begin
+            PropertiesLength = erlang:length(maps:keys(Value)),
+            PropertiesLength >= 10 andalso
+                PropertiesLength =< 20 andalso
+                lists:all(fun is_boolean/1, maps:values(Value))
+        end
+    ).
+
+prop_object_2() ->
+    Schema = #{
+        <<"type">> => <<"object">>,
+        <<"properties">> => #{
+            <<"foo">> => #{<<"type">> => <<"integer">>},
+            <<"bar">> => #{<<"type">> => <<"boolean">>}
+        },
+        <<"required">> => [<<"foo">>, <<"bar">>],
+        <<"minProperties">> => 1,
+        <<"additionalProperties">> => false
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        is_integer(maps:get(<<"foo">>, Value)) andalso is_boolean(maps:get(<<"bar">>, Value))
+    ).
+
 prop_string() ->
     Schema = #{
         <<"type">> => <<"string">>,
