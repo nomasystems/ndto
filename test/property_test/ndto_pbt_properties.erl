@@ -19,6 +19,22 @@
 %%%-----------------------------------------------------------------------------
 %%% PROPERTIES
 %%%-----------------------------------------------------------------------------
+prop_any_of() ->
+    Schema = #{
+        <<"anyOf">> => [
+            #{<<"type">> => <<"boolean">>},
+            #{<<"type">> => <<"number">>},
+            #{<<"type">> => <<"string">>}
+        ]
+    },
+    ?FORALL(
+        Value,
+        ndto_pbt:dto(Schema),
+        is_boolean(Value) orelse
+            is_number(Value) orelse
+            is_binary(Value)
+    ).
+
 prop_array_1() ->
     Schema = #{
         <<"type">> => <<"array">>,
@@ -186,7 +202,9 @@ prop_string() ->
     ?FORALL(
         Value,
         ndto_pbt:dto(Schema),
-        string:length(Value) >= 2 andalso string:length(Value) =< 4
+        is_binary(Value) andalso
+            string:length(Value) >= 2 andalso
+            string:length(Value) =< 4
     ).
 
 prop_string_base64() ->
