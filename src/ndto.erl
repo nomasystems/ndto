@@ -87,5 +87,4 @@ load(DTO, Options) ->
     Reason :: file:posix() | badarg | terminated | system_limit.
 write(DTO, Filename) ->
     Content = erl_prettypr:format(DTO),
-    Bin = erlang:list_to_binary(Content),
-    file:write_file(Filename, Bin).
+    file:write_file(Filename, Content).
