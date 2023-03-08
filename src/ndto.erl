@@ -19,26 +19,72 @@
 %%% EXTERNAL EXPORTS
 -export([
     generate/2,
-    generate/3
+    generate/3,
+    load/1,
+    load/2,
+    write/2
 ]).
 
 %%% TYPE EXPORTS
--export_type([ndto/0]).
+-export_type([dto/0]).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 -spec generate(Name, Schema) -> Result when
-    Name :: binary(),
+    Name :: atom(),
     Schema :: schema(),
-    Result :: ndto().
+    Result :: dto().
 generate(Name, Schema) ->
     generate(Name, Schema, openapi).
 
 -spec generate(Name, Schema, Format) -> Result when
-    Name :: binary(),
+    Name :: atom(),
     Schema :: schema(),
     Format :: schema_format(),
-    Result :: ndto().
+    Result :: dto().
 generate(Name, Schema, Format) ->
     ndto_generator:generate(Name, Schema, Format).
+
+-spec load(DTO) -> Result when
+    DTO :: dto(),
+    Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
+    Errors :: [term()],
+    Warnings :: [term()].
+load(DTO) ->
+    load(DTO, []).
+
+-spec load(DTO, Options) -> Result when
+    DTO :: dto(),
+    Options :: [compile:option()],
+    Result :: ok | error | {error, {Errors, Warnings}},
+    Errors :: [term()],
+    Warnings :: [term()].
+load(DTO, Options) ->
+    Forms = erl_syntax:revert_forms(DTO),
+    case compile:forms(Forms, Options) of
+        {ok, ModuleName, Bin} when is_binary(Bin), is_atom(ModuleName) ->
+            case
+                code:load_binary(
+                    ModuleName, erlang:atom_to_list(ModuleName) ++ ".erl", Bin
+                )
+            of
+                {module, ModuleName} ->
+                    ok;
+                {error, What} ->
+                    {error, {[What], []}}
+            end;
+        {error, Errors, Warnings} ->
+            {error, {Errors, Warnings}};
+        error ->
+            error
+    end.
+
+-spec write(DTO, Filename) -> Result when
+    DTO :: dto(),
+    Filename :: file:filename(),
+    Result :: ok | {error, Reason},
+    Reason :: file:posix() | badarg | terminated | system_limit.
+write(DTO, Filename) ->
+    Content = erl_prettypr:format(DTO),
+    file:write_file(Filename, Content).

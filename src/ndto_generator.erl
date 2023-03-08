@@ -32,15 +32,13 @@
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 -spec generate(Name, Schema, Format) -> Result when
-    Name :: binary(),
+    Name :: atom(),
     Schema :: schema(),
     Format :: schema_format(),
-    Result :: ndto().
+    Result :: dto().
 generate(Name, Schema, Format) ->
-    ModuleName = erlang:binary_to_atom(Name),
-
     ModuleHeader = erl_syntax:comment(?COPYRIGHT ++ [?NOTE]),
-    ModuleAttr = erl_syntax:attribute(erl_syntax:atom(module), [erl_syntax:atom(ModuleName)]),
+    ModuleAttr = erl_syntax:attribute(erl_syntax:atom(module), [erl_syntax:atom(Name)]),
     ExportHeader = erl_syntax:comment([?EXPORTS_HEADER]),
     ExportAttr = erl_syntax:attribute(erl_syntax:atom(export), [
         erl_syntax:list([
@@ -73,14 +71,22 @@ generate(Name, Schema, Format) ->
     erl_syntax:form_list(
         lists:append([
             [
-                ModuleHeader,
-                ModuleAttr,
-                ExportHeader,
-                ExportAttr,
-                ExportHeader2,
-                InternalHeader,
-                Fun,
-                IsValidFun
+                erl_syntax:set_precomments(
+                    ModuleAttr,
+                    [ModuleHeader]
+                ),
+                erl_syntax:set_precomments(
+                    ExportAttr,
+                    [ExportHeader]
+                ),
+                erl_syntax:set_precomments(
+                    Fun,
+                    [ExportHeader2]
+                ),
+                erl_syntax:set_precomments(
+                    IsValidFun,
+                    [InternalHeader]
+                )
             ],
             ExtraFuns
         ])
