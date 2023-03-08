@@ -25,7 +25,10 @@ prop_any() ->
         ndto_dom:any_value(),
         begin
             Schema = #{},
-            true = ndto_test_util:is_valid(<<"test_any">>, Schema, Any),
+            DTO = ndto:generate(test_any, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_any:is_valid(Any),
             true
         end
     ).
@@ -35,14 +38,18 @@ prop_ref() ->
         Any,
         ndto_dom:any_value(),
         begin
-            ReferencedName = <<"referenced_dto">>,
+            ReferencedName = test_referenced_dto,
             ReferencedSchema = #{},
-            Name = <<"ref_dto">>,
             Schema = #{
-                <<"$ref">> => <<"/components/schemas/", ReferencedName/binary>>
+                <<"$ref">> => <<"/components/schemas/", (erlang:atom_to_binary(ReferencedName))/binary>>
             },
-            ndto_test_util:compile(ReferencedName, ReferencedSchema),
-            true = ndto_test_util:is_valid(Name, Schema, Any),
+
+            ReferencedDTO = ndto:generate(ReferencedName, ReferencedSchema),
+            ok = ndto:load(ReferencedDTO),
+            DTO = ndto:generate(test_ref, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_ref:is_valid(Any),
             true
         end
     ).
@@ -58,7 +65,10 @@ prop_string() ->
                 <<"maxLength">> => string:length(String),
                 <<"pattern">> => <<".*">>
             },
-            true = ndto_test_util:is_valid(<<"test_string">>, Schema, String),
+            DTO = ndto:generate(test_string, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_string:is_valid(String),
             true
         end
     ).
@@ -75,7 +85,10 @@ prop_number() ->
                 <<"maximum">> => Number + 1,
                 <<"exclusiveMaximum">> => true
             },
-            true = ndto_test_util:is_valid(<<"test_number">>, Schema, Number),
+            DTO = ndto:generate(test_number, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_number:is_valid(Number),
             true
         end
     ).
@@ -98,7 +111,10 @@ prop_integer() ->
                 <<"exclusiveMaximum">> => false,
                 <<"multipleOf">> => MultipleOf
             },
-            true = ndto_test_util:is_valid(<<"test_integer">>, Schema, Integer),
+            DTO = ndto:generate(test_integer, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_integer:is_valid(Integer),
             true
         end
     ).
@@ -111,7 +127,10 @@ prop_boolean() ->
             Schema = #{
                 <<"type">> => <<"boolean">>
             },
-            true = ndto_test_util:is_valid(<<"test_boolean">>, Schema, Boolean),
+            DTO = ndto:generate(test_boolean, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_boolean:is_valid(Boolean),
             true
         end
     ).
@@ -135,7 +154,10 @@ prop_array() ->
                 <<"maxItems">> => erlang:length(Array),
                 <<"uniqueItems">> => false
             },
-            true = ndto_test_util:is_valid(<<"test_array">>, Schema, Array),
+            DTO = ndto:generate(test_array, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_array:is_valid(Array),
             true
         end
     ).
@@ -158,7 +180,10 @@ prop_object() ->
                 <<"minProperties">> => erlang:length(maps:keys(Object)) - 1,
                 <<"maxProperties">> => erlang:length(maps:keys(Object)) + 1
             },
-            true = ndto_test_util:is_valid(<<"test_object">>, Schema, Object),
+            DTO = ndto:generate(test_object, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_object:is_valid(Object),
             true
         end
     ).
@@ -180,7 +205,10 @@ prop_enum() ->
                 <<"type">> => Type,
                 <<"enum">> => Values
             },
-            true = ndto_test_util:is_valid(<<"test_enum">>, Schema, erlang:hd(Values)),
+            DTO = ndto:generate(test_enum, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_enum:is_valid(erlang:hd(Values)),
             true
         end
     ).

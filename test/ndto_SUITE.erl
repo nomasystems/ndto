@@ -141,13 +141,19 @@ nullable(_Conf) ->
             Schema1 = #{
                 <<"type">> => Type
             },
+            DTO1 = ndto:generate(test_nullable1, Schema1),
+            ok = ndto:load(DTO1),
+
+            false = test_nullable1:is_valid(undefined),
+
             Schema2 = #{
                 <<"type">> => Type,
                 <<"nullable">> => true
             },
-            false = ndto_test_util:is_valid(<<"test_nullable1">>, Schema1, undefined),
-            true = ndto_test_util:is_valid(<<"test_nullable2">>, Schema2, undefined),
-            true
+            DTO2 = ndto:generate(test_nullable2, Schema2),
+            ok = ndto:load(DTO2),
+
+            true = test_nullable2:is_valid(undefined)
         end,
         ndto_dom:types()
     ).
@@ -160,9 +166,12 @@ oneOf(_Conf) ->
             #{<<"type">> => <<"number">>, <<"minimum">> => 0}
         ]
     },
-    false = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, <<"0">>),
-    false = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, 0),
-    true = ndto_test_util:is_valid(<<"test_oneOf">>, Schema, 0.0).
+    DTO = ndto:generate(test_one_of, Schema),
+    ok = ndto:load(DTO),
+
+    false = test_one_of:is_valid(<<"0">>),
+    false = test_one_of:is_valid(0),
+    true = test_one_of:is_valid(0.0).
 
 anyOf(_Conf) ->
     Schema = #{
@@ -172,9 +181,12 @@ anyOf(_Conf) ->
             #{<<"type">> => <<"number">>, <<"minimum">> => 0}
         ]
     },
-    false = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, <<"0">>),
-    true = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, 0),
-    true = ndto_test_util:is_valid(<<"test_anyOf">>, Schema, 0.0).
+    DTO = ndto:generate(test_any_of, Schema),
+    ok = ndto:load(DTO),
+
+    false = test_any_of:is_valid(<<"0">>),
+    true = test_any_of:is_valid(0),
+    true = test_any_of:is_valid(0.0).
 
 allOf(_Conf) ->
     Schema = #{
@@ -184,18 +196,24 @@ allOf(_Conf) ->
             #{<<"type">> => <<"number">>, <<"minimum">> => 0}
         ]
     },
-    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, <<"1">>),
-    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 0),
-    false = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 1.0),
-    true = ndto_test_util:is_valid(<<"test_allOf">>, Schema, 1).
+    DTO = ndto:generate(test_all_of, Schema),
+    ok = ndto:load(DTO),
+
+    false = test_all_of:is_valid(<<"1">>),
+    false = test_all_of:is_valid(0),
+    false = test_all_of:is_valid(1.0),
+    true = test_all_of:is_valid(1).
 
 'not'(_Conf) ->
     Schema = #{
         <<"not">> => #{<<"type">> => <<"integer">>, <<"minimum">> => 0}
     },
-    false = ndto_test_util:is_valid(<<"test_not">>, Schema, 0),
-    true = ndto_test_util:is_valid(<<"test_not">>, Schema, <<"0">>),
-    true = ndto_test_util:is_valid(<<"test_not">>, Schema, -1).
+    DTO = ndto:generate(test_not, Schema),
+    ok = ndto:load(DTO),
+
+    false = test_not:is_valid(0),
+    true = test_not:is_valid(<<"0">>),
+    true = test_not:is_valid(-1).
 
 enum(Conf) ->
     ct_property_test:quickcheck(
@@ -208,7 +226,10 @@ pattern(_Conf) ->
         <<"type">> => <<"string">>,
         <<"pattern">> => <<"[a-z]+@[a-z]+\.[a-z]+">>
     },
-    true = ndto_test_util:is_valid(<<"test_base64">>, Schema, <<"test@ndto.erl">>).
+    DTO = ndto:generate(test_pattern, Schema),
+    ok = ndto:load(DTO),
+
+    true = test_pattern:is_valid(<<"test@ndto.erl">>).
 
 additional_properties(_Conf) ->
     Schema1 = #{
@@ -216,43 +237,43 @@ additional_properties(_Conf) ->
         <<"properties">> => #{<<"foo">> => #{}},
         <<"additionalProperties">> => false
     },
-    true = ndto_test_util:is_valid(<<"test_additional_properties1">>, Schema1, #{
-        <<"foo">> => <<"bar">>
-    }),
-    false = ndto_test_util:is_valid(<<"test_additional_properties1">>, Schema1, #{
-        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
-    }),
+    DTO1 = ndto:generate(test_additional_properties1, Schema1),
+    ok = ndto:load(DTO1),
+
+    true = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>}),
+    false = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
+
     Schema2 = #{
         <<"type">> => <<"object">>,
         <<"properties">> => #{<<"foo">> => #{}},
         <<"additionalProperties">> => true
     },
-    true = ndto_test_util:is_valid(<<"test_additional_properties2">>, Schema2, #{
-        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
-    }),
-    true = ndto_test_util:is_valid(<<"test_additional_properties2">>, Schema2, #{
-        <<"foo">> => <<"bar">>, <<"baz">> => <<"corge">>
-    }),
+    DTO2 = ndto:generate(test_additional_properties2, Schema2),
+    ok = ndto:load(DTO2),
+
+    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
+    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"corge">>}),
+
     Schema3 = #{
         <<"type">> => <<"object">>,
         <<"properties">> => #{<<"foo">> => #{}},
         <<"additionalProperties">> => #{<<"type">> => <<"boolean">>}
     },
-    true = ndto_test_util:is_valid(<<"test_additional_properties3">>, Schema3, #{
-        <<"foo">> => <<"bar">>, <<"baz">> => true
-    }),
-    false = ndto_test_util:is_valid(<<"test_additional_properties3">>, Schema3, #{
-        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>
-    }).
+    DTO3 = ndto:generate(test_additional_properties3, Schema3),
+    ok = ndto:load(DTO3),
+
+    true = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true}),
+    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}).
 
 unique_items(_Conf) ->
     Schema = #{
         <<"type">> => <<"array">>,
         <<"uniqueItems">> => true
     },
-    true = ndto_test_util:is_valid(<<"test_unique_items">>, Schema, [
-        0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}
-    ]).
+    DTO = ndto:generate(test_unique_items, Schema),
+    ok = ndto:load(DTO),
+
+    true = test_unique_items:is_valid([0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}]).
 
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),
@@ -260,7 +281,10 @@ iso8601(_Conf) ->
         <<"type">> => <<"string">>,
         <<"format">> => <<"iso8601-datetime">>
     },
-    true = ndto_test_util:is_valid(<<"test_iso8601">>, Schema, String).
+    DTO = ndto:generate(test_iso8601, Schema),
+    ok = ndto:load(DTO),
+
+    true = test_iso8601:is_valid(String).
 
 base64(_Conf) ->
     String = base64:encode(<<"this is a test">>),
@@ -268,4 +292,7 @@ base64(_Conf) ->
         <<"type">> => <<"string">>,
         <<"format">> => <<"base64">>
     },
-    true = ndto_test_util:is_valid(<<"test_base64">>, Schema, String).
+    DTO = ndto:generate(test_base64, Schema),
+    ok = ndto:load(DTO),
+
+    true = test_base64:is_valid(String).
