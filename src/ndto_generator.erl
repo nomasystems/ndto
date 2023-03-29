@@ -18,7 +18,7 @@
 -include("ndto_generator.hrl").
 
 %%% EXTERNAL EXPORTS
--export([generate/3]).
+-export([generate/2]).
 
 %%% UTIL EXPORTS
 -export([
@@ -31,12 +31,11 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec generate(Name, Schema, Format) -> Result when
+-spec generate(Name, Schema) -> Result when
     Name :: atom(),
     Schema :: schema(),
-    Format :: schema_format(),
     Result :: dto().
-generate(Name, Schema, Format) ->
+generate(Name, Schema) ->
     ModuleHeader = erl_syntax:comment(?COPYRIGHT ++ [?NOTE]),
     ModuleAttr = erl_syntax:attribute(erl_syntax:atom(module), [erl_syntax:atom(Name)]),
     ExportHeader = erl_syntax:comment([?EXPORTS_HEADER]),
@@ -47,8 +46,7 @@ generate(Name, Schema, Format) ->
     ]),
     ExportHeader2 = erl_syntax:comment([?CLINE, ?EXPORTS_HEADER, ?CLINE]),
 
-    FormatModule = erlang:binary_to_atom(<<"ndto_", (erlang:atom_to_binary(Format))/binary>>),
-    {IsValidFun, ExtraFuns} = FormatModule:is_valid(<<"is_valid_">>, Schema),
+    {IsValidFun, ExtraFuns} = ndto_openapi:is_valid(<<"is_valid_">>, Schema),
     Fun =
         erl_syntax:function(
             erl_syntax:atom(is_valid),

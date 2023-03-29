@@ -19,14 +19,16 @@
 %%% EXTERNAL EXPORTS
 -export([
     generate/2,
-    generate/3,
     load/1,
     load/2,
     write/2
 ]).
 
 %%% TYPE EXPORTS
--export_type([dto/0]).
+-export_type([
+    dto/0,
+    schema/0
+]).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
@@ -36,15 +38,7 @@
     Schema :: schema(),
     Result :: dto().
 generate(Name, Schema) ->
-    generate(Name, Schema, openapi).
-
--spec generate(Name, Schema, Format) -> Result when
-    Name :: atom(),
-    Schema :: schema(),
-    Format :: schema_format(),
-    Result :: dto().
-generate(Name, Schema, Format) ->
-    ndto_generator:generate(Name, Schema, Format).
+    ndto_generator:generate(Name, Schema).
 
 -spec load(DTO) -> Result when
     DTO :: dto(),
