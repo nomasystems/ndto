@@ -1,17 +1,15 @@
-name: ndto ci
-
+name: ndto docs
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 env:
   OTP-VERSION: 25.2.3
   REBAR3-VERSION: 3.20.0
 
 jobs:
-  check:
+  docs:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,16 +32,9 @@ jobs:
             _build
           key: ${{ runner.os }}-${{ env.OTP-VERSION }}-${{ env.REBAR3-VERSION }}-${{ hashFiles('rebar.lock') }}
 
-      - name: Compile
-        run: |
-          rebar3 clean
-          rebar3 compile
+      - run: rebar3 doc
 
-      - run: rebar3 check
-
-      - run: rebar3 test
-
-      - uses: test-summary/action@v2
-        if: always()
+      - uses: peaceiris/actions-gh-pages@v3.9.3
         with:
-          paths: '_build/test/logs/**/report.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc

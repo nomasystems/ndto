@@ -3,3 +3,4 @@ _checkouts/
 _gen/
 *.dump
 *.crashdump
+doc/
