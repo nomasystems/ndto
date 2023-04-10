@@ -23,8 +23,10 @@
     number_value/0,
     integer_value/0,
     boolean_value/0,
+    array_value/0,
     array_value/1,
-    object_value/0
+    object_value/0,
+    object_value/1
 ]).
 
 %%% UTIL EXPORTS
@@ -42,7 +44,7 @@ any_value() ->
         number_value(),
         integer_value(),
         boolean_value(),
-        ?LET(Type, triq_dom:elements(types()), array_value(Type)),
+        array_value(),
         object_value()
     ]).
 
@@ -57,6 +59,9 @@ integer_value() ->
 
 boolean_value() ->
     triq_dom:bool().
+
+array_value() ->
+    ?LET(Type, triq_dom:elements(types()), array_value(Type)).
 
 array_value(<<"array">>) ->
     triq_dom:list(

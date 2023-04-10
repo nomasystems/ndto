@@ -115,6 +115,25 @@ is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) when is_binary(Ref) ->
         OptionalClause ++ [TrueClause]
     ),
     {Fun, []};
+is_valid(Prefix, #{<<"enum">> := Enum}) ->
+    FunName = <<Prefix/binary, "enum">>,
+    TrueClauses = lists:map(
+        fun(EnumVal) ->
+            erl_syntax:clause(
+                [literal(EnumVal)],
+                none,
+                [erl_syntax:atom(true)]
+            )
+        end,
+        Enum
+    ),
+    FalseClause = false_clause(),
+    Clauses = lists:append(TrueClauses, [FalseClause]),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        Clauses
+    ),
+    {Fun, []};
 is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
     FunName = <<Prefix/binary, "string">>,
     ExtraFuns =
@@ -129,7 +148,6 @@ is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
             end,
             [],
             [
-                <<"enum">>,
                 <<"minLength">>,
                 <<"maxLength">>,
                 <<"format">>,
@@ -166,7 +184,12 @@ is_valid(Prefix, #{<<"type">> := Type} = Schema) when
                 undefined ->
                     Acc;
                 Value ->
-                    [is_valid_number(Type, <<FunName/binary, "_">>, Keyword, Value, Schema) | Acc]
+                    case is_valid_number(Type, <<FunName/binary, "_">>, Keyword, Value, Schema) of
+                        undefined ->
+                            Acc;
+                        NewIsValidFun ->
+                            [NewIsValidFun | Acc]
+                    end
             end
         end,
         [],
@@ -640,66 +663,30 @@ is_valid_number(_Type, Prefix, <<"maximum">>, Maximum, Schema) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     );
-is_valid_number(Type, Prefix, <<"multipleOf">>, MultipleOf, _Schema) ->
+is_valid_number(<<"integer">>, Prefix, <<"multipleOf">>, MultipleOf, _Schema) ->
     FunName = <<Prefix/binary, "multipleOf">>,
-    MultipleOfST =
-        case MultipleOf of
-            Integer when is_integer(Integer) ->
-                erl_syntax:integer(MultipleOf);
-            _Float ->
-                erl_syntax:float(MultipleOf)
-        end,
     TrueClause =
-        case Type of
-            <<"integer">> ->
-                erl_syntax:clause(
-                    [erl_syntax:variable('Val')],
-                    none,
-                    [
-                        erl_syntax:infix_expr(
-                            erl_syntax:infix_expr(
-                                erl_syntax:variable('Val'),
-                                erl_syntax:operator('rem'),
-                                MultipleOfST
-                            ),
-                            erl_syntax:operator('=:='),
-                            erl_syntax:integer(0)
-                        )
-                    ]
-                );
-            <<"number">> ->
-                erl_syntax:clause(
-                    [erl_syntax:variable('Val')],
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            [
+                erl_syntax:infix_expr(
                     erl_syntax:infix_expr(
                         erl_syntax:variable('Val'),
-                        erl_syntax:operator('>='),
-                        MultipleOfST
+                        erl_syntax:operator('rem'),
+                        erl_syntax:integer(MultipleOf)
                     ),
-                    [
-                        erl_syntax:match_expr(
-                            erl_syntax:variable('Quotient'),
-                            erl_syntax:infix_expr(
-                                erl_syntax:variable('Val'),
-                                erl_syntax:operator('/'),
-                                MultipleOfST
-                            )
-                        ),
-                        erl_syntax:infix_expr(
-                            erl_syntax:variable('Quotient'),
-                            erl_syntax:operator('=='),
-                            erl_syntax:application(
-                                erl_syntax:atom(erlang),
-                                erl_syntax:atom(trunc),
-                                [erl_syntax:variable('Quotient')]
-                            )
-                        )
-                    ]
+                    erl_syntax:operator('=:='),
+                    erl_syntax:integer(0)
                 )
-        end,
+            ]
+        ),
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
-    ).
+    );
+is_valid_number(_Number, _Prefix, <<"multipleOf">>, _Value, _Schema) ->
+    undefined.
 
 -spec is_valid_object(Prefix, Keyword, Schema) -> Result when
     Prefix :: binary(),
@@ -913,7 +900,6 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    merl:print(Fun),
     {Fun, []};
 is_valid_object(Prefix, <<"additionalProperties">>, #{
     <<"additionalProperties">> := AdditionalProperties, <<"properties">> := Properties
@@ -992,28 +978,6 @@ is_valid_object(_Prefix, <<"additionalProperties">>, _Schema) ->
     Keyword :: binary(),
     Value :: term(),
     Result :: erl_syntax:syntaxTree().
-is_valid_string(Prefix, <<"enum">>, Enum) ->
-    FunName = <<Prefix/binary, "enum">>,
-    TrueClauses = lists:map(
-        fun(EnumVal) ->
-            erl_syntax:clause(
-                [
-                    erl_syntax:binary([
-                        erl_syntax:binary_field(erl_syntax:string(erlang:binary_to_list(EnumVal)))
-                    ])
-                ],
-                none,
-                [erl_syntax:atom(true)]
-            )
-        end,
-        Enum
-    ),
-    FalseClause = false_clause(),
-    Clauses = lists:append(TrueClauses, [FalseClause]),
-    erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
-    );
 is_valid_string(Prefix, <<"minLength">>, MinLength) ->
     FunName = <<Prefix/binary, "minLength">>,
     TrueClause = erl_syntax:clause(
@@ -1270,6 +1234,24 @@ false_clause() ->
 
 guard(Pred, Var) ->
     erl_syntax:application(erl_syntax:atom(Pred), [erl_syntax:variable(Var)]).
+
+literal(Val) when is_boolean(Val) ->
+    erl_syntax:atom(Val);
+literal(Val) when is_integer(Val) ->
+    erl_syntax:integer(Val);
+literal(Val) when is_float(Val) ->
+    erl_syntax:float(Val);
+literal(Val) when is_binary(Val) ->
+    erl_syntax:binary([
+        erl_syntax:binary_field(erl_syntax:string(erlang:binary_to_list(Val)))
+    ]);
+literal(Val) when is_list(Val) ->
+    erl_syntax:list([literal(V) || V <- Val]);
+literal(Val) when is_map(Val) ->
+    erl_syntax:map_expr([
+        erl_syntax:map_field_exact(literal(K), literal(V))
+     || {K, V} <- maps:to_list(Val)
+    ]).
 
 optional_clause(#{<<"nullable">> := true}) ->
     [

@@ -24,7 +24,6 @@ all() ->
         {group, types},
         {group, subschemas},
         nullable,
-        enum,
         pattern,
         unique_items,
         additional_properties,
@@ -36,6 +35,7 @@ groups() ->
         {types, [parallel], [
             any,
             ref,
+            enum,
             string,
             number,
             integer,
@@ -96,6 +96,13 @@ any(Conf) ->
 ref(Conf) ->
     ct_property_test:quickcheck(
         ndto_properties:prop_ref(),
+        Conf
+    ).
+
+enum(Conf) ->
+    % dbg:tpl(ndto_generator, is_valid, 2),
+    ct_property_test:quickcheck(
+        ndto_properties:prop_enum(),
         Conf
     ).
 
@@ -214,12 +221,6 @@ allOf(_Conf) ->
     false = test_not:is_valid(0),
     true = test_not:is_valid(<<"0">>),
     true = test_not:is_valid(-1).
-
-enum(Conf) ->
-    ct_property_test:quickcheck(
-        ndto_properties:prop_enum(),
-        Conf
-    ).
 
 pattern(_Conf) ->
     Schema = #{
