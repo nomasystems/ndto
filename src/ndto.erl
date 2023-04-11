@@ -27,6 +27,7 @@
     empty_schema()
     | universal_schema()
     | ref_schema()
+    | enum_schema()
     | boolean_schema()
     | integer_schema()
     | number_schema()
@@ -37,9 +38,11 @@
     | intersection_schema()
     | complement_schema()
     | symmetric_difference_schema().
+
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
 -type ref_schema() :: #{binary() => binary()}.
+-type enum_schema() :: #{binary() => [term()]}.
 -type boolean_schema() :: #{binary() => term()}.
 -type integer_schema() :: #{binary() => term()}.
 -type number_schema() :: #{binary() => term()}.
@@ -51,12 +54,25 @@
 -type complement_schema() :: #{binary() => schema()}.
 -type symmetric_difference_schema() :: #{binary() => [schema()]}.
 
+-type value() ::
+    boolean()
+    | integer()
+    | float()
+    | binary()
+    | array()
+    | object().
+-type array() :: [value()].
+-type object() :: #{binary() => value()}.
+-type format() :: binary().
+-type pattern() :: binary().
+
 %%% TYPE EXPORTS
 -export_type([
     t/0,
     schema/0,
     empty_schema/0,
     universal_schema/0,
+    ref_schema/0,
     boolean_schema/0,
     integer_schema/0,
     number_schema/0,
@@ -66,7 +82,10 @@
     union_schema/0,
     intersection_schema/0,
     complement_schema/0,
-    symmetric_difference_schema/0
+    symmetric_difference_schema/0,
+    value/0,
+    format/0,
+    pattern/0
 ]).
 
 %%%-----------------------------------------------------------------------------
