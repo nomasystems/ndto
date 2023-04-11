@@ -26,6 +26,7 @@ all() ->
         nullable,
         pattern,
         unique_items,
+        pattern_properties,
         additional_properties,
         {group, string_formats}
     ].
@@ -232,39 +233,60 @@ pattern(_Conf) ->
 
     true = test_pattern:is_valid(<<"test@ndto.erl">>).
 
+pattern_properties(_Conf) ->
+    Schema = #{
+        <<"type">> => <<"object">>,
+        <<"patternProperties">> => #{
+            <<"[a-z]+">> => #{<<"type">> => <<"string">>}
+        }
+    },
+    DTO = ndto:generate(test_pattern_properties, Schema),
+    ok = ndto:load(DTO),
+
+    false = test_pattern_properties:is_valid(#{<<"foo">> => 0}),
+    true = test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>}),
+    true = test_pattern_properties:is_valid(#{<<"0">> => <<"foo">>}).
+
 additional_properties(_Conf) ->
     Schema1 = #{
         <<"type">> => <<"object">>,
         <<"properties">> => #{<<"foo">> => #{}},
+        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
         <<"additionalProperties">> => false
     },
     DTO1 = ndto:generate(test_additional_properties1, Schema1),
     ok = ndto:load(DTO1),
 
     true = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>}),
-    false = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
+    true = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
+    false = test_additional_properties1:is_valid(#{
+        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
+    }),
 
     Schema2 = #{
         <<"type">> => <<"object">>,
         <<"properties">> => #{<<"foo">> => #{}},
+        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
         <<"additionalProperties">> => true
     },
     DTO2 = ndto:generate(test_additional_properties2, Schema2),
     ok = ndto:load(DTO2),
 
     true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
-    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"corge">>}),
+    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"0">> => [1]}),
 
     Schema3 = #{
         <<"type">> => <<"object">>,
         <<"properties">> => #{<<"foo">> => #{}},
+        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
         <<"additionalProperties">> => #{<<"type">> => <<"boolean">>}
     },
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
     ok = ndto:load(DTO3),
 
-    true = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true}),
-    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}).
+    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true}),
+    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>}),
+    true = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true}).
 
 unique_items(_Conf) ->
     Schema = #{
