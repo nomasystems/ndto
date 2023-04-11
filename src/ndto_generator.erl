@@ -99,7 +99,7 @@ is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) when is_binary(Ref) ->
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
-            type_guard(ref),
+            none,
             [
                 erl_syntax:application(
                     erl_syntax:atom(erlang:binary_to_atom(DTO)),
@@ -475,19 +475,17 @@ is_valid(Prefix, #{<<"not">> := Subschema} = _Schema) ->
         [TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
-is_valid(Prefix, Schema) ->
+is_valid(Prefix, _Schema) ->
     FunName = <<Prefix/binary, "any">>,
-    OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
-            type_guard(any),
+            none,
             [erl_syntax:atom(true)]
         ),
-    FalseClause = false_clause(),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        OptionalClause ++ [TrueClause, FalseClause]
+        [TrueClause]
     ),
     {Fun, []}.
 
@@ -501,7 +499,6 @@ is_valid(Prefix, Schema) ->
 is_valid_array(Prefix, <<"items">>, Items) ->
     FunName = <<Prefix/binary, "items">>,
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, Items),
-    OptionalClause = optional_clause(Items),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -529,7 +526,7 @@ is_valid_array(Prefix, <<"items">>, Items) ->
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        OptionalClause ++ [TrueClause]
+        [TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
 is_valid_array(Prefix, <<"minItems">>, MinItems) ->
@@ -1548,14 +1545,6 @@ optional_clause(_Schema) ->
 type_guard(Type) ->
     type_guard(Type, 'Val').
 
-type_guard(any, Var) ->
-    erl_syntax:infix_expr(
-        erl_syntax:variable(Var),
-        erl_syntax:operator('=/='),
-        erl_syntax:atom(undefined)
-    );
-type_guard(ref, _Var) ->
-    none;
 type_guard(string, Var) ->
     guard(is_binary, Var);
 type_guard(number, Var) ->
