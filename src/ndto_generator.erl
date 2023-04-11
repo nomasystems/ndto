@@ -143,7 +143,12 @@ is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
                     undefined ->
                         Acc;
                     Value ->
-                        [is_valid_string(<<FunName/binary, "_">>, Keyword, Value) | Acc]
+                        case is_valid_string(<<FunName/binary, "_">>, Keyword, Value) of
+                            undefined ->
+                                Acc;
+                            Fun ->
+                                [Fun | Acc]
+                        end
                 end
             end,
             [],
@@ -1258,7 +1263,7 @@ is_valid_object(_Prefix, <<"additionalProperties">>, _Schema) ->
     Prefix :: binary(),
     Keyword :: binary(),
     Value :: term(),
-    Result :: erl_syntax:syntaxTree().
+    Result :: undefined | erl_syntax:syntaxTree().
 is_valid_string(Prefix, <<"minLength">>, MinLength) ->
     FunName = <<Prefix/binary, "minLength">>,
     TrueClause = erl_syntax:clause(
@@ -1290,6 +1295,48 @@ is_valid_string(Prefix, <<"maxLength">>, MaxLength) ->
                 ]),
                 erl_syntax:operator('=<'),
                 erl_syntax:integer(MaxLength)
+            )
+        ]
+    ),
+    erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    );
+is_valid_string(Prefix, <<"pattern">>, Pattern) ->
+    FunName = <<Prefix/binary, "pattern">>,
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [
+            erl_syntax:case_expr(
+                erl_syntax:application(
+                    erl_syntax:atom(re),
+                    erl_syntax:atom(run),
+                    [
+                        erl_syntax:variable('Val'),
+                        erl_syntax:binary([
+                            erl_syntax:binary_field(
+                                erl_syntax:string(erlang:binary_to_list(Pattern))
+                            )
+                        ])
+                    ]
+                ),
+                [
+                    erl_syntax:clause(
+                        [
+                            erl_syntax:tuple([
+                                erl_syntax:atom(match), erl_syntax:variable('_Captured')
+                            ])
+                        ],
+                        none,
+                        [erl_syntax:atom(true)]
+                    ),
+                    erl_syntax:clause(
+                        [erl_syntax:variable('_nomatch')],
+                        none,
+                        [erl_syntax:atom(false)]
+                    )
+                ]
             )
         ]
     ),
@@ -1443,48 +1490,8 @@ is_valid_string(Prefix, <<"format">>, <<"base64">>) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     );
-is_valid_string(Prefix, <<"pattern">>, Pattern) ->
-    FunName = <<Prefix/binary, "pattern">>,
-    TrueClause = erl_syntax:clause(
-        [erl_syntax:variable('Val')],
-        none,
-        [
-            erl_syntax:case_expr(
-                erl_syntax:application(
-                    erl_syntax:atom(re),
-                    erl_syntax:atom(run),
-                    [
-                        erl_syntax:variable('Val'),
-                        erl_syntax:binary([
-                            erl_syntax:binary_field(
-                                erl_syntax:string(erlang:binary_to_list(Pattern))
-                            )
-                        ])
-                    ]
-                ),
-                [
-                    erl_syntax:clause(
-                        [
-                            erl_syntax:tuple([
-                                erl_syntax:atom(match), erl_syntax:variable('_Captured')
-                            ])
-                        ],
-                        none,
-                        [erl_syntax:atom(true)]
-                    ),
-                    erl_syntax:clause(
-                        [erl_syntax:variable('_nomatch')],
-                        none,
-                        [erl_syntax:atom(false)]
-                    )
-                ]
-            )
-        ]
-    ),
-    erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
-    ).
+is_valid_string(_Prefix, <<"format">>, _Format) ->
+    undefined.
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
