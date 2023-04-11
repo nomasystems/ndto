@@ -1538,16 +1538,16 @@ literal(Val) when is_map(Val) ->
      || {K, V} <- maps:to_list(Val)
     ]).
 
-optional_clause(#{<<"nullable">> := true}) ->
+optional_clause(#{<<"nullable">> := false}) ->
+    [];
+optional_clause(_Schema) ->
     [
         erl_syntax:clause(
             [erl_syntax:atom('undefined')],
             none,
             [erl_syntax:atom(true)]
         )
-    ];
-optional_clause(_Schema) ->
-    [].
+    ].
 
 type_guard(Type) ->
     type_guard(Type, 'Val').

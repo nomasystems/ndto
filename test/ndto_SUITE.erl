@@ -152,16 +152,16 @@ nullable(_Conf) ->
             DTO1 = ndto:generate(test_nullable1, Schema1),
             ok = ndto:load(DTO1),
 
-            false = test_nullable1:is_valid(undefined),
+            true = test_nullable1:is_valid(undefined),
 
             Schema2 = #{
                 <<"type">> => Type,
-                <<"nullable">> => true
+                <<"nullable">> => false
             },
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
 
-            true = test_nullable2:is_valid(undefined)
+            false = test_nullable2:is_valid(undefined)
         end,
         ndto_dom:types()
     ).
