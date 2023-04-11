@@ -316,6 +316,7 @@ is_valid(Prefix, #{<<"type">> := <<"object">>} = Schema) ->
                 <<"required">>,
                 <<"minProperties">>,
                 <<"maxProperties">>,
+                <<"patternProperties">>,
                 <<"additionalProperties">>
             ]
         ),
@@ -849,10 +850,199 @@ is_valid_object(Prefix, <<"maxProperties">>, #{<<"maxProperties">> := MaxPropert
         [TrueClause]
     ),
     {Fun, []};
-is_valid_object(Prefix, <<"additionalProperties">>, #{
-    <<"additionalProperties">> := false, <<"properties">> := Properties
-}) ->
+is_valid_object(Prefix, <<"patternProperties">>, #{<<"patternProperties">> := PatternProperties}) ->
+    FunName = <<Prefix/binary, "patternProperties">>,
+    {IsValidPatterns, ExtraFuns} = lists:foldl(
+        fun({PropertyPattern, PropertySchema}, {IsValidPatternsAcc, ExtraFunsAcc}) ->
+            {IsValidFun, ExtraFuns} = is_valid(
+                <<FunName/binary, "_", PropertyPattern/binary, "_">>, PropertySchema
+            ),
+            {[{PropertyPattern, IsValidFun} | IsValidPatternsAcc], ExtraFuns ++ ExtraFunsAcc}
+        end,
+        {[], []},
+        maps:to_list(PatternProperties)
+    ),
+    Conditions = lists:map(
+        fun({PropertyPattern, IsValidFun}) ->
+            Filter =
+                erl_syntax:application(
+                    erl_syntax:atom(lists),
+                    erl_syntax:atom(filter),
+                    [
+                        erl_syntax:fun_expr([
+                            erl_syntax:clause(
+                                [
+                                    erl_syntax:tuple([
+                                        erl_syntax:variable('PropertyName'),
+                                        erl_syntax:variable('_PropertyValue')
+                                    ])
+                                ],
+                                none,
+                                [
+                                    erl_syntax:case_expr(
+                                        erl_syntax:application(
+                                            erl_syntax:atom(re),
+                                            erl_syntax:atom(run),
+                                            [
+                                                erl_syntax:variable('PropertyName'),
+                                                erl_syntax:binary([
+                                                    erl_syntax:binary_field(
+                                                        erl_syntax:string(
+                                                            erlang:binary_to_list(
+                                                                PropertyPattern
+                                                            )
+                                                        )
+                                                    )
+                                                ])
+                                            ]
+                                        ),
+                                        [
+                                            erl_syntax:clause(
+                                                [
+                                                    erl_syntax:tuple([
+                                                        erl_syntax:atom(match),
+                                                        erl_syntax:variable('_Captured')
+                                                    ])
+                                                ],
+                                                none,
+                                                [erl_syntax:atom(true)]
+                                            ),
+                                            erl_syntax:clause(
+                                                [erl_syntax:variable('_nomatch')],
+                                                none,
+                                                [erl_syntax:atom(false)]
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ]),
+                        erl_syntax:application(
+                            erl_syntax:atom(maps),
+                            erl_syntax:atom(to_list),
+                            [erl_syntax:variable('Val')]
+                        )
+                    ]
+                ),
+            erl_syntax:application(
+                erl_syntax:atom(lists),
+                erl_syntax:atom(all),
+                [
+                    erl_syntax:fun_expr([
+                        erl_syntax:clause(
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:variable('_PropertyName'),
+                                    erl_syntax:variable('PropertyValue')
+                                ])
+                            ],
+                            none,
+                            [
+                                erl_syntax:application(
+                                    erl_syntax:function_name(IsValidFun),
+                                    [erl_syntax:variable('PropertyValue')]
+                                )
+                            ]
+                        )
+                    ]),
+                    Filter
+                ]
+            )
+        end,
+        IsValidPatterns
+    ),
+    TrueClause = erl_syntax:clause(
+        [erl_syntax:variable('Val')],
+        none,
+        [chain_conditions(Conditions, 'andalso')]
+    ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [TrueClause]
+    ),
+    IsValidFuns = [IsValidFun || {_PatternName, IsValidFun} <- IsValidPatterns],
+    {Fun, IsValidFuns ++ ExtraFuns};
+is_valid_object(
+    Prefix,
+    <<"additionalProperties">>,
+    #{<<"additionalProperties">> := false, <<"properties">> := Properties} = Schema
+) ->
     FunName = <<Prefix/binary, "additionalProperties">>,
+    PatternProperties = maps:get(<<"patternProperties">>, Schema, #{}),
+    PatternPropertiesList = erl_syntax:application(
+        erl_syntax:atom(lists),
+        erl_syntax:atom(filter),
+        [
+            erl_syntax:fun_expr([
+                erl_syntax:clause(
+                    [erl_syntax:variable('PropertyName')],
+                    none,
+                    [
+                        erl_syntax:application(
+                            erl_syntax:atom(lists),
+                            erl_syntax:atom(any),
+                            [
+                                erl_syntax:fun_expr([
+                                    erl_syntax:clause(
+                                        [erl_syntax:variable('Pattern')],
+                                        none,
+                                        [
+                                            erl_syntax:case_expr(
+                                                erl_syntax:application(
+                                                    erl_syntax:atom(re),
+                                                    erl_syntax:atom(run),
+                                                    [
+                                                        erl_syntax:variable('PropertyName'),
+                                                        erl_syntax:variable('Pattern')
+                                                    ]
+                                                ),
+                                                [
+                                                    erl_syntax:clause(
+                                                        [
+                                                            erl_syntax:tuple([
+                                                                erl_syntax:atom(match),
+                                                                erl_syntax:variable('_Captured')
+                                                            ])
+                                                        ],
+                                                        none,
+                                                        [erl_syntax:atom(true)]
+                                                    ),
+                                                    erl_syntax:clause(
+                                                        [erl_syntax:variable('_nomatch')],
+                                                        none,
+                                                        [erl_syntax:atom(false)]
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ]),
+                                erl_syntax:list(
+                                    lists:map(
+                                        fun(PropertyPattern) ->
+                                            erl_syntax:binary([
+                                                erl_syntax:binary_field(
+                                                    erl_syntax:string(
+                                                        erlang:binary_to_list(PropertyPattern)
+                                                    )
+                                                )
+                                            ])
+                                        end,
+                                        maps:keys(PatternProperties)
+                                    )
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]),
+            erl_syntax:application(
+                erl_syntax:atom(maps),
+                erl_syntax:atom(keys),
+                [erl_syntax:variable('Val')]
+            )
+        ]
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -876,19 +1066,26 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
                         erl_syntax:atom(sets),
                         erl_syntax:atom(from_list),
                         [
-                            erl_syntax:list(
-                                lists:map(
-                                    fun(PropertyName) ->
-                                        erl_syntax:binary([
-                                            erl_syntax:binary_field(
-                                                erl_syntax:string(
-                                                    erlang:binary_to_list(PropertyName)
-                                                )
-                                            )
-                                        ])
-                                    end,
-                                    maps:keys(Properties)
-                                )
+                            erl_syntax:application(
+                                erl_syntax:atom(lists),
+                                erl_syntax:atom(append),
+                                [
+                                    erl_syntax:list(
+                                        lists:map(
+                                            fun(PropertyName) ->
+                                                erl_syntax:binary([
+                                                    erl_syntax:binary_field(
+                                                        erl_syntax:string(
+                                                            erlang:binary_to_list(PropertyName)
+                                                        )
+                                                    )
+                                                ])
+                                            end,
+                                            maps:keys(Properties)
+                                        )
+                                    ),
+                                    PatternPropertiesList
+                                ]
                             )
                         ]
                     )
@@ -901,11 +1098,88 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
         [TrueClause]
     ),
     {Fun, []};
-is_valid_object(Prefix, <<"additionalProperties">>, #{
-    <<"additionalProperties">> := AdditionalProperties, <<"properties">> := Properties
-}) ->
+is_valid_object(
+    Prefix,
+    <<"additionalProperties">>,
+    #{<<"additionalProperties">> := AdditionalProperties, <<"properties">> := Properties} = Schema
+) ->
     FunName = <<Prefix/binary, "additionalProperties">>,
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, AdditionalProperties),
+    PatternProperties = maps:get(<<"patternProperties">>, Schema, #{}),
+    PatternPropertiesList = erl_syntax:application(
+        erl_syntax:atom(lists),
+        erl_syntax:atom(filter),
+        [
+            erl_syntax:fun_expr([
+                erl_syntax:clause(
+                    [erl_syntax:variable('PropertyName')],
+                    none,
+                    [
+                        erl_syntax:application(
+                            erl_syntax:atom(lists),
+                            erl_syntax:atom(any),
+                            [
+                                erl_syntax:fun_expr([
+                                    erl_syntax:clause(
+                                        [erl_syntax:variable('Pattern')],
+                                        none,
+                                        [
+                                            erl_syntax:case_expr(
+                                                erl_syntax:application(
+                                                    erl_syntax:atom(re),
+                                                    erl_syntax:atom(run),
+                                                    [
+                                                        erl_syntax:variable('PropertyName'),
+                                                        erl_syntax:variable('Pattern')
+                                                    ]
+                                                ),
+                                                [
+                                                    erl_syntax:clause(
+                                                        [
+                                                            erl_syntax:tuple([
+                                                                erl_syntax:atom(match),
+                                                                erl_syntax:variable('_Captured')
+                                                            ])
+                                                        ],
+                                                        none,
+                                                        [erl_syntax:atom(true)]
+                                                    ),
+                                                    erl_syntax:clause(
+                                                        [erl_syntax:variable('_nomatch')],
+                                                        none,
+                                                        [erl_syntax:atom(false)]
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ]),
+                                erl_syntax:list(
+                                    lists:map(
+                                        fun(PropertyPattern) ->
+                                            erl_syntax:binary([
+                                                erl_syntax:binary_field(
+                                                    erl_syntax:string(
+                                                        erlang:binary_to_list(PropertyPattern)
+                                                    )
+                                                )
+                                            ])
+                                        end,
+                                        maps:keys(PatternProperties)
+                                    )
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]),
+            erl_syntax:application(
+                erl_syntax:atom(maps),
+                erl_syntax:atom(keys),
+                [erl_syntax:variable('Val')]
+            )
+        ]
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -945,19 +1219,26 @@ is_valid_object(Prefix, <<"additionalProperties">>, #{
                                 erl_syntax:atom(keys),
                                 [erl_syntax:variable('Val')]
                             ),
-                            erl_syntax:list(
-                                lists:map(
-                                    fun(PropertyName) ->
-                                        erl_syntax:binary([
-                                            erl_syntax:binary_field(
-                                                erl_syntax:string(
-                                                    erlang:binary_to_list(PropertyName)
-                                                )
-                                            )
-                                        ])
-                                    end,
-                                    maps:keys(Properties)
-                                )
+                            erl_syntax:application(
+                                erl_syntax:atom(lists),
+                                erl_syntax:atom(append),
+                                [
+                                    erl_syntax:list(
+                                        lists:map(
+                                            fun(PropertyName) ->
+                                                erl_syntax:binary([
+                                                    erl_syntax:binary_field(
+                                                        erl_syntax:string(
+                                                            erlang:binary_to_list(PropertyName)
+                                                        )
+                                                    )
+                                                ])
+                                            end,
+                                            maps:keys(Properties)
+                                        )
+                                    ),
+                                    PatternPropertiesList
+                                ]
                             )
                         ]
                     )
