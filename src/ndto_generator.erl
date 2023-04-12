@@ -345,7 +345,7 @@ is_valid(Prefix, #{<<"type">> := <<"object">>} = Schema) ->
         OptionalClause ++ [TrueClause, FalseClause]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid(Prefix, #{<<"oneOf">> := Subschemas} = _Schema) when is_list(Subschemas) ->
+is_valid(Prefix, #{<<"oneOf">> := Subschemas} = Schema) when is_list(Subschemas) ->
     FunName = <<Prefix/binary, "oneOf">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
@@ -372,6 +372,7 @@ is_valid(Prefix, #{<<"oneOf">> := Subschemas} = _Schema) when is_list(Subschemas
         )
      || IsValidFun <- IsValidFuns
     ],
+    OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
@@ -380,10 +381,10 @@ is_valid(Prefix, #{<<"oneOf">> := Subschemas} = _Schema) when is_list(Subschemas
         ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        OptionalClause ++ [TrueClause]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid(Prefix, #{<<"anyOf">> := Subschemas} = _Schema) when is_list(Subschemas) ->
+is_valid(Prefix, #{<<"anyOf">> := Subschemas} = Schema) when is_list(Subschemas) ->
     FunName = <<Prefix/binary, "anyOf">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
@@ -410,6 +411,7 @@ is_valid(Prefix, #{<<"anyOf">> := Subschemas} = _Schema) when is_list(Subschemas
         )
      || IsValidFun <- IsValidFuns
     ],
+    OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
@@ -418,10 +420,10 @@ is_valid(Prefix, #{<<"anyOf">> := Subschemas} = _Schema) when is_list(Subschemas
         ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        OptionalClause ++ [TrueClause]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid(Prefix, #{<<"allOf">> := Subschemas} = _Schema) when is_list(Subschemas) ->
+is_valid(Prefix, #{<<"allOf">> := Subschemas} = Schema) when is_list(Subschemas) ->
     FunName = <<Prefix/binary, "allOf">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
@@ -448,6 +450,7 @@ is_valid(Prefix, #{<<"allOf">> := Subschemas} = _Schema) when is_list(Subschemas
         )
      || IsValidFun <- IsValidFuns
     ],
+    OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
@@ -456,12 +459,13 @@ is_valid(Prefix, #{<<"allOf">> := Subschemas} = _Schema) when is_list(Subschemas
         ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        OptionalClause ++ [TrueClause]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid(Prefix, #{<<"not">> := Subschema} = _Schema) ->
+is_valid(Prefix, #{<<"not">> := Subschema} = Schema) ->
     FunName = <<Prefix/binary, "not">>,
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, Subschema),
+    OptionalClause = optional_clause(Schema),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -477,7 +481,7 @@ is_valid(Prefix, #{<<"not">> := Subschema} = _Schema) ->
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        OptionalClause ++ [TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
 is_valid(Prefix, _Schema) ->
