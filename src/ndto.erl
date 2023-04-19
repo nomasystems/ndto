@@ -22,7 +22,7 @@
 ]).
 
 %% TYPES
--type t() :: erl_syntax:syntaxTree().
+-opaque t() :: erl_syntax:syntaxTree().
 -type schema() ::
     empty_schema()
     | universal_schema()
