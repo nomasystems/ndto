@@ -488,7 +488,7 @@ is_valid(Prefix, _Schema) ->
     FunName = <<Prefix/binary, "any">>,
     TrueClause =
         erl_syntax:clause(
-            [erl_syntax:variable('Val')],
+            [erl_syntax:variable('_Val')],
             none,
             [erl_syntax:atom(true)]
         ),
