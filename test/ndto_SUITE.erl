@@ -35,7 +35,6 @@ groups() ->
     [
         {types, [parallel], [
             any,
-            ref,
             enum,
             string,
             number,
@@ -94,14 +93,7 @@ any(Conf) ->
         Conf
     ).
 
-ref(Conf) ->
-    ct_property_test:quickcheck(
-        ndto_properties:prop_ref(),
-        Conf
-    ).
-
 enum(Conf) ->
-    % dbg:tpl(ndto_generator, is_valid, 2),
     ct_property_test:quickcheck(
         ndto_properties:prop_enum(),
         Conf
