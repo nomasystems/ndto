@@ -33,27 +33,6 @@ prop_any() ->
         end
     ).
 
-prop_ref() ->
-    ?FORALL(
-        Any,
-        ndto_dom:any_value(),
-        begin
-            ReferencedName = test_referenced_dto,
-            ReferencedSchema = #{},
-            Schema = #{
-                <<"$ref">> => <<"/components/schemas/", (erlang:atom_to_binary(ReferencedName))/binary>>
-            },
-
-            ReferencedDTO = ndto:generate(ReferencedName, ReferencedSchema),
-            ok = ndto:load(ReferencedDTO),
-            DTO = ndto:generate(test_ref, Schema),
-            ok = ndto:load(DTO),
-
-            true = test_ref:is_valid(Any),
-            true
-        end
-    ).
-
 prop_enum() ->
     triq:numtests(
         25,

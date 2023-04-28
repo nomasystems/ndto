@@ -26,7 +26,6 @@
 -type schema() ::
     empty_schema()
     | universal_schema()
-    | ref_schema()
     | enum_schema()
     | boolean_schema()
     | integer_schema()
@@ -41,7 +40,6 @@
 
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
--type ref_schema() :: #{binary() => binary()}.
 -type enum_schema() :: #{binary() => [term()]}.
 -type boolean_schema() :: #{binary() => term()}.
 -type integer_schema() :: #{binary() => term()}.
@@ -72,7 +70,6 @@
     schema/0,
     empty_schema/0,
     universal_schema/0,
-    ref_schema/0,
     boolean_schema/0,
     integer_schema/0,
     number_schema/0,
