@@ -47,6 +47,7 @@ false = string_schema:is_valid(<<"hi world">>).
 -type schema() ::
     empty_schema()
     | universal_schema()
+    | ref_schema()
     | boolean_schema()
     | enum_schema()
     | integer_schema()
@@ -61,6 +62,7 @@ false = string_schema:is_valid(<<"hi world">>).
 
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
+-type ref_schema() :: #{<<"$ref">> := binary()}.
 -type boolean_schema() :: #{<<"type">> := <<"boolean">>}.
 -type enum_schema() :: #{<<"enum">> := [value()]}.
 -type integer_schema() :: #{
