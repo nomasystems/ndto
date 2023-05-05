@@ -45,7 +45,8 @@ false = string_schema:is_valid(<<"hi world">>).
 `ndto` schemas are defined as follows:
 ```erl
 -type schema() ::
-    empty_schema()
+    undefined
+    | empty_schema()
     | universal_schema()
     | ref_schema()
     | boolean_schema()
