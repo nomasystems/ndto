@@ -24,7 +24,8 @@
 %% TYPES
 -opaque t() :: erl_syntax:syntaxTree().
 -type schema() ::
-    empty_schema()
+    undefined
+    | empty_schema()
     | universal_schema()
     | ref_schema()
     | enum_schema()

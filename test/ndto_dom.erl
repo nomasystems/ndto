@@ -19,6 +19,7 @@
 %%% VALUE EXPORTS
 -export([
     any_value/0,
+    undefined_value/0,
     string_value/0,
     number_value/0,
     integer_value/0,
@@ -40,6 +41,7 @@
 %%%-----------------------------------------------------------------------------
 any_value() ->
     triq_dom:oneof([
+        undefined_value(),
         string_value(),
         number_value(),
         integer_value(),
@@ -47,6 +49,9 @@ any_value() ->
         array_value(),
         object_value()
     ]).
+
+undefined_value() ->
+    triq_dom:return(undefined).
 
 string_value() ->
     triq_dom:unicode_binary().
