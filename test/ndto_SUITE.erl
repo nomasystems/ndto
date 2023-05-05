@@ -35,6 +35,7 @@ groups() ->
     [
         {types, [parallel], [
             any,
+            ref,
             enum,
             string,
             number,
@@ -90,6 +91,12 @@ end_per_testcase(Case, Conf) ->
 any(Conf) ->
     ct_property_test:quickcheck(
         ndto_properties:prop_any(),
+        Conf
+    ).
+
+ref(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_properties:prop_ref(),
         Conf
     ).
 

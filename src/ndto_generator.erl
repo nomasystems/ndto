@@ -92,6 +92,29 @@ generate(Name, Schema) ->
     Result :: {IsValidFun, ExtraFuns},
     IsValidFun :: erl_syntax:syntaxTree(),
     ExtraFuns :: [erl_syntax:syntaxTree()].
+is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) when is_binary(Ref) ->
+    [_Path, <<DTO/binary>>] = string:split(Ref, <<"/">>, trailing),
+    FunName = <<Prefix/binary, "ref_", DTO/binary>>,
+    OptionalClause = optional_clause(Schema),
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            [
+                erl_syntax:application(
+                    erl_syntax:atom(erlang:binary_to_atom(DTO)),
+                    erl_syntax:atom(is_valid),
+                    [
+                        erl_syntax:variable('Val')
+                    ]
+                )
+            ]
+        ),
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        OptionalClause ++ [TrueClause]
+    ),
+    {Fun, []};
 is_valid(Prefix, #{<<"enum">> := Enum}) ->
     FunName = <<Prefix/binary, "enum">>,
     TrueClauses = lists:map(
