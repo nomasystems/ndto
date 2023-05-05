@@ -35,6 +35,7 @@ groups() ->
     [
         {types, [parallel], [
             any,
+            undefined,
             ref,
             enum,
             string,
@@ -91,6 +92,12 @@ end_per_testcase(Case, Conf) ->
 any(Conf) ->
     ct_property_test:quickcheck(
         ndto_properties:prop_any(),
+        Conf
+    ).
+
+undefined(Conf) ->
+    ct_property_test:quickcheck(
+        ndto_properties:prop_undefined(),
         Conf
     ).
 

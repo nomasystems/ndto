@@ -33,6 +33,31 @@ prop_any() ->
         end
     ).
 
+prop_undefined() ->
+    ?FORALL(
+        {Undefined, Defined},
+        {
+            ndto_dom:undefined_value(),
+            triq_dom:oneof([
+                ndto_dom:string_value(),
+                ndto_dom:number_value(),
+                ndto_dom:integer_value(),
+                ndto_dom:boolean_value(),
+                ndto_dom:array_value(),
+                ndto_dom:object_value()
+            ])
+        },
+        begin
+            Schema = undefined,
+            DTO = ndto:generate(test_undefined, Schema),
+            ok = ndto:load(DTO),
+
+            true = test_undefined:is_valid(Undefined),
+            false = test_undefined:is_valid(Defined),
+            true
+        end
+    ).
+
 prop_ref() ->
     ?FORALL(
         Any,
