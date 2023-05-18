@@ -74,6 +74,7 @@
     empty_schema/0,
     universal_schema/0,
     ref_schema/0,
+    enum_schema/0,
     boolean_schema/0,
     integer_schema/0,
     number_schema/0,
