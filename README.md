@@ -1,6 +1,6 @@
 # ndto
 [![ndto ci](https://github.com/nomasystems/ndto/actions/workflows/ci.yml/badge.svg)](https://github.com/nomasystems/ndto/actions/workflows/ci.yml)
-[![ndto docs](https://github.com/nomasystems/ndto/actions/workflows/docs.yml/badge.svg)](https://github.com/nomasystems/ndto/actions/workflows/docs.yml)
+[![ndto docs](https://github.com/nomasystems/ndto/actions/workflows/docs.yml/badge.svg)](https://nomasystems.github.io/ndto)
 
 `ndto` is an Erlang library for generating DTO (Data Transfer Object) validation modules from schemas.
 
