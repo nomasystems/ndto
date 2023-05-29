@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-A5F05479.js"></script>
+    <script src="dist/sidebar_items-8964BE3A.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -96,7 +96,7 @@ ndto
 </button>
 
 
-    <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L14" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -106,6 +106,10 @@ ndto
 
 </h1>
 
+
+  <section id="moduledoc">
+<a href="ndto.html#content"><code>ndto</code></a>'s main module.
+  </section>
 
 
   <section id="summary" class="details-list">
@@ -135,6 +139,8 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;array&quot;&gt;&gt;, &lt;&lt;&quot;items&quot;&gt;&gt; =&gt; schema(), &lt;&lt;&quot;minItems&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxItems&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;uniqueItems&quot;&gt;&gt; =&gt; boolean() }</code></div>
+
     </div>
 
     <div class="summary-row">
@@ -143,6 +149,8 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;boolean&quot;&gt;&gt;}</code></div>
+
     </div>
 
     <div class="summary-row">
@@ -150,6 +158,8 @@ ndto
         <a href="#t:complement_schema/0" translate="no">complement_schema/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;not&quot;&gt;&gt; := schema()}</code></div>
 
     </div>
 
@@ -167,6 +177,8 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;enum&quot;&gt;&gt; := [value()]}</code></div>
+
     </div>
 
     <div class="summary-row">
@@ -174,6 +186,8 @@ ndto
         <a href="#t:format/0" translate="no">format/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>&lt;&lt;&quot;iso8601&quot;&gt;&gt; | &lt;&lt;&quot;base64&quot;&gt;&gt;</code></div>
 
     </div>
 
@@ -183,11 +197,23 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;integer&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;maximum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;multipleOf&quot;&gt;&gt; =&gt; integer() }</code></div>
+
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#t:intersection_schema/0" translate="no">intersection_schema/0</a>
+
+      </div>
+
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;allOf&quot;&gt;&gt; := [schema()]}</code></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:name/0" translate="no">name/0</a>
 
       </div>
 
@@ -198,6 +224,8 @@ ndto
         <a href="#t:number_schema/0" translate="no">number_schema/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;number&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;maximum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;multipleOf&quot;&gt;&gt; =&gt; integer() }</code></div>
 
     </div>
 
@@ -215,6 +243,8 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;object&quot;&gt;&gt;, &lt;&lt;&quot;properties&quot;&gt;&gt; =&gt; #{binary() =&gt; schema()}, &lt;&lt;&quot;required&quot;&gt;&gt; =&gt; [binary()], &lt;&lt;&quot;minProperties&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxProperties&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;patternProperties&quot;&gt;&gt; =&gt; #{pattern() =&gt; schema()}, &lt;&lt;&quot;additionalProperties&quot;&gt;&gt; =&gt; schema() }</code></div>
+
     </div>
 
     <div class="summary-row">
@@ -230,6 +260,8 @@ ndto
         <a href="#t:ref_schema/0" translate="no">ref_schema/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;ref&quot;&gt;&gt; := binary()}</code></div>
 
     </div>
 
@@ -247,6 +279,8 @@ ndto
 
       </div>
 
+        <div class="summary-synopsis"><code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;string&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;minLength&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxLength&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;format&quot;&gt;&gt; =&gt; format(), &lt;&lt;&quot;pattern&quot;&gt;&gt; =&gt; pattern() }</code></div>
+
     </div>
 
     <div class="summary-row">
@@ -254,6 +288,8 @@ ndto
         <a href="#t:symmetric_difference_schema/0" translate="no">symmetric_difference_schema/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;oneOf&quot;&gt;&gt; := [schema()]}</code></div>
 
     </div>
 
@@ -270,6 +306,8 @@ ndto
         <a href="#t:union_schema/0" translate="no">union_schema/0</a>
 
       </div>
+
+        <div class="summary-synopsis"><code>#{&lt;&lt;&quot;anyOf&quot;&gt;&gt; := [schema()]}</code></div>
 
     </div>
 
@@ -358,7 +396,7 @@ Types
     </a>
     <h1 class="signature" translate="no">array/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L65" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -386,7 +424,7 @@ Types
     </a>
     <h1 class="signature" translate="no">array_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L51" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L81" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -398,11 +436,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> array_schema() :: #{binary() => term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> array_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;array&quot;&gt;&gt;, &lt;&lt;&quot;items&quot;&gt;&gt; =&gt; schema(), &lt;&lt;&quot;minItems&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxItems&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;uniqueItems&quot;&gt;&gt; =&gt; boolean() }</code>
   </section>
 </section>
 <section class="detail" id="t:boolean_schema/0">
@@ -414,7 +452,7 @@ Types
     </a>
     <h1 class="signature" translate="no">boolean_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -426,11 +464,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: #{binary() => term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;boolean&quot;&gt;&gt;}</code>
   </section>
 </section>
 <section class="detail" id="t:complement_schema/0">
@@ -442,7 +480,7 @@ Types
     </a>
     <h1 class="signature" translate="no">complement_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L55" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L103" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -454,11 +492,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: #{binary() => <a href="#t:schema/0">schema</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;not&quot;&gt;&gt; := schema()}</code>
   </section>
 </section>
 <section class="detail" id="t:empty_schema/0">
@@ -470,7 +508,7 @@ Types
     </a>
     <h1 class="signature" translate="no">empty_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L43" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L46" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -498,7 +536,7 @@ Types
     </a>
     <h1 class="signature" translate="no">enum_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L46" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L50" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -510,11 +548,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: #{binary() => [term()]}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;enum&quot;&gt;&gt; := [value()]}</code>
   </section>
 </section>
 <section class="detail" id="t:format/0">
@@ -526,7 +564,7 @@ Types
     </a>
     <h1 class="signature" translate="no">format/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L67" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L117" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -542,7 +580,7 @@ Types
 
       </div>
 
-
+<code>&lt;&lt;&quot;iso8601&quot;&gt;&gt; | &lt;&lt;&quot;base64&quot;&gt;&gt;</code>
   </section>
 </section>
 <section class="detail" id="t:integer_schema/0">
@@ -553,34 +591,6 @@ Types
       <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature" translate="no">integer_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L48" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">-type</span> integer_schema() :: #{binary() => term()}.</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:intersection_schema/0">
-
-  <div class="detail-header">
-    <a href="#t:intersection_schema/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">intersection_schema/0</h1>
 
       <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L54" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -594,7 +604,63 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: #{binary() => [<a href="#t:schema/0">schema</a>()]}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> integer_schema() :: map().</pre>
+
+      </div>
+
+<code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;integer&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;maximum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;multipleOf&quot;&gt;&gt; =&gt; integer() }</code>
+  </section>
+</section>
+<section class="detail" id="t:intersection_schema/0">
+
+  <div class="detail-header">
+    <a href="#t:intersection_schema/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">intersection_schema/0</h1>
+
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L101" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: map().</pre>
+
+      </div>
+
+<code>#{&lt;&lt;&quot;allOf&quot;&gt;&gt; := [schema()]}</code>
+  </section>
+</section>
+<section class="detail" id="t:name/0">
+
+  <div class="detail-header">
+    <a href="#t:name/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">name/0</h1>
+
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L27" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-type</span> name() :: atom().</pre>
 
       </div>
 
@@ -610,7 +676,7 @@ Types
     </a>
     <h1 class="signature" translate="no">number_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L49" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -622,11 +688,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> number_schema() :: #{binary() => term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> number_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;number&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;maximum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; =&gt; boolean(), &lt;&lt;&quot;multipleOf&quot;&gt;&gt; =&gt; integer() }</code>
   </section>
 </section>
 <section class="detail" id="t:object/0">
@@ -638,7 +704,7 @@ Types
     </a>
     <h1 class="signature" translate="no">object/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L66" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L116" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -666,7 +732,7 @@ Types
     </a>
     <h1 class="signature" translate="no">object_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L89" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -678,11 +744,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> object_schema() :: #{binary() => term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> object_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;object&quot;&gt;&gt;, &lt;&lt;&quot;properties&quot;&gt;&gt; =&gt; #{binary() =&gt; schema()}, &lt;&lt;&quot;required&quot;&gt;&gt; =&gt; [binary()], &lt;&lt;&quot;minProperties&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxProperties&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;patternProperties&quot;&gt;&gt; =&gt; #{pattern() =&gt; schema()}, &lt;&lt;&quot;additionalProperties&quot;&gt;&gt; =&gt; schema() }</code>
   </section>
 </section>
 <section class="detail" id="t:pattern/0">
@@ -694,7 +760,7 @@ Types
     </a>
     <h1 class="signature" translate="no">pattern/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L68" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L119" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -722,7 +788,7 @@ Types
     </a>
     <h1 class="signature" translate="no">ref_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L45" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L48" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -734,11 +800,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: #{binary() => binary()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;ref&quot;&gt;&gt; := binary()}</code>
   </section>
 </section>
 <section class="detail" id="t:schema/0">
@@ -750,7 +816,7 @@ Types
     </a>
     <h1 class="signature" translate="no">schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L26" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L28" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -793,7 +859,7 @@ Types
     </a>
     <h1 class="signature" translate="no">string_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L50" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L72" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -805,11 +871,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> string_schema() :: #{binary() => term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> string_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{ &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;string&quot;&gt;&gt;, &lt;&lt;&quot;minimum&quot;&gt;&gt; =&gt; integer(), &lt;&lt;&quot;minLength&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;maxLength&quot;&gt;&gt; =&gt; non_neg_integer(), &lt;&lt;&quot;format&quot;&gt;&gt; =&gt; format(), &lt;&lt;&quot;pattern&quot;&gt;&gt; =&gt; pattern() }</code>
   </section>
 </section>
 <section class="detail" id="t:symmetric_difference_schema/0">
@@ -821,7 +887,7 @@ Types
     </a>
     <h1 class="signature" translate="no">symmetric_difference_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L56" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L105" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -833,11 +899,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> symmetric_difference_schema() :: #{binary() => [<a href="#t:schema/0">schema</a>()]}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> symmetric_difference_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;oneOf&quot;&gt;&gt; := [schema()]}</code>
   </section>
 </section>
 <section class="detail" id="t:t/0">
@@ -849,7 +915,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L44" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -879,7 +945,7 @@ Types
     </a>
     <h1 class="signature" translate="no">union_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L53" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L99" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -891,11 +957,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> union_schema() :: #{binary() => [<a href="#t:schema/0">schema</a>()]}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> union_schema() :: map().</pre>
 
       </div>
 
-
+<code>#{&lt;&lt;&quot;anyOf&quot;&gt;&gt; := [schema()]}</code>
   </section>
 </section>
 <section class="detail" id="t:universal_schema/0">
@@ -907,7 +973,7 @@ Types
     </a>
     <h1 class="signature" translate="no">universal_schema/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L44" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -935,7 +1001,7 @@ Types
     </a>
     <h1 class="signature" translate="no">value/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L58" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L108" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -976,7 +1042,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">generate(Name, Schema)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L101" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L153" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -988,7 +1054,7 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-spec</span> generate(Name, Schema) -> Result when Name :: atom(), Schema :: <a href="#t:schema/0">schema</a>(), Result :: <a href="#t:t/0">t</a>().</pre>
+          <pre translate="no"><span class="attribute">-spec</span> generate(Name, Schema) -> Result when Name :: <a href="#t:name/0">name</a>(), Schema :: <a href="#t:schema/0">schema</a>(), Result :: <a href="#t:t/0">t</a>().</pre>
 
       </div>
 
@@ -1004,7 +1070,7 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
     </a>
     <h1 class="signature" translate="no">load(DTO)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L110" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L162" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1037,7 +1103,7 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
     </a>
     <h1 class="signature" translate="no">load(DTO, Options)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L120" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L172" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1071,7 +1137,7 @@ Loads a DTO module into the Erlang Runtime System
     </a>
     <h1 class="signature" translate="no">write(DTO, Filename)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L149" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/v0.0.1/src/ndto.erl#L201" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
