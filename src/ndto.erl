@@ -11,6 +11,8 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License
+
+%% @doc <code>ndto</code>'s main module.
 -module(ndto).
 
 %%% EXTERNAL EXPORTS
@@ -22,7 +24,7 @@
 ]).
 
 %% TYPES
--opaque t() :: erl_syntax:syntaxTree().
+-type name() :: atom().
 -type schema() ::
     undefined
     | empty_schema()
@@ -39,21 +41,69 @@
     | intersection_schema()
     | complement_schema()
     | symmetric_difference_schema().
+-opaque t() :: erl_syntax:syntaxTree().
 
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
--type ref_schema() :: #{binary() => binary()}.
--type enum_schema() :: #{binary() => [term()]}.
--type boolean_schema() :: #{binary() => term()}.
--type integer_schema() :: #{binary() => term()}.
--type number_schema() :: #{binary() => term()}.
--type string_schema() :: #{binary() => term()}.
--type array_schema() :: #{binary() => term()}.
--type object_schema() :: #{binary() => term()}.
--type union_schema() :: #{binary() => [schema()]}.
--type intersection_schema() :: #{binary() => [schema()]}.
--type complement_schema() :: #{binary() => schema()}.
--type symmetric_difference_schema() :: #{binary() => [schema()]}.
+-type ref_schema() :: map().
+% <code>#{&lt;&lt;&quot;ref&quot;&gt;&gt; := binary()}</code>
+-type enum_schema() :: map().
+% <code>#{&lt;&lt;&quot;enum&quot;&gt;&gt; := [value()]}</code>
+-type boolean_schema() :: map().
+% <code>#{&lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;boolean&quot;&gt;&gt;}</code>
+-type integer_schema() :: map().
+% <code>#{
+%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;integer&quot;&gt;&gt;,
+%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
+%   &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; => boolean(),
+%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => integer(),
+%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
+%   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
+% }</code>
+-type number_schema() :: map().
+% <code>#{
+%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;number&quot;&gt;&gt;,
+%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
+%   &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; => boolean(),
+%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => integer(),
+%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
+%   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
+% }</code>
+-type string_schema() :: map().
+% <code>#{
+%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;string&quot;&gt;&gt;,
+%     &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
+%     &lt;&lt;&quot;minLength&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;maxLength&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;format&quot;&gt;&gt; => format(),
+%     &lt;&lt;&quot;pattern&quot;&gt;&gt; => pattern()
+% }</code>
+-type array_schema() :: map().
+% <code>#{
+%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;array&quot;&gt;&gt;,
+%     &lt;&lt;&quot;items&quot;&gt;&gt; => schema(),
+%     &lt;&lt;&quot;minItems&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;maxItems&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;uniqueItems&quot;&gt;&gt; => boolean()
+% }</code>
+-type object_schema() :: map().
+% <code>#{
+%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;object&quot;&gt;&gt;,
+%     &lt;&lt;&quot;properties&quot;&gt;&gt; => #{binary() => schema()},
+%     &lt;&lt;&quot;required&quot;&gt;&gt; => [binary()],
+%     &lt;&lt;&quot;minProperties&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;maxProperties&quot;&gt;&gt; => non_neg_integer(),
+%     &lt;&lt;&quot;patternProperties&quot;&gt;&gt; => #{pattern() => schema()},
+%     &lt;&lt;&quot;additionalProperties&quot;&gt;&gt; => schema()
+% }</code>
+-type union_schema() :: map().
+% <code>#{&lt;&lt;&quot;anyOf&quot;&gt;&gt; := [schema()]}</code>
+-type intersection_schema() :: map().
+% <code>#{&lt;&lt;&quot;allOf&quot;&gt;&gt; := [schema()]}</code>
+-type complement_schema() :: map().
+% <code>#{&lt;&lt;&quot;not&quot;&gt;&gt; := schema()}</code>
+-type symmetric_difference_schema() :: map().
+% <code>#{&lt;&lt;&quot;oneOf&quot;&gt;&gt; := [schema()]}</code>
 
 -type value() ::
     boolean()
@@ -65,12 +115,14 @@
 -type array() :: [value()].
 -type object() :: #{binary() => value()}.
 -type format() :: binary().
+% <code>&lt;&lt;&quot;iso8601&quot;&gt;&gt; | &lt;&lt;&quot;base64&quot;&gt;&gt;</code>
 -type pattern() :: binary().
 
 %%% TYPE EXPORTS
 -export_type([
-    t/0,
+    name/0,
     schema/0,
+    t/0,
     empty_schema/0,
     universal_schema/0,
     ref_schema/0,
@@ -94,7 +146,7 @@
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 -spec generate(Name, Schema) -> Result when
-    Name :: atom(),
+    Name :: name(),
     Schema :: schema(),
     Result :: t().
 %% @doc Generates an Erlang Syntax Tree of a DTO module from a schema

@@ -1,5 +1,6 @@
 # ndto
-![ndto ci](https://github.com/nomasystems/ndto/actions/workflows/ci.yml/badge.svg)
+[![ndto ci](https://github.com/nomasystems/ndto/actions/workflows/ci.yml/badge.svg)](https://github.com/nomasystems/ndto/actions/workflows/ci.yml)
+[![ndto docs](https://github.com/nomasystems/ndto/actions/workflows/docs.yml/badge.svg)](https://github.com/nomasystems/ndto/actions/workflows/docs.yml)
 
 `ndto` is an Erlang library for generating DTO (Data Transfer Object) validation modules from schemas.
 
@@ -15,7 +16,7 @@ To use `ndto` in your project, just add it as a dependency in your `rebar.config
 
 ## Quickstart
 
-1. Define a `ndto` schema.
+1. Define an `ndto` schema.
 ```erl
 Schema = #{
     <<"type">> => <<"string">>,
@@ -40,88 +41,6 @@ true = string_schema:is_valid(<<"hello world">>).
 false = string_schema:is_valid(<<"hello">>).
 false = string_schema:is_valid(<<"hi world">>).
 ```
-## Schema
-
-`ndto` schemas are defined as follows:
-```erl
--type schema() ::
-    undefined
-    | empty_schema()
-    | universal_schema()
-    | ref_schema()
-    | boolean_schema()
-    | enum_schema()
-    | integer_schema()
-    | number_schema()
-    | string_schema()
-    | array_schema()
-    | object_schema()
-    | union_schema()
-    | intersection_schema()
-    | complement_schema()
-    | symmetric_difference_schema().
-
--type empty_schema() :: false.
--type universal_schema() :: true | #{} | union_schema().
--type ref_schema() :: #{<<"$ref">> := binary()}.
--type boolean_schema() :: #{<<"type">> := <<"boolean">>}.
--type enum_schema() :: #{<<"enum">> := [value()]}.
--type integer_schema() :: #{
-    <<"type">> := <<"integer">>,
-    <<"minimum">> => integer(),
-    <<"exclusiveMinimum">> => boolean(),
-    <<"maximum">> => integer(),
-    <<"exclusiveMaximum">> => boolean(),
-    <<"multipleOf">> => integer()
-}.
--type number_schema() :: #{
-    <<"type">> := <<"number">>,
-    <<"minimum">> => number(),
-    <<"exclusiveMinimum">> => boolean(),
-    <<"maximum">> => number(),
-    <<"exclusiveMaximum">> => boolean()
-}.
--type string_schema() :: #{
-    <<"type">> := <<"string">>,
-    <<"minimum">> => integer(),
-    <<"minLength">> => non_neg_integer(),
-    <<"maxLength">> => non_neg_integer(),
-    <<"format">> => format(),
-    <<"pattern">> => pattern()
-}.
--type array_schema() :: #{
-    <<"type">> := <<"array">>,
-    <<"items">> => schema(),
-    <<"minItems">> => non_neg_integer(),
-    <<"maxItems">> => non_neg_integer(),
-    <<"uniqueItems">> => boolean()
-}.
--type object_schema() :: #{
-    <<"type">> := <<"object">>,
-    <<"properties">> => #{binary() => schema()},
-    <<"required">> => [binary()],
-    <<"minProperties">> => non_neg_integer(),
-    <<"maxProperties">> => non_neg_integer(),
-    <<"patternProperties">> => #{pattern() => schema()},
-    <<"additionalProperties">> => schema()
-}.
--type union_schema() :: #{<<"anyOf">> := [schema()]}.
--type intersection_schema() :: #{<<"allOf">> := [schema()]}.
--type complement_schema() :: #{<<"not">> := schema()}.
--type symmetric_difference_schema() :: #{<<"oneOf">> := [schema()]}.
-
--type value() ::
-    boolean()
-    | integer()
-    | float()
-    | binary()
-    | array()
-    | object().
--type array() :: [value()].
--type object() :: #{binary() => value()}.
--type format() :: <<"iso8601">> | <<"base64">>.
--type pattern() :: binary().
-```
 
 ## Contributing
 
@@ -134,3 +53,4 @@ If you need help or have any questions, please don't hesitate to open an issue o
 ## License
 
 `ndto` is released under the Apache 2.0 License. For more information, please see the [LICENSE](LICENSE) file.
+> This project uses OpenAPI specification (OAS) schemas and examples, which are licensed under the Apache 2.0 license. See the associated [LICENSE](priv/oas/LICENSE) file for more information.

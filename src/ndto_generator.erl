@@ -106,9 +106,8 @@ is_valid(Prefix, undefined) ->
         Clauses
     ),
     {Fun, []};
-is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) when is_binary(Ref) ->
-    [_Path, <<DTO/binary>>] = string:split(Ref, <<"/">>, trailing),
-    FunName = <<Prefix/binary, "ref_", DTO/binary>>,
+is_valid(Prefix, #{<<"$ref">> := DTO} = Schema) when is_atom(DTO) ->
+    FunName = <<Prefix/binary, "ref_", (erlang:atom_to_binary(DTO))/binary>>,
     OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -116,7 +115,7 @@ is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) when is_binary(Ref) ->
             none,
             [
                 erl_syntax:application(
-                    erl_syntax:atom(erlang:binary_to_atom(DTO)),
+                    erl_syntax:atom(DTO),
                     erl_syntax:atom(is_valid),
                     [
                         erl_syntax:variable('Val')
