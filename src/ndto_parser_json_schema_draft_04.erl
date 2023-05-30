@@ -56,7 +56,9 @@ parse(Namespace, SpecPath) ->
                         spec = Spec
                     },
                     {Schema, ExtraSchemas, _CTX} = parse_schemas(CTX, Spec),
-                    {ok, [{Namespace, Schema} | ExtraSchemas]};
+                    RawSchemas = [{Namespace, Schema} | ExtraSchemas],
+                    Schemas = [{Name, clean_schema(RawSchema)} || {Name, RawSchema} <- RawSchemas],
+                    {ok, Schemas};
                 {error, Reason} ->
                     {error, Reason}
             end;
@@ -67,6 +69,21 @@ parse(Namespace, SpecPath) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
+-spec clean_schema(RawSchema) -> Schema when
+    RawSchema :: ndto:schema(),
+    Schema :: ndto:schema().
+clean_schema(RawSchema) ->
+    maps:fold(
+        fun
+            (_Key, undefined, Acc) ->
+                Acc;
+            (Key, Value, Acc) ->
+                maps:put(Key, Value, Acc)
+        end,
+        #{},
+        RawSchema
+    ).
+
 -spec deserialize_spec(Bin) -> Result when
     Bin :: binary(),
     Result :: {ok, map()} | {error, Reason},
