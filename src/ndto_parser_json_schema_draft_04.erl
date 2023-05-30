@@ -72,17 +72,21 @@ parse(Namespace, SpecPath) ->
 -spec clean_schema(RawSchema) -> Schema when
     RawSchema :: ndto:schema(),
     Schema :: ndto:schema().
-clean_schema(RawSchema) ->
+clean_schema(RawSchema) when is_list(RawSchema) ->
+    [clean_schema(Value) || Value <- RawSchema, Value =/= undefined];
+clean_schema(RawSchema) when is_map(RawSchema) ->
     maps:fold(
         fun
             (_Key, undefined, Acc) ->
                 Acc;
             (Key, Value, Acc) ->
-                maps:put(Key, Value, Acc)
+                maps:put(Key, clean_schema(Value), Acc)
         end,
         #{},
         RawSchema
-    ).
+    );
+clean_schema(Schema) ->
+    Schema.
 
 -spec deserialize_spec(Bin) -> Result when
     Bin :: binary(),
