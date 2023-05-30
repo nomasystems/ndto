@@ -73,7 +73,7 @@ parse(Namespace, SpecPath) ->
     RawSchema :: ndto:schema(),
     Schema :: ndto:schema().
 clean_schema(RawSchema) when is_list(RawSchema) ->
-    [clean_schema(Value) || Value <- RawSchema, Value =:= undefined];
+    [clean_schema(Value) || Value <- RawSchema, Value =/= undefined];
 clean_schema(RawSchema) when is_map(RawSchema) ->
     maps:fold(
         fun
