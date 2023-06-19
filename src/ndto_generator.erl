@@ -106,8 +106,9 @@ is_valid(Prefix, undefined) ->
         Clauses
     ),
     {Fun, []};
-is_valid(Prefix, #{<<"$ref">> := DTO} = Schema) when is_atom(DTO) ->
-    FunName = <<Prefix/binary, "ref_", (erlang:atom_to_binary(DTO))/binary>>,
+is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) ->
+    FunName = <<Prefix/binary, "ref_", Ref/binary>>,
+    DTO = erlang:binary_to_atom(Ref),
     OptionalClause = optional_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -363,7 +364,7 @@ is_valid(Prefix, #{<<"oneOf">> := Subschemas} = Schema) when is_list(Subschemas)
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+                <<FunName/binary, "_", (erlang:integer_to_binary(Idx))/binary, "_">>, Subschema
             ),
             {
                 Idx + 1,
