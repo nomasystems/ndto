@@ -14,6 +14,7 @@
 -module(ndto_properties).
 
 %%% INCLUDE FILES
+-include_lib("stdlib/include/assert.hrl").
 -include_lib("triq/include/triq.hrl").
 
 %%%-----------------------------------------------------------------------------
@@ -28,7 +29,7 @@ prop_any() ->
             DTO = ndto:generate(test_any, Schema),
             ok = ndto:load(DTO),
 
-            true = test_any:is_valid(Any),
+            ?assertEqual(true, test_any:is_valid(Any)),
             true
         end
     ).
@@ -52,8 +53,8 @@ prop_undefined() ->
             DTO = ndto:generate(test_undefined, Schema),
             ok = ndto:load(DTO),
 
-            true = test_undefined:is_valid(Undefined),
-            false = test_undefined:is_valid(Defined),
+            ?assertEqual(true, test_undefined:is_valid(Undefined)),
+            ?assertEqual(false, test_undefined:is_valid(Defined)),
             true
         end
     ).
@@ -66,7 +67,7 @@ prop_ref() ->
             ReferencedName = test_referenced_dto,
             ReferencedSchema = #{},
             Schema = #{
-                <<"$ref">> => <<"/components/schemas/", (erlang:atom_to_binary(ReferencedName))/binary>>
+                <<"$ref">> => erlang:atom_to_binary(ReferencedName)
             },
 
             ReferencedDTO = ndto:generate(ReferencedName, ReferencedSchema),
@@ -74,7 +75,7 @@ prop_ref() ->
             DTO = ndto:generate(test_ref, Schema),
             ok = ndto:load(DTO),
 
-            true = test_ref:is_valid(Any),
+            ?assertEqual(true, test_ref:is_valid(Any)),
             true
         end
     ).
@@ -90,9 +91,12 @@ prop_enum() ->
                 DTO = ndto:generate(test_enum, Schema),
                 ok = ndto:load(DTO),
     
-                true = lists:all(
-                    fun test_enum:is_valid/1,
-                    Enum
+                ?assertEqual(
+                    true,
+                    lists:all(
+                        fun test_enum:is_valid/1,
+                        Enum
+                    )
                 ),
                 true
             end
@@ -113,7 +117,10 @@ prop_string() ->
             DTO = ndto:generate(test_string, Schema),
             ok = ndto:load(DTO),
 
-            true = test_string:is_valid(String),
+            ?assertEqual(
+                true,
+                test_string:is_valid(String)
+            ),
             true
         end
     ).
@@ -133,7 +140,10 @@ prop_number() ->
             DTO = ndto:generate(test_number, Schema),
             ok = ndto:load(DTO),
 
-            true = test_number:is_valid(Number),
+            ?assertEqual(
+                true,
+                test_number:is_valid(Number)
+            ),
             true
         end
     ).
@@ -159,7 +169,10 @@ prop_integer() ->
             DTO = ndto:generate(test_integer, Schema),
             ok = ndto:load(DTO),
 
-            true = test_integer:is_valid(Integer),
+            ?assertEqual(
+                true,
+                test_integer:is_valid(Integer)
+            ),
             true
         end
     ).
@@ -175,7 +188,10 @@ prop_boolean() ->
             DTO = ndto:generate(test_boolean, Schema),
             ok = ndto:load(DTO),
 
-            true = test_boolean:is_valid(Boolean),
+            ?assertEqual(
+                true,
+                test_boolean:is_valid(Boolean)
+            ),
             true
         end
     ).
@@ -202,7 +218,10 @@ prop_array() ->
             DTO = ndto:generate(test_array, Schema),
             ok = ndto:load(DTO),
 
-            true = test_array:is_valid(Array),
+            ?assertEqual(
+                true,
+                test_array:is_valid(Array)
+            ),
             true
         end
     ).
@@ -228,7 +247,10 @@ prop_object() ->
             DTO = ndto:generate(test_object, Schema),
             ok = ndto:load(DTO),
 
-            true = test_object:is_valid(Object),
+            ?assertEqual(
+                true,
+                test_object:is_valid(Object)
+            ),
             true
         end
     ).
