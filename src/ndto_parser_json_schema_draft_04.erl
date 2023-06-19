@@ -30,7 +30,7 @@
 -record(ctx, {
     base_path :: binary(),
     namespace :: binary(),
-    resolved :: [atom()],
+    resolved :: [binary()],
     spec :: json_schema()
 }).
 
