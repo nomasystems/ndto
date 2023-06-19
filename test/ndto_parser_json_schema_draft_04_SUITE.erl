@@ -79,6 +79,8 @@ oas_3_0(_Conf) ->
             }
         }
     } = proplists:get_value(oas_3_0_Schema, Schemas),
-    Expected = lists:sort([#{<<"$ref">> => oas_3_0_Reference}, #{<<"$ref">> => oas_3_0_Schema}]),
+    Expected = lists:sort([
+        #{<<"$ref">> => <<"oas_3_0_Reference">>}, #{<<"$ref">> => <<"oas_3_0_Schema">>}
+    ]),
     Actual = lists:sort(SchemaOneOf),
     ?assertEqual(Expected, Actual).

@@ -44,20 +44,24 @@
     Schemas :: [{ndto:name(), ndto:schema()}],
     Reason :: term().
 %% @doc Parses a draft-04 JSON Schema specification into a list of <code>ndto:schema()</code> values.
-parse(Namespace, SpecPath) ->
+parse(RawNamespace, SpecPath) ->
+    Namespace = erlang:atom_to_binary(RawNamespace),
     case read_spec(SpecPath) of
         {ok, BinSpec} ->
             case deserialize_spec(BinSpec) of
                 {ok, Spec} ->
                     CTX = #ctx{
                         base_path = filename:dirname(SpecPath),
-                        namespace = erlang:atom_to_binary(Namespace),
+                        namespace = Namespace,
                         resolved = [],
                         spec = Spec
                     },
                     {Schema, ExtraSchemas, _CTX} = parse_schemas(CTX, Spec),
                     RawSchemas = [{Namespace, Schema} | ExtraSchemas],
-                    Schemas = [{Name, clean_schema(RawSchema)} || {Name, RawSchema} <- RawSchemas],
+                    Schemas = [
+                        {name(Name), clean_schema(RawSchema)}
+                     || {Name, RawSchema} <- RawSchemas
+                    ],
                     {ok, Schemas};
                 {error, Reason} ->
                     {error, Reason}
@@ -349,7 +353,7 @@ read_spec(SpecPath) ->
     Ref :: binary(),
     CTX :: #ctx{},
     Result :: {NewResolved, NewSchema, NewCTX},
-    NewResolved :: ndto:name(),
+    NewResolved :: binary(),
     NewSchema :: ndto:schema(),
     NewCTX :: #ctx{}.
 resolve_ref(Ref, #ctx{base_path = BasePath, namespace = Namespace, resolved = Resolved, spec = Spec}) ->
@@ -377,7 +381,7 @@ resolve_ref(Ref, #ctx{base_path = BasePath, namespace = Namespace, resolved = Re
                         erlang:error({invalid_ref, Reason})
                 end
         end,
-    NewResolved = name(<<NewNamespace/binary, "_", (lists:last(LocalPath))/binary>>),
+    NewResolved = <<NewNamespace/binary, "_", (lists:last(LocalPath))/binary>>,
     NewSchema = get(LocalPath, NewSpec),
     NewCTX = #ctx{
         base_path = NewBasePath,
