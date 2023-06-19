@@ -24,7 +24,7 @@
 ]).
 
 %%% TYPES
--type json_schema() :: undefined | true | false | #{binary() => term()}.
+-type json_schema() :: njson:t().
 
 %%% RECORDS
 -record(ctx, {
