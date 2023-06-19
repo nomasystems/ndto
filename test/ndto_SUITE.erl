@@ -267,10 +267,16 @@ additional_properties(_Conf) ->
     ok = ndto:load(DTO1),
 
     ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>})),
-    ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})),
-    ?assertEqual(false, test_additional_properties1:is_valid(#{
-        <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
-    })),
+    ?assertEqual(
+        true,
+        test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
+    ),
+    ?assertEqual(
+        false,
+        test_additional_properties1:is_valid(#{
+            <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
+        })
+    ),
 
     Schema2 = #{
         <<"type">> => <<"object">>,
@@ -281,8 +287,13 @@ additional_properties(_Conf) ->
     DTO2 = ndto:generate(test_additional_properties2, Schema2),
     ok = ndto:load(DTO2),
 
-    ?assertEqual(true, test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})),
-    ?assertEqual(true, test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"0">> => [1]})),
+    ?assertEqual(
+        true,
+        test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
+    ),
+    ?assertEqual(
+        true, test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"0">> => [1]})
+    ),
 
     Schema3 = #{
         <<"type">> => <<"object">>,
@@ -293,9 +304,15 @@ additional_properties(_Conf) ->
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
     ok = ndto:load(DTO3),
 
-    ?assertEqual(false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})),
-    ?assertEqual(false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})),
-    ?assertEqual(true, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true})).
+    ?assertEqual(
+        false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
+    ),
+    ?assertEqual(
+        false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
+    ),
+    ?assertEqual(
+        true, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true})
+    ).
 
 unique_items(_Conf) ->
     Schema = #{
@@ -305,7 +322,10 @@ unique_items(_Conf) ->
     DTO = ndto:generate(test_unique_items, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual(true, test_unique_items:is_valid([0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}])).
+    ?assertEqual(
+        true,
+        test_unique_items:is_valid([0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}])
+    ).
 
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),

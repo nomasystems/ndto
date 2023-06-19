@@ -195,9 +195,18 @@ complement(_Conf) ->
 
     ObjectComplement = ndto_schema:complement(?OBJECT_SCHEMA),
     ok = generate_and_load(object_complement, ObjectComplement),
-    ?assertEqual(false, object_complement:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})),
-    ?assertEqual(true, object_complement:is_valid(#{<<"foo">> => 1, <<"bar">> => <<"aaa">>, <<"baz">> => true})),
-    ?assertEqual(true, object_complement:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"1aa">>, <<"baz">> => true})),
+    ?assertEqual(
+        false,
+        object_complement:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})
+    ),
+    ?assertEqual(
+        true,
+        object_complement:is_valid(#{<<"foo">> => 1, <<"bar">> => <<"aaa">>, <<"baz">> => true})
+    ),
+    ?assertEqual(
+        true,
+        object_complement:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"1aa">>, <<"baz">> => true})
+    ),
     ?assertEqual(true, object_complement:is_valid(true)),
 
     IntersectionComplement = ndto_schema:complement(?INTERSECTION_SCHEMA),
@@ -388,7 +397,9 @@ union(_Conf) ->
         }
     ]),
     ok = generate_and_load(object_union, ObjectUnion),
-    ?assertEqual(true, object_union:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})),
+    ?assertEqual(
+        true, object_union:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})
+    ),
     ?assertEqual(true, object_union:is_valid(#{<<"qux">> => true})),
     ?assertEqual(false, object_union:is_valid(#{<<"foo">> => <<"foobar">>})),
     ?assertEqual(false, object_union:is_valid(false)),
@@ -422,7 +433,10 @@ union(_Conf) ->
     ComplementUnion = ndto_schema:union([?COMPLEMENT_SCHEMA, #{<<"not">> => ?OBJECT_SCHEMA}]),
     ok = generate_and_load(complement_union, ComplementUnion),
     ?assertEqual(true, complement_union:is_valid(true)),
-    ?assertEqual(true, complement_union:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})),
+    ?assertEqual(
+        true,
+        complement_union:is_valid(#{<<"foo">> => 4, <<"bar">> => <<"aaa">>, <<"baz">> => true})
+    ),
     ?assertEqual(true, complement_union:is_valid(<<"foo">>)),
 
     ok.
