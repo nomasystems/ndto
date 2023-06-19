@@ -13,6 +13,9 @@
 %% limitations under the License.
 -module(ndto_SUITE).
 
+%%% INCLUDE FILES
+-include_lib("stdlib/include/assert.hrl").
+
 %%% EXTERNAL EXPORTS
 -compile([export_all, nowarn_export_all]).
 
@@ -158,7 +161,7 @@ nullable(_Conf) ->
             DTO1 = ndto:generate(test_nullable1, Schema1),
             ok = ndto:load(DTO1),
 
-            true = test_nullable1:is_valid(undefined),
+            ?assertEqual(true, test_nullable1:is_valid(undefined)),
 
             Schema2 = #{
                 <<"type">> => Type,
@@ -167,7 +170,7 @@ nullable(_Conf) ->
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
 
-            false = test_nullable2:is_valid(undefined)
+            ?assertEqual(false, test_nullable2:is_valid(undefined))
         end,
         ndto_dom:types()
     ).
@@ -183,9 +186,9 @@ oneOf(_Conf) ->
     DTO = ndto:generate(test_one_of, Schema),
     ok = ndto:load(DTO),
 
-    false = test_one_of:is_valid(<<"0">>),
-    false = test_one_of:is_valid(0),
-    true = test_one_of:is_valid(0.0).
+    ?assertEqual(false, test_one_of:is_valid(<<"0">>)),
+    ?assertEqual(false, test_one_of:is_valid(0)),
+    ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 anyOf(_Conf) ->
     Schema = #{
@@ -198,9 +201,9 @@ anyOf(_Conf) ->
     DTO = ndto:generate(test_any_of, Schema),
     ok = ndto:load(DTO),
 
-    false = test_any_of:is_valid(<<"0">>),
-    true = test_any_of:is_valid(0),
-    true = test_any_of:is_valid(0.0).
+    ?assertEqual(false, test_any_of:is_valid(<<"0">>)),
+    ?assertEqual(true, test_any_of:is_valid(0)),
+    ?assertEqual(true, test_any_of:is_valid(0.0)).
 
 allOf(_Conf) ->
     Schema = #{
@@ -213,10 +216,10 @@ allOf(_Conf) ->
     DTO = ndto:generate(test_all_of, Schema),
     ok = ndto:load(DTO),
 
-    false = test_all_of:is_valid(<<"1">>),
-    false = test_all_of:is_valid(0),
-    false = test_all_of:is_valid(1.0),
-    true = test_all_of:is_valid(1).
+    ?assertEqual(false, test_all_of:is_valid(<<"1">>)),
+    ?assertEqual(false, test_all_of:is_valid(0)),
+    ?assertEqual(false, test_all_of:is_valid(1.0)),
+    ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
     Schema = #{
@@ -225,9 +228,9 @@ allOf(_Conf) ->
     DTO = ndto:generate(test_not, Schema),
     ok = ndto:load(DTO),
 
-    false = test_not:is_valid(0),
-    true = test_not:is_valid(<<"0">>),
-    true = test_not:is_valid(-1).
+    ?assertEqual(false, test_not:is_valid(0)),
+    ?assertEqual(true, test_not:is_valid(<<"0">>)),
+    ?assertEqual(true, test_not:is_valid(-1)).
 
 pattern(_Conf) ->
     Schema = #{
@@ -237,7 +240,7 @@ pattern(_Conf) ->
     DTO = ndto:generate(test_pattern, Schema),
     ok = ndto:load(DTO),
 
-    true = test_pattern:is_valid(<<"test@ndto.erl">>).
+    ?assertEqual(true, test_pattern:is_valid(<<"test@ndto.erl">>)).
 
 pattern_properties(_Conf) ->
     Schema = #{
@@ -249,9 +252,9 @@ pattern_properties(_Conf) ->
     DTO = ndto:generate(test_pattern_properties, Schema),
     ok = ndto:load(DTO),
 
-    false = test_pattern_properties:is_valid(#{<<"foo">> => 0}),
-    true = test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>}),
-    true = test_pattern_properties:is_valid(#{<<"0">> => <<"foo">>}).
+    ?assertEqual(false, test_pattern_properties:is_valid(#{<<"foo">> => 0})),
+    ?assertEqual(true, test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>})),
+    ?assertEqual(true, test_pattern_properties:is_valid(#{<<"0">> => <<"foo">>})).
 
 additional_properties(_Conf) ->
     Schema1 = #{
@@ -263,11 +266,11 @@ additional_properties(_Conf) ->
     DTO1 = ndto:generate(test_additional_properties1, Schema1),
     ok = ndto:load(DTO1),
 
-    true = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>}),
-    true = test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
-    false = test_additional_properties1:is_valid(#{
+    ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>})),
+    ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})),
+    ?assertEqual(false, test_additional_properties1:is_valid(#{
         <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
-    }),
+    })),
 
     Schema2 = #{
         <<"type">> => <<"object">>,
@@ -278,8 +281,8 @@ additional_properties(_Conf) ->
     DTO2 = ndto:generate(test_additional_properties2, Schema2),
     ok = ndto:load(DTO2),
 
-    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>}),
-    true = test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"0">> => [1]}),
+    ?assertEqual(true, test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})),
+    ?assertEqual(true, test_additional_properties2:is_valid(#{<<"foo">> => <<"bar">>, <<"0">> => [1]})),
 
     Schema3 = #{
         <<"type">> => <<"object">>,
@@ -290,9 +293,9 @@ additional_properties(_Conf) ->
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
     ok = ndto:load(DTO3),
 
-    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true}),
-    false = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>}),
-    true = test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true}).
+    ?assertEqual(false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})),
+    ?assertEqual(false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})),
+    ?assertEqual(true, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true})).
 
 unique_items(_Conf) ->
     Schema = #{
@@ -302,7 +305,7 @@ unique_items(_Conf) ->
     DTO = ndto:generate(test_unique_items, Schema),
     ok = ndto:load(DTO),
 
-    true = test_unique_items:is_valid([0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}]).
+    ?assertEqual(true, test_unique_items:is_valid([0, 1.0, true, <<"string">>, [], #{<<"key">> => <<"value">>}])).
 
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),
@@ -313,7 +316,7 @@ iso8601(_Conf) ->
     DTO = ndto:generate(test_iso8601, Schema),
     ok = ndto:load(DTO),
 
-    true = test_iso8601:is_valid(String).
+    ?assertEqual(true, test_iso8601:is_valid(String)).
 
 base64(_Conf) ->
     String = base64:encode(<<"this is a test">>),
@@ -324,4 +327,4 @@ base64(_Conf) ->
     DTO = ndto:generate(test_base64, Schema),
     ok = ndto:load(DTO),
 
-    true = test_base64:is_valid(String).
+    ?assertEqual(true, test_base64:is_valid(String)).

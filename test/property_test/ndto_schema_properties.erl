@@ -14,8 +14,10 @@
 -module(ndto_schema_properties).
 
 %%% INCLUDE FILES
+-include_lib("stdlib/include/assert.hrl").
 -include_lib("triq/include/triq.hrl").
 
+%%% MACROS
 -define(NUMTESTS, 3).
 
 %%%-----------------------------------------------------------------------------
@@ -30,7 +32,7 @@ prop_conmutative_intersection() ->
             begin
                 I1_2 = ndto_schema:intersection([Schema1, Schema2]),
                 I2_1 = ndto_schema:intersection([Schema2, Schema1]),
-                I1_2 = I2_1,
+                ?assertEqual(I1_2, I2_1),
 
                 true
             end
@@ -43,10 +45,10 @@ prop_identity() ->
         ndto_schema_dom:schema(),
         begin
             EmptySchema = ndto_schema:empty_schema(),
-            Schema = ndto_schema:union([Schema, EmptySchema]),
+            ?assertEqual(Schema, ndto_schema:union([Schema, EmptySchema])),
 
             UniversalSchema = ndto_schema:universal_schema(),
-            Schema = ndto_schema:intersection([Schema, UniversalSchema]),
+            ?assertEqual(Schema, ndto_schema:intersection([Schema, UniversalSchema])),
 
             true
         end
@@ -57,7 +59,7 @@ prop_idempotent() ->
         Schema,
         ndto_schema_dom:schema(),
         begin
-            Schema = ndto_schema:intersection([Schema, Schema]),
+            ?assertEqual(Schema, ndto_schema:intersection([Schema, Schema])),
             true
         end
     ).
@@ -68,7 +70,7 @@ prop_domination() ->
         ndto_schema_dom:schema(),
         begin
             EmptySchema = ndto_schema:empty_schema(),
-            EmptySchema = ndto_schema:intersection([Schema, EmptySchema]),
+            ?assertEqual(EmptySchema, ndto_schema:intersection([Schema, EmptySchema])),
             true
         end
     ).
