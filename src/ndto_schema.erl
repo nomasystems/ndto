@@ -352,7 +352,9 @@ intersection(#{<<"enum">> := Enum1}, #{<<"enum">> := Enum2}) ->
 intersection(Schema1, #{<<"enum">> := _Enum} = Schema2) ->
     intersection(Schema2, Schema1);
 intersection(#{<<"enum">> := Enum}, Schema2) ->
-    Name = erlang:binary_to_atom(<<"intersection_enum_", (erlang:unique_integer())/integer>>),
+    Name = erlang:binary_to_atom(
+        <<"intersection_enum_", (erlang:integer_to_binary(erlang:unique_integer()))/binary>>
+    ),
     DTO = ndto:generate(Name, Schema2),
     ndto:load(DTO),
     NewEnum = lists:filter(fun Name:is_valid/1, Enum),
