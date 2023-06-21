@@ -156,7 +156,8 @@ nullable(_Conf) ->
     lists:foreach(
         fun(Type) ->
             Schema1 = #{
-                <<"type">> => Type
+                <<"type">> => Type,
+                <<"nullable">> => true
             },
             DTO1 = ndto:generate(test_nullable1, Schema1),
             ok = ndto:load(DTO1),
@@ -164,8 +165,7 @@ nullable(_Conf) ->
             ?assertEqual(true, test_nullable1:is_valid(undefined)),
 
             Schema2 = #{
-                <<"type">> => Type,
-                <<"nullable">> => false
+                <<"type">> => Type
             },
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
