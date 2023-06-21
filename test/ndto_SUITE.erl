@@ -31,7 +31,8 @@ all() ->
         unique_items,
         pattern_properties,
         additional_properties,
-        {group, string_formats}
+        {group, string_formats},
+        {group, examples}
     ].
 
 groups() ->
@@ -57,6 +58,9 @@ groups() ->
         {string_formats, [parallel], [
             iso8601,
             base64
+        ]},
+        {examples, [parallel], [
+            petstore
         ]}
     ].
 
@@ -348,3 +352,22 @@ base64(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(true, test_base64:is_valid(String)).
+
+petstore(_Conf) ->
+    Schema = ndto_parser:parse(
+        ndto_parser_json_schema_draft_04,
+        test_oas_3_0,
+        erlang:list_to_binary(code:lib_dir(ndto, priv) ++ "/oas/3.0/specs/oas_3_0.json")
+    ),
+    DTO = ndto:generate(test_oas_3_0, Schema),
+    ok = ndto:load(DTO),
+
+    {ok, PetstoreBin} = file:read_file(
+        erlang:list_to_binary(code:lib_dir(ndto, priv) ++ "/oas/3.0/examples/petstore.json")
+    ),
+    Petstore = njson:decode(PetstoreBin),
+
+    ?assertEqual(
+        true,
+        test_oas_3_0:is_valid(Petstore)
+    ).
