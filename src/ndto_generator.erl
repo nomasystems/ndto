@@ -401,12 +401,13 @@ is_valid(Prefix, #{<<"oneOf">> := Subschemas} = Schema) when is_list(Subschemas)
 is_valid(Prefix, #{<<"anyOf">> := Subschemas} = Schema) when is_list(Subschemas) ->
     FunName = <<Prefix/binary, "anyOf">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
-        fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
+        fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
+            Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+                <<FunName/binary, "_", Idx/binary, "_">>, Subschema
             ),
             {
-                Idx + 1,
+                RawIdx + 1,
                 [IsValidFun | IsValidFunsAcc],
                 % TODO: replace with `++` for consistency
                 % Currently `gradualizer` complains:
@@ -440,12 +441,13 @@ is_valid(Prefix, #{<<"anyOf">> := Subschemas} = Schema) when is_list(Subschemas)
 is_valid(Prefix, #{<<"allOf">> := Subschemas} = Schema) when is_list(Subschemas) ->
     FunName = <<Prefix/binary, "allOf">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
-        fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
+        fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
+            Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/integer, "_">>, Subschema
+                <<FunName/binary, "_", Idx/binary, "_">>, Subschema
             ),
             {
-                Idx + 1,
+                RawIdx + 1,
                 [IsValidFun | IsValidFunsAcc],
                 % TODO: replace with `++` for consistency
                 % Currently `gradualizer` complains:
