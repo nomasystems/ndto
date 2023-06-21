@@ -332,7 +332,6 @@ is_valid(Prefix, #{<<"type">> := <<"object">>} = Schema) ->
             {[], []},
             [
                 <<"properties">>,
-                <<"required">>,
                 <<"minProperties">>,
                 <<"maxProperties">>,
                 <<"patternProperties">>,
@@ -716,10 +715,17 @@ is_valid_number(_Number, _Prefix, <<"multipleOf">>, _Value, _Schema) ->
     Result :: {Fun, ExtraFuns},
     Fun :: erl_syntax:syntaxTree() | undefined,
     ExtraFuns :: [erl_syntax:syntaxTree()].
-is_valid_object(Prefix, <<"properties">>, #{<<"properties">> := Properties}) ->
+is_valid_object(Prefix, <<"properties">>, #{<<"properties">> := Properties} = Schema) ->
     FunName = <<Prefix/binary, "properties">>,
     {PropertiesFuns, ExtraFuns} = maps:fold(
-        fun(PropertyName, Property, {IsValidFunsAcc, ExtraFunsAcc}) ->
+        fun(PropertyName, RawProperty, {IsValidFunsAcc, ExtraFunsAcc}) ->
+            Property =
+                case lists:member(PropertyName, maps:get(<<"required">>, Schema, [])) of
+                    false ->
+                        RawProperty#{<<"nullable">> => true};
+                    true ->
+                        RawProperty
+                end,
             {IsValidPropertyFun, ExtraPropertyFuns} =
                 is_valid(<<FunName/binary, "_", PropertyName/binary, "_">>, Property),
             {
@@ -767,53 +773,6 @@ is_valid_object(Prefix, <<"properties">>, #{<<"properties">> := Properties}) ->
     ),
     {_PropertyNames, IsValidFuns} = lists:unzip(PropertiesFuns),
     {Fun, IsValidFuns ++ ExtraFuns};
-is_valid_object(Prefix, <<"required">>, #{<<"required">> := Required}) ->
-    FunName = <<Prefix/binary, "required">>,
-    TrueClause = erl_syntax:clause(
-        [erl_syntax:variable('Val')],
-        none,
-        [
-            erl_syntax:application(
-                erl_syntax:atom(lists),
-                erl_syntax:atom(all),
-                [
-                    erl_syntax:fun_expr([
-                        erl_syntax:clause(
-                            [erl_syntax:variable('Property')],
-                            none,
-                            [
-                                erl_syntax:application(
-                                    erl_syntax:atom(maps),
-                                    erl_syntax:atom(is_key),
-                                    [
-                                        erl_syntax:variable('Property'),
-                                        erl_syntax:variable('Val')
-                                    ]
-                                )
-                            ]
-                        )
-                    ]),
-                    erl_syntax:list(
-                        lists:map(
-                            fun(PropertyName) ->
-                                erl_syntax:binary([
-                                    erl_syntax:binary_field(
-                                        erl_syntax:string(erlang:binary_to_list(PropertyName))
-                                    )
-                                ])
-                            end,
-                            Required
-                        )
-                    )
-                ]
-            )
-        ]
-    ),
-    Fun = erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
-    ),
-    {Fun, []};
 is_valid_object(Prefix, <<"minProperties">>, #{<<"minProperties">> := MinProperties}) ->
     FunName = <<Prefix/binary, "minProperties">>,
     TrueClause = erl_syntax:clause(
