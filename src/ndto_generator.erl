@@ -129,8 +129,9 @@ is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) ->
         OptionalClause ++ [TrueClause]
     ),
     {Fun, []};
-is_valid(Prefix, #{<<"enum">> := Enum}) ->
+is_valid(Prefix, #{<<"enum">> := Enum} = Schema) ->
     FunName = <<Prefix/binary, "enum">>,
+    OptionalClause = optional_clause(Schema),
     TrueClauses = lists:map(
         fun(EnumVal) ->
             erl_syntax:clause(
@@ -142,7 +143,7 @@ is_valid(Prefix, #{<<"enum">> := Enum}) ->
         Enum
     ),
     FalseClause = false_clause(),
-    Clauses = lists:append(TrueClauses, [FalseClause]),
+    Clauses = OptionalClause ++ TrueClauses ++ [FalseClause],
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         Clauses
