@@ -143,7 +143,7 @@ is_valid(Prefix, #{<<"enum">> := Enum} = Schema) ->
         Enum
     ),
     FalseClause = false_clause(),
-    Clauses = [OptionalClause | TrueClauses] ++ [FalseClause],
+    Clauses = OptionalClause ++ TrueClauses ++ [FalseClause],
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         Clauses
