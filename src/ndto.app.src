@@ -2,6 +2,6 @@
     {description, "Erlang library for DTOs validation"},
     {vsn, "0.0.1"},
     {registered, []},
-    {applications, [kernel, stdlib]},
+    {applications, [kernel, stdlib, compiler, syntax_tools]},
     {env, []}
 ]}.
