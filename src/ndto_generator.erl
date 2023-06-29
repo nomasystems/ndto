@@ -626,7 +626,7 @@ is_valid_array(_Prefix, <<"uniqueItems">>, false) ->
     Keyword :: binary(),
     Value :: term(),
     Schema :: ndto:number_schema(),
-    Result :: erl_syntax:syntaxTree().
+    Result :: undefined | erl_syntax:syntaxTree().
 is_valid_number(_Type, Prefix, <<"minimum">>, Minimum, Schema) ->
     FunName = <<Prefix/binary, "minimum">>,
     MinimumSt =
