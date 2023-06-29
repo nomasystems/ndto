@@ -41,7 +41,7 @@
     | intersection_schema()
     | complement_schema()
     | symmetric_difference_schema().
--opaque t() :: erl_syntax:syntaxTree().
+-type t() :: erl_syntax:syntaxTree().
 
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
