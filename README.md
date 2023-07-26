@@ -44,7 +44,7 @@ false = string_schema:is_valid(<<"hi world">>).
 
 ## Contributing
 
-We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about `ndto` in the open-source community. Don't forget to check out our [contribution guidelines](CONTRIBUTING) to ensure smooth collaboration! :rocket:
+We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about `ndto` in the open-source community. Don't forget to check out our [contribution guidelines](CONTRIBUTING.md) to ensure smooth collaboration! :rocket:
 
 ## Support
 
