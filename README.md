@@ -44,11 +44,11 @@ false = string_schema:is_valid(<<"hi world">>).
 
 ## Contributing
 
-We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about `ndto` in the open-source community. Together, we can make this library even better! :muscle:
+We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about `ndto` in the open-source community. Don't forget to check out our [contribution guidelines](CONTRIBUTING) to ensure smooth collaboration! :rocket:
 
 ## Support
 
-If you need help or have any questions, please don't hesitate to open an issue on the GitHub repository or contact the maintainers directly.
+If you need help or have any questions, please don't hesitate to open an issue or contact the maintainers directly.
 
 ## License
 
