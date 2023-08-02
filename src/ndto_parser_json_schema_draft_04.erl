@@ -57,9 +57,9 @@ parse(RawNamespace, SpecPath) ->
                         spec = Spec
                     },
                     {Schema, ExtraSchemas, _CTX} = parse_schemas(CTX, Spec),
-                    RawSchemas = [{Namespace, Schema} | ExtraSchemas],
+                    RawSchemas = [{erlang:binary_to_atom(Namespace), Schema} | ExtraSchemas],
                     Schemas = [
-                        {name(Name), clean_schema(RawSchema)}
+                        {Name, clean_schema(RawSchema)}
                      || {Name, RawSchema} <- RawSchemas
                     ],
                     {ok, Schemas};
@@ -76,13 +76,13 @@ parse(RawNamespace, SpecPath) ->
 -spec clean_schema(RawSchema) -> Schema when
     RawSchema :: ndto:schema(),
     Schema :: ndto:schema().
-clean_schema(RawSchema) when is_list(RawSchema) ->
-    [clean_schema(Value) || Value <- RawSchema, Value =/= undefined];
 clean_schema(RawSchema) when is_map(RawSchema) ->
     maps:fold(
         fun
             (_Key, undefined, Acc) ->
                 Acc;
+            (Key, List, Acc) when is_list(List) ->
+                maps:put(Key, [clean_schema(Value) || Value <- List, Value =/= undefined], Acc);
             (Key, Value, Acc) ->
                 maps:put(Key, clean_schema(Value), Acc)
         end,
@@ -94,7 +94,7 @@ clean_schema(Schema) ->
 
 -spec deserialize_spec(Bin) -> Result when
     Bin :: binary(),
-    Result :: {ok, map()} | {error, Reason},
+    Result :: {ok, json_schema()} | {error, Reason},
     Reason :: term().
 deserialize_spec(Bin) ->
     try
@@ -113,12 +113,6 @@ get([], Spec) ->
     Spec;
 get([Key | Keys], Spec) ->
     get(Keys, maps:get(Key, Spec)).
-
--spec name(Binary) -> Name when
-    Binary :: binary(),
-    Name :: ndto:name().
-name(Binary) ->
-    erlang:binary_to_atom(Binary).
 
 -spec parse_schemas(CTX, Spec) -> Result when
     CTX :: #ctx{},
@@ -147,7 +141,7 @@ parse_schemas(CTX, #{<<"$ref">> := Ref}) ->
             {Schema, [], CTX};
         false ->
             {NewSchema, NewExtraSchemas, NewCTX} = parse_schemas(RefCTX, RefSchema),
-            {Schema, [{RefName, NewSchema} | NewExtraSchemas], CTX#ctx{
+            {Schema, [{erlang:binary_to_atom(RefName), NewSchema} | NewExtraSchemas], CTX#ctx{
                 resolved = NewCTX#ctx.resolved
             }}
     end;
