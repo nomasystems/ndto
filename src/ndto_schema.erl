@@ -54,7 +54,7 @@ complement(#{<<"not">> := Not}) ->
     Not;
 complement(#{<<"enum">> := _Values}) ->
     %% TODO: mutation
-    erlang:throw(not_implemented);
+    undefined;
 complement(#{<<"type">> := <<"boolean">>}) ->
     union(lists:delete(#{<<"type">> => <<"boolean">>}, ?BASIC_SCHEMAS));
 complement(#{<<"type">> := <<"number">>} = Schema) ->

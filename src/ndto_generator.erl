@@ -269,11 +269,7 @@ is_valid(Prefix, #{<<"type">> := <<"array">>} = Schema) ->
                             {NewIsValidFun, NewExtraFuns} ->
                                 {
                                     [NewIsValidFun | IsValidFunsAcc],
-                                    % TODO: replace with `++` for consistency
-                                    % Currently `gradualizer` complains:
-                                    % - The operator '++' on line 165 at column 81 is expected to have type
-                                    % _TyVar-576460752303422687 which is too precise to be statically checked
-                                    lists:append(NewExtraFuns, ExtraFunsAcc)
+                                    NewExtraFuns ++ ExtraFunsAcc
                                 }
                         end
                 end
@@ -321,11 +317,7 @@ is_valid(Prefix, #{<<"type">> := <<"object">>} = Schema) ->
                             {NewIsValidFun, NewExtraFuns} ->
                                 {
                                     [NewIsValidFun | IsValidFunsAcc],
-                                    % TODO: replace with `++` for consistency
-                                    % Currently `gradualizer` complains:
-                                    % - The operator '++' on line 165 at column 81 is expected to have type
-                                    % _TyVar-576460752303422687 which is too precise to be statically checked
-                                    lists:append(NewExtraFuns, ExtraFunsAcc)
+                                    NewExtraFuns ++ ExtraFunsAcc
                                 }
                         end
                 end
@@ -370,11 +362,7 @@ is_valid(Prefix, #{<<"oneOf">> := Subschemas} = Schema) when is_list(Subschemas)
             {
                 Idx + 1,
                 [IsValidFun | IsValidFunsAcc],
-                % TODO: replace with `++` for consistency
-                % Currently `gradualizer` complains:
-                % The operator '++' on line 274 at column 27 is expected to have type
-                % _TyVar-576460752303421471 which is too precise to be statically checked
-                lists:append(ExtraFuns, ExtraFunsAcc)
+                ExtraFuns ++ ExtraFunsAcc
             }
         end,
         {0, [], []},
@@ -410,11 +398,7 @@ is_valid(Prefix, #{<<"anyOf">> := Subschemas} = Schema) when is_list(Subschemas)
             {
                 RawIdx + 1,
                 [IsValidFun | IsValidFunsAcc],
-                % TODO: replace with `++` for consistency
-                % Currently `gradualizer` complains:
-                % The operator '++' on line 312 at column 27 is expected to have type
-                % _TyVar-576460752303420927 which is too precise to be statically checked
-                lists:append(ExtraFuns, ExtraFunsAcc)
+                ExtraFuns ++ ExtraFunsAcc
             }
         end,
         {0, [], []},
@@ -450,11 +434,7 @@ is_valid(Prefix, #{<<"allOf">> := Subschemas} = Schema) when is_list(Subschemas)
             {
                 RawIdx + 1,
                 [IsValidFun | IsValidFunsAcc],
-                % TODO: replace with `++` for consistency
-                % Currently `gradualizer` complains:
-                % The operator '++' on line 350 at column 27 is expected to have type
-                % _TyVar-576460752303420383 which is too precise to be statically checked
-                lists:append(ExtraFuns, ExtraFunsAcc)
+                ExtraFuns ++ ExtraFunsAcc
             }
         end,
         {0, [], []},
@@ -728,11 +708,7 @@ is_valid_object(Prefix, <<"properties">>, #{<<"properties">> := Properties} = Sc
                 is_valid(<<FunName/binary, "_", PropertyName/binary, "_">>, Property),
             {
                 [{PropertyName, IsValidPropertyFun} | IsValidFunsAcc],
-                % TODO: replace with `++` for consistency
-                % Currently `gradualizer` complains:
-                % - The operator '++' on line 567 at column 30 is expected to have type
-                % _TyVar-576460752303420927 which is too precise to be statically checked
-                lists:append(ExtraFunsAcc, ExtraPropertyFuns)
+                ExtraFunsAcc ++ ExtraPropertyFuns
             }
         end,
         {[], []},
