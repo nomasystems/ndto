@@ -26,8 +26,7 @@
 %% TYPES
 -type name() :: atom().
 -type schema() ::
-    undefined
-    | empty_schema()
+    empty_schema()
     | universal_schema()
     | ref_schema()
     | enum_schema()
