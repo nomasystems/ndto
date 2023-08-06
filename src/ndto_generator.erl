@@ -92,20 +92,6 @@ generate(Name, Schema) ->
     Result :: {IsValidFun, ExtraFuns},
     IsValidFun :: erl_syntax:syntaxTree(),
     ExtraFuns :: [erl_syntax:syntaxTree()].
-is_valid(Prefix, undefined) ->
-    FunName = <<Prefix/binary, "undefined">>,
-    TrueClause = erl_syntax:clause(
-        [erl_syntax:atom(undefined)],
-        none,
-        [erl_syntax:atom(true)]
-    ),
-    FalseClause = false_clause(),
-    Clauses = [TrueClause, FalseClause],
-    Fun = erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
-    ),
-    {Fun, []};
 is_valid(Prefix, #{<<"$ref">> := Ref} = Schema) ->
     FunName = <<Prefix/binary, "ref_", Ref/binary>>,
     DTO = erlang:binary_to_atom(Ref),

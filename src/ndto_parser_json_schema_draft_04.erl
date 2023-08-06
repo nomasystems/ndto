@@ -121,9 +121,6 @@ get([Key | Keys], Spec) ->
     Schema :: ndto:schema(),
     ExtraSchemas :: [{ndto:name(), ndto:schema()}],
     NewCTX :: #ctx{}.
-parse_schemas(CTX, undefined) ->
-    Schema = undefined,
-    {Schema, [], CTX};
 parse_schemas(CTX, false) ->
     Schema = false,
     {Schema, [], CTX};
