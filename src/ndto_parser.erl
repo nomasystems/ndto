@@ -30,7 +30,7 @@
 ]).
 
 %%%-----------------------------------------------------------------------------
-%%% BEHVAIOUR CALLBACKS
+%%% BEHAVIOUR CALLBACKS
 %%%-----------------------------------------------------------------------------
 -callback parse(Namespace, SpecPath) -> Result when
     Namespace :: atom(),
