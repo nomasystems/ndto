@@ -951,9 +951,10 @@ is_valid_object(Prefix, <<"patternProperties">>, #{<<"patternProperties">> := Pa
 is_valid_object(
     Prefix,
     <<"additionalProperties">>,
-    #{<<"additionalProperties">> := false, <<"properties">> := Properties} = Schema
+    #{<<"additionalProperties">> := false} = Schema
 ) ->
     FunName = <<Prefix/binary, "additionalProperties">>,
+    Properties = maps:get(<<"properties">>, Schema, #{}),
     PatternProperties = maps:get(<<"patternProperties">>, Schema, #{}),
     PatternPropertiesList = erl_syntax:application(
         erl_syntax:atom(lists),
@@ -1087,10 +1088,11 @@ is_valid_object(
 is_valid_object(
     Prefix,
     <<"additionalProperties">>,
-    #{<<"additionalProperties">> := AdditionalProperties, <<"properties">> := Properties} = Schema
+    #{<<"additionalProperties">> := AdditionalProperties} = Schema
 ) ->
     FunName = <<Prefix/binary, "additionalProperties">>,
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, AdditionalProperties),
+    Properties = maps:get(<<"properties">>, Schema, #{}),
     PatternProperties = maps:get(<<"patternProperties">>, Schema, #{}),
     PatternPropertiesList = erl_syntax:application(
         erl_syntax:atom(lists),
