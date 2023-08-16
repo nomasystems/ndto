@@ -309,6 +309,21 @@ additional_properties(_Conf) ->
     ),
     ?assertEqual(
         true, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true})
+    ),
+
+    Schema4 = #{
+        <<"type">> => <<"object">>,
+        <<"patternProperties">> => #{<<"^[A-Z]+$">> => true},
+        <<"additionalProperties">> => false
+    },
+    DTO4 = ndto:generate(test_additional_properties4, Schema4),
+    ok = ndto:load(DTO4),
+
+    ?assertEqual(
+        true, test_additional_properties4:is_valid(#{<<"FOO">> => true, <<"BAR">> => 1})
+    ),
+    ?assertEqual(
+        false, test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
 unique_items(_Conf) ->
