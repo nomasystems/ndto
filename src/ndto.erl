@@ -71,7 +71,6 @@
 -type string_schema() :: map().
 % <code>#{
 %     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;string&quot;&gt;&gt;,
-%     &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
 %     &lt;&lt;&quot;minLength&quot;&gt;&gt; => non_neg_integer(),
 %     &lt;&lt;&quot;maxLength&quot;&gt;&gt; => non_neg_integer(),
 %     &lt;&lt;&quot;format&quot;&gt;&gt; => format(),
