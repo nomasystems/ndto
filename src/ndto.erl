@@ -32,7 +32,7 @@
     | enum_schema()
     | boolean_schema()
     | integer_schema()
-    | number_schema()
+    | float_schema()
     | string_schema()
     | array_schema()
     | object_schema()
@@ -59,14 +59,13 @@
 %   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
 %   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
 % }</code>
--type number_schema() :: map().
+-type float_schema() :: map().
 % <code>#{
-%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;number&quot;&gt;&gt;,
-%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
+%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;float&quot;&gt;&gt;,
+%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => float(),
 %   &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => integer(),
-%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
+%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => float(),
+%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean()
 % }</code>
 -type string_schema() :: map().
 % <code>#{
@@ -127,7 +126,7 @@
     enum_schema/0,
     boolean_schema/0,
     integer_schema/0,
-    number_schema/0,
+    float_schema/0,
     string_schema/0,
     array_schema/0,
     object_schema/0,

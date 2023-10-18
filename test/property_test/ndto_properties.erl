@@ -100,24 +100,24 @@ prop_string() ->
         end
     ).
 
-prop_number() ->
+prop_float() ->
     ?FORALL(
-        Number,
-        ndto_dom:number_value(),
+        Float,
+        ndto_dom:float_value(),
         begin
             Schema = #{
-                <<"type">> => <<"number">>,
-                <<"minimum">> => Number,
+                <<"type">> => <<"float">>,
+                <<"minimum">> => Float,
                 <<"exclusiveMinimum">> => false,
-                <<"maximum">> => Number + 1,
+                <<"maximum">> => Float + 1,
                 <<"exclusiveMaximum">> => true
             },
-            DTO = ndto:generate(test_number, Schema),
+            DTO = ndto:generate(test_float, Schema),
             ok = ndto:load(DTO),
 
             ?assertEqual(
                 true,
-                test_number:is_valid(Number)
+                test_float:is_valid(Float)
             ),
             true
         end

@@ -42,7 +42,7 @@ groups() ->
             ref,
             enum,
             string,
-            number,
+            float,
             integer,
             boolean,
             array,
@@ -119,9 +119,9 @@ string(Conf) ->
         Conf
     ).
 
-number(Conf) ->
+float(Conf) ->
     ct_property_test:quickcheck(
-        ndto_properties:prop_number(),
+        ndto_properties:prop_float(),
         Conf
     ).
 
@@ -177,14 +177,14 @@ oneOf(_Conf) ->
         <<"oneOf">> => [
             #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
             #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
-            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+            #{<<"type">> => <<"float">>, <<"minimum">> => 0}
         ]
     },
     DTO = ndto:generate(test_one_of, Schema),
     ok = ndto:load(DTO),
 
     ?assertEqual(false, test_one_of:is_valid(<<"0">>)),
-    ?assertEqual(false, test_one_of:is_valid(0)),
+    ?assertEqual(false, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 anyOf(_Conf) ->
@@ -192,7 +192,7 @@ anyOf(_Conf) ->
         <<"anyOf">> => [
             #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
             #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
-            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+            #{<<"type">> => <<"float">>, <<"minimum">> => 0}
         ]
     },
     DTO = ndto:generate(test_any_of, Schema),
@@ -206,8 +206,7 @@ allOf(_Conf) ->
     Schema = #{
         <<"allOf">> => [
             #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
-            #{<<"type">> => <<"number">>, <<"minimum">> => 0}
+            #{<<"type">> => <<"integer">>, <<"minimum">> => 1}
         ]
     },
     DTO = ndto:generate(test_all_of, Schema),

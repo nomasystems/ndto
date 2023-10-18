@@ -172,12 +172,23 @@ parse_schemas(CTX, #{<<"type">> := <<"number">>} = RawSchema) ->
     MultipleOf = maps:get(<<"multipleOf">>, RawSchema, undefined),
     Schema =
         #{
-            <<"type">> => <<"number">>,
-            <<"minimum">> => Minimum,
-            <<"exclusiveMinimum">> => ExclusiveMinimum,
-            <<"maximum">> => Maximum,
-            <<"exclusiveMaximum">> => ExclusiveMaximum,
-            <<"multipleOf">> => MultipleOf
+            <<"anyOf">> => [
+                #{
+                    <<"type">> => <<"integer">>,
+                    <<"minimum">> => Minimum,
+                    <<"exclusiveMinimum">> => ExclusiveMinimum,
+                    <<"maximum">> => Maximum,
+                    <<"exclusiveMaximum">> => ExclusiveMaximum,
+                    <<"multipleOf">> => MultipleOf
+                },
+                #{
+                    <<"type">> => <<"float">>,
+                    <<"minimum">> => Minimum,
+                    <<"exclusiveMinimum">> => ExclusiveMinimum,
+                    <<"maximum">> => Maximum,
+                    <<"exclusiveMaximum">> => ExclusiveMaximum
+                }
+            ]
         },
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"type">> := <<"string">>} = RawSchema) ->
