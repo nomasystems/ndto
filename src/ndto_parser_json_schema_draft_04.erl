@@ -132,7 +132,7 @@ parse_schemas(CTX, UniversalSchema) when is_map(UniversalSchema), map_size(Unive
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"$ref">> := Ref}) ->
     {RefName, RefSchema, RefCTX} = resolve_ref(Ref, CTX),
-    Schema = #{<<"$ref">> => RefName},
+    Schema = #{ref => RefName},
     case lists:member(RefName, CTX#ctx.resolved) of
         true ->
             {Schema, [], CTX};
@@ -143,10 +143,10 @@ parse_schemas(CTX, #{<<"$ref">> := Ref}) ->
             }}
     end;
 parse_schemas(CTX, #{<<"enum">> := Enum}) ->
-    Schema = #{<<"enum">> => Enum},
+    Schema = #{enum => Enum},
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"type">> := <<"boolean">>}) ->
-    Schema = #{<<"type">> => <<"boolean">>},
+    Schema = #{type => boolean},
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"type">> := <<"integer">>} = RawSchema) ->
     Minimum = maps:get(<<"minimum">>, RawSchema, undefined),
@@ -156,12 +156,12 @@ parse_schemas(CTX, #{<<"type">> := <<"integer">>} = RawSchema) ->
     MultipleOf = maps:get(<<"multipleOf">>, RawSchema, undefined),
     Schema =
         #{
-            <<"type">> => <<"integer">>,
-            <<"minimum">> => Minimum,
-            <<"exclusiveMinimum">> => ExclusiveMinimum,
-            <<"maximum">> => Maximum,
-            <<"exclusiveMaximum">> => ExclusiveMaximum,
-            <<"multipleOf">> => MultipleOf
+            type => integer,
+            minimum => Minimum,
+            exclusive_minimum => ExclusiveMinimum,
+            maximum => Maximum,
+            exclusive_maximum => ExclusiveMaximum,
+            multiple_of => MultipleOf
         },
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"type">> := <<"number">>} = RawSchema) ->
@@ -172,21 +172,21 @@ parse_schemas(CTX, #{<<"type">> := <<"number">>} = RawSchema) ->
     MultipleOf = maps:get(<<"multipleOf">>, RawSchema, undefined),
     Schema =
         #{
-            <<"anyOf">> => [
+            any_of => [
                 #{
-                    <<"type">> => <<"integer">>,
-                    <<"minimum">> => Minimum,
-                    <<"exclusiveMinimum">> => ExclusiveMinimum,
-                    <<"maximum">> => Maximum,
-                    <<"exclusiveMaximum">> => ExclusiveMaximum,
-                    <<"multipleOf">> => MultipleOf
+                    type => integer,
+                    minimum => Minimum,
+                    exclusive_minimum => ExclusiveMinimum,
+                    maximum => Maximum,
+                    exclusive_maximum => ExclusiveMaximum,
+                    multiple_of => MultipleOf
                 },
                 #{
-                    <<"type">> => <<"float">>,
-                    <<"minimum">> => Minimum,
-                    <<"exclusiveMinimum">> => ExclusiveMinimum,
-                    <<"maximum">> => Maximum,
-                    <<"exclusiveMaximum">> => ExclusiveMaximum
+                    type => float,
+                    minimum => Minimum,
+                    exclusive_minimum => ExclusiveMinimum,
+                    maximum => Maximum,
+                    exclusive_maximum => ExclusiveMaximum
                 }
             ]
         },
@@ -194,15 +194,23 @@ parse_schemas(CTX, #{<<"type">> := <<"number">>} = RawSchema) ->
 parse_schemas(CTX, #{<<"type">> := <<"string">>} = RawSchema) ->
     MinLength = maps:get(<<"minLength">>, RawSchema, undefined),
     MaxLength = maps:get(<<"maxLength">>, RawSchema, undefined),
-    Format = maps:get(<<"format">>, RawSchema, undefined),
+    Format =
+        case maps:get(<<"format">>, RawSchema, undefined) of
+            <<"iso8601">> ->
+                iso8601;
+            <<"byte">> ->
+                base64;
+            _Otherwise ->
+                undefined
+        end,
     Pattern = maps:get(<<"pattern">>, RawSchema, undefined),
     Schema =
         #{
-            <<"type">> => <<"string">>,
-            <<"minLength">> => MinLength,
-            <<"maxLength">> => MaxLength,
-            <<"format">> => Format,
-            <<"pattern">> => Pattern
+            type => string,
+            min_length => MinLength,
+            max_length => MaxLength,
+            format => Format,
+            pattern => Pattern
         },
     {Schema, [], CTX};
 parse_schemas(CTX, #{<<"type">> := <<"array">>} = RawSchema) ->
@@ -218,11 +226,11 @@ parse_schemas(CTX, #{<<"type">> := <<"array">>} = RawSchema) ->
     UniqueItems = maps:get(<<"uniqueItems">>, RawSchema, undefined),
     Schema =
         #{
-            <<"type">> => <<"array">>,
-            <<"items">> => Items,
-            <<"minItems">> => MinItems,
-            <<"maxItems">> => MaxItems,
-            <<"uniqueItems">> => UniqueItems
+            type => array,
+            items => Items,
+            min_items => MinItems,
+            max_items => MaxItems,
+            unique_items => UniqueItems
         },
     {Schema, ItemsExtraSchemas, ItemsCTX};
 parse_schemas(CTX, #{<<"type">> := <<"object">>} = RawSchema) ->
@@ -280,13 +288,13 @@ parse_schemas(CTX, #{<<"type">> := <<"object">>} = RawSchema) ->
         end,
     Schema =
         #{
-            <<"type">> => <<"object">>,
-            <<"properties">> => Properties,
-            <<"required">> => Required,
-            <<"minProperties">> => MinProperties,
-            <<"maxProperties">> => MaxProperties,
-            <<"additionalProperties">> => AdditionalProperties,
-            <<"patternProperties">> => PatternProperties
+            type => object,
+            properties => Properties,
+            required => Required,
+            minProperties => MinProperties,
+            maxProperties => MaxProperties,
+            additionalProperties => AdditionalProperties,
+            patternProperties => PatternProperties
         },
     {Schema,
         PropertiesExtraSchemas ++ AdditionalPropertiesExtraSchemas ++ PatternPropertiesExtraSchemas,
@@ -303,7 +311,7 @@ parse_schemas(CTX, #{<<"anyOf">> := RawAnyOf}) ->
             {[], [], CTX},
             RawAnyOf
         ),
-    Schema = #{<<"anyOf">> => AnyOf},
+    Schema = #{any_of => AnyOf},
     {Schema, ExtraSchemas, NewCTX};
 parse_schemas(CTX, #{<<"allOf">> := RawAllOf}) ->
     {AllOf, ExtraSchemas, NewCTX} =
@@ -317,11 +325,11 @@ parse_schemas(CTX, #{<<"allOf">> := RawAllOf}) ->
             {[], [], CTX},
             RawAllOf
         ),
-    Schema = #{<<"allOf">> => AllOf},
+    Schema = #{all_of => AllOf},
     {Schema, ExtraSchemas, NewCTX};
 parse_schemas(CTX, #{<<"not">> := RawNot}) ->
     {Not, ExtraSchemas, NewCTX} = parse_schemas(CTX, RawNot),
-    Schema = #{<<"not">> => Not},
+    Schema = #{'not' => Not},
     {Schema, ExtraSchemas, NewCTX};
 parse_schemas(CTX, #{<<"oneOf">> := RawOneOf}) ->
     {OneOf, ExtraSchemas, NewCTX} =
@@ -335,7 +343,7 @@ parse_schemas(CTX, #{<<"oneOf">> := RawOneOf}) ->
             {[], [], CTX},
             RawOneOf
         ),
-    Schema = #{<<"oneOf">> => OneOf},
+    Schema = #{one_of => OneOf},
     {Schema, ExtraSchemas, NewCTX}.
 
 -spec read_spec(SpecPath) -> Result when
