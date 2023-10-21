@@ -181,7 +181,7 @@ is_valid(Prefix, #{<<"type">> := <<"string">>} = Schema) ->
     ),
     {Fun, ExtraFuns};
 is_valid(Prefix, #{<<"type">> := Type} = Schema) when
-    is_binary(Type) andalso (Type =:= <<"number">> orelse Type =:= <<"integer">>)
+    is_binary(Type) andalso (Type =:= <<"float">> orelse Type =:= <<"integer">>)
 ->
     FunName = <<Prefix/binary, Type/binary>>,
     ExtraFuns = lists:foldl(
@@ -591,7 +591,7 @@ is_valid_array(_Prefix, <<"uniqueItems">>, false) ->
     Prefix :: binary(),
     Keyword :: binary(),
     Value :: term(),
-    Schema :: ndto:number_schema(),
+    Schema :: ndto:integer_schema() | ndto:float_schema(),
     Result :: undefined | erl_syntax:syntaxTree().
 is_valid_number(_Type, Prefix, <<"minimum">>, Minimum, Schema) ->
     FunName = <<Prefix/binary, "minimum">>,
@@ -1540,8 +1540,8 @@ type_guard(Type) ->
 
 type_guard(string, Var) ->
     guard(is_binary, Var);
-type_guard(number, Var) ->
-    guard(is_number, Var);
+type_guard(float, Var) ->
+    guard(is_float, Var);
 type_guard(integer, Var) ->
     guard(is_integer, Var);
 type_guard(boolean, Var) ->

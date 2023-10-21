@@ -1,4 +1,4 @@
-name: ndto ci
+name: CI
 
 on:
   push:

@@ -21,7 +21,7 @@
     any_value/0,
     undefined_value/0,
     string_value/0,
-    number_value/0,
+    float_value/0,
     integer_value/0,
     boolean_value/0,
     array_value/0,
@@ -43,7 +43,7 @@ any_value() ->
     triq_dom:oneof([
         undefined_value(),
         string_value(),
-        number_value(),
+        float_value(),
         integer_value(),
         boolean_value(),
         array_value(),
@@ -56,8 +56,8 @@ undefined_value() ->
 string_value() ->
     triq_dom:unicode_binary().
 
-number_value() ->
-    triq_dom:oneof([triq_dom:int(), triq_dom:float()]).
+float_value() ->
+    triq_dom:float().
 
 integer_value() ->
     triq_dom:int().
@@ -117,4 +117,4 @@ object_value(Type) ->
 %%% UTIL EXPORTS
 %%%-----------------------------------------------------------------------------
 types() ->
-    [<<"string">>, <<"number">>, <<"integer">>, <<"boolean">>, <<"array">>, <<"object">>].
+    [<<"string">>, <<"float">>, <<"integer">>, <<"boolean">>, <<"array">>, <<"object">>].
