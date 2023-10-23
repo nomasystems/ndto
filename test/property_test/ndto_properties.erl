@@ -42,7 +42,7 @@ prop_ref() ->
             ReferencedName = test_referenced_dto,
             ReferencedSchema = #{},
             Schema = #{
-                <<"$ref">> => erlang:atom_to_binary(ReferencedName)
+                ref => erlang:atom_to_binary(ReferencedName)
             },
 
             ReferencedDTO = ndto:generate(ReferencedName, ReferencedSchema),
@@ -62,7 +62,7 @@ prop_enum() ->
             Enum,
             triq_dom:list(ndto_dom:array_value()),
             begin
-                Schema = #{<<"enum">> => Enum},
+                Schema = #{enum => Enum},
                 DTO = ndto:generate(test_enum, Schema),
                 ok = ndto:load(DTO),
     
@@ -84,10 +84,10 @@ prop_string() ->
         ndto_dom:string_value(),
         begin
             Schema = #{
-                <<"type">> => <<"string">>,
-                <<"minLength">> => string:length(String),
-                <<"maxLength">> => string:length(String),
-                <<"pattern">> => <<".*">>
+                type => string,
+                min_length => string:length(String),
+                max_length => string:length(String),
+                pattern => <<".*">>
             },
             DTO = ndto:generate(test_string, Schema),
             ok = ndto:load(DTO),
@@ -106,11 +106,11 @@ prop_float() ->
         ndto_dom:float_value(),
         begin
             Schema = #{
-                <<"type">> => <<"float">>,
-                <<"minimum">> => Float,
-                <<"exclusiveMinimum">> => false,
-                <<"maximum">> => Float + 1,
-                <<"exclusiveMaximum">> => true
+                type => float,
+                minimum => Float,
+                exclusive_minimum => false,
+                maximum => Float + 1,
+                exclusive_maximum => true
             },
             DTO = ndto:generate(test_float, Schema),
             ok = ndto:load(DTO),
@@ -134,12 +134,12 @@ prop_integer() ->
         begin
             Integer = RawInteger * MultipleOf,
             Schema = #{
-                <<"type">> => <<"integer">>,
-                <<"minimum">> => Integer - 1,
-                <<"exclusiveMinimum">> => true,
-                <<"maximum">> => Integer,
-                <<"exclusiveMaximum">> => false,
-                <<"multipleOf">> => MultipleOf
+                type => integer,
+                minimum => Integer - 1,
+                exclusive_minimum => true,
+                maximum => Integer,
+                exclusive_maximum => false,
+                multiple_of => MultipleOf
             },
             DTO = ndto:generate(test_integer, Schema),
             ok = ndto:load(DTO),
@@ -158,7 +158,7 @@ prop_boolean() ->
         ndto_dom:boolean_value(),
         begin
             Schema = #{
-                <<"type">> => <<"boolean">>
+                type => boolean
             },
             DTO = ndto:generate(test_boolean, Schema),
             ok = ndto:load(DTO),
@@ -181,14 +181,14 @@ prop_array() ->
         ),
         begin
             Schema = #{
-                <<"type">> => <<"array">>,
-                <<"items">> => #{
-                    <<"type">> => Type,
-                    <<"nullable">> => false
+                type => array,
+                items => #{
+                    type => Type,
+                    nullable => false
                 },
-                <<"minItems">> => erlang:length(Array),
-                <<"maxItems">> => erlang:length(Array),
-                <<"uniqueItems">> => false
+                min_items => erlang:length(Array),
+                max_items => erlang:length(Array),
+                unique_items => false
             },
             DTO = ndto:generate(test_array, Schema),
             ok = ndto:load(DTO),
@@ -207,17 +207,17 @@ prop_object() ->
         ndto_dom:object_value(),
         begin
             Schema = #{
-                <<"type">> => <<"object">>,
-                <<"properties">> => maps:fold(
+                type => object,
+                properties => maps:fold(
                     fun(Key, _Value, Acc) ->
                         maps:put(Key, #{}, Acc)
                     end,
                     #{},
                     Object
                 ),
-                <<"required">> => maps:keys(Object),
-                <<"minProperties">> => erlang:length(maps:keys(Object)) - 1,
-                <<"maxProperties">> => erlang:length(maps:keys(Object)) + 1
+                required => maps:keys(Object),
+                min_properties => erlang:length(maps:keys(Object)) - 1,
+                max_properties => erlang:length(maps:keys(Object)) + 1
             },
             DTO = ndto:generate(test_object, Schema),
             ok = ndto:load(DTO),

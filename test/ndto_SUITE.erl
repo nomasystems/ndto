@@ -49,9 +49,9 @@ groups() ->
             object
         ]},
         {subschemas, [parallel], [
-            oneOf,
-            anyOf,
-            allOf,
+            one_of,
+            any_of,
+            all_of,
             'not'
         ]},
         {string_formats, [parallel], [
@@ -153,8 +153,8 @@ nullable(_Conf) ->
     lists:foreach(
         fun(Type) ->
             Schema1 = #{
-                <<"type">> => Type,
-                <<"nullable">> => true
+                type => Type,
+                nullable => true
             },
             DTO1 = ndto:generate(test_nullable1, Schema1),
             ok = ndto:load(DTO1),
@@ -162,7 +162,7 @@ nullable(_Conf) ->
             ?assertEqual(true, test_nullable1:is_valid(undefined)),
 
             Schema2 = #{
-                <<"type">> => Type
+                type => Type
             },
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
@@ -172,12 +172,12 @@ nullable(_Conf) ->
         ndto_dom:types()
     ).
 
-oneOf(_Conf) ->
+one_of(_Conf) ->
     Schema = #{
-        <<"oneOf">> => [
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
-            #{<<"type">> => <<"float">>, <<"minimum">> => 0}
+        one_of => [
+            #{type => integer, minimum => 0},
+            #{type => integer, minimum => 1},
+            #{type => float, minimum => 0}
         ]
     },
     DTO = ndto:generate(test_one_of, Schema),
@@ -187,12 +187,12 @@ oneOf(_Conf) ->
     ?assertEqual(false, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
-anyOf(_Conf) ->
+any_of(_Conf) ->
     Schema = #{
-        <<"anyOf">> => [
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 1},
-            #{<<"type">> => <<"float">>, <<"minimum">> => 0}
+        any_of => [
+            #{type => integer, minimum => 0},
+            #{type => integer, minimum => 1},
+            #{type => float, minimum => 0}
         ]
     },
     DTO = ndto:generate(test_any_of, Schema),
@@ -202,11 +202,11 @@ anyOf(_Conf) ->
     ?assertEqual(true, test_any_of:is_valid(0)),
     ?assertEqual(true, test_any_of:is_valid(0.0)).
 
-allOf(_Conf) ->
+all_of(_Conf) ->
     Schema = #{
-        <<"allOf">> => [
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 0},
-            #{<<"type">> => <<"integer">>, <<"minimum">> => 1}
+        all_of => [
+            #{type => integer, minimum => 0},
+            #{type => integer, minimum => 1}
         ]
     },
     DTO = ndto:generate(test_all_of, Schema),
@@ -219,7 +219,7 @@ allOf(_Conf) ->
 
 'not'(_Conf) ->
     Schema = #{
-        <<"not">> => #{<<"type">> => <<"integer">>, <<"minimum">> => 0}
+        'not' => #{type => integer, minimum => 0}
     },
     DTO = ndto:generate(test_not, Schema),
     ok = ndto:load(DTO),
@@ -230,8 +230,8 @@ allOf(_Conf) ->
 
 pattern(_Conf) ->
     Schema = #{
-        <<"type">> => <<"string">>,
-        <<"pattern">> => <<"[a-z]+@[a-z]+\.[a-z]+">>
+        type => string,
+        pattern => <<"[a-z]+@[a-z]+\.[a-z]+">>
     },
     DTO = ndto:generate(test_pattern, Schema),
     ok = ndto:load(DTO),
@@ -240,9 +240,9 @@ pattern(_Conf) ->
 
 pattern_properties(_Conf) ->
     Schema = #{
-        <<"type">> => <<"object">>,
-        <<"patternProperties">> => #{
-            <<"[a-z]+">> => #{<<"type">> => <<"string">>}
+        type => object,
+        pattern_properties => #{
+            <<"[a-z]+">> => #{type => string}
         }
     },
     DTO = ndto:generate(test_pattern_properties, Schema),
@@ -254,10 +254,10 @@ pattern_properties(_Conf) ->
 
 additional_properties(_Conf) ->
     Schema1 = #{
-        <<"type">> => <<"object">>,
-        <<"properties">> => #{<<"foo">> => #{}},
-        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
-        <<"additionalProperties">> => false
+        type => object,
+        properties => #{<<"foo">> => #{}},
+        pattern_properties => #{<<"[a-z]+">> => #{type => string}},
+        additional_properties => false
     },
     DTO1 = ndto:generate(test_additional_properties1, Schema1),
     ok = ndto:load(DTO1),
@@ -275,10 +275,10 @@ additional_properties(_Conf) ->
     ),
 
     Schema2 = #{
-        <<"type">> => <<"object">>,
-        <<"properties">> => #{<<"foo">> => #{}},
-        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
-        <<"additionalProperties">> => true
+        type => <<"object">>,
+        properties => #{<<"foo">> => #{}},
+        pattern_properties => #{<<"[a-z]+">> => #{type => string}},
+        additional_properties => true
     },
     DTO2 = ndto:generate(test_additional_properties2, Schema2),
     ok = ndto:load(DTO2),
@@ -292,10 +292,10 @@ additional_properties(_Conf) ->
     ),
 
     Schema3 = #{
-        <<"type">> => <<"object">>,
-        <<"properties">> => #{<<"foo">> => #{}},
-        <<"patternProperties">> => #{<<"[a-z]+">> => #{<<"type">> => <<"string">>}},
-        <<"additionalProperties">> => #{<<"type">> => <<"boolean">>}
+        type => object,
+        properties => #{<<"foo">> => #{}},
+        pattern_properties => #{<<"[a-z]+">> => #{type => string}},
+        additional_properties => #{type => boolean}
     },
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
     ok = ndto:load(DTO3),
@@ -311,9 +311,9 @@ additional_properties(_Conf) ->
     ),
 
     Schema4 = #{
-        <<"type">> => <<"object">>,
-        <<"patternProperties">> => #{<<"^[A-Z]+$">> => true},
-        <<"additionalProperties">> => false
+        type => object,
+        pattern_properties => #{<<"^[A-Z]+$">> => true},
+        additional_properties => false
     },
     DTO4 = ndto:generate(test_additional_properties4, Schema4),
     ok = ndto:load(DTO4),
@@ -327,8 +327,8 @@ additional_properties(_Conf) ->
 
 unique_items(_Conf) ->
     Schema = #{
-        <<"type">> => <<"array">>,
-        <<"uniqueItems">> => true
+        type => array,
+        unique_items => true
     },
     DTO = ndto:generate(test_unique_items, Schema),
     ok = ndto:load(DTO),
@@ -341,8 +341,8 @@ unique_items(_Conf) ->
 iso8601(_Conf) ->
     String = ncalendar:now(iso8601),
     Schema = #{
-        <<"type">> => <<"string">>,
-        <<"format">> => <<"iso8601-datetime">>
+        type => string,
+        format => iso8601
     },
     DTO = ndto:generate(test_iso8601, Schema),
     ok = ndto:load(DTO),
@@ -352,8 +352,8 @@ iso8601(_Conf) ->
 base64(_Conf) ->
     String = base64:encode(<<"this is a test">>),
     Schema = #{
-        <<"type">> => <<"string">>,
-        <<"format">> => <<"base64">>
+        type => string,
+        format => base64
     },
     DTO = ndto:generate(test_base64, Schema),
     ok = ndto:load(DTO),

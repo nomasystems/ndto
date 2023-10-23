@@ -62,25 +62,25 @@ oas_3_0(_Conf) ->
     SpecPath = filename:join(code:lib_dir(ndto, priv), "oas/3.0/specs/oas_3_0.json"),
     {ok, Schemas} = ndto_parser:parse(ndto_parser_json_schema_draft_04, oas_3_0, SpecPath),
     #{
-        <<"type">> := <<"object">>,
-        <<"properties">> := #{
+        type := object,
+        properties := #{
             <<"openapi">> := #{
-                <<"type">> := <<"string">>,
-                <<"pattern">> := Pattern
+                type := string,
+                pattern := Pattern
             }
         }
     } = proplists:get_value(oas_3_0, Schemas),
     ?assertEqual(<<"^3\\.0\\.\\d(-.+)?$">>, Pattern),
     #{
-        <<"type">> := <<"object">>,
-        <<"properties">> := #{
+        type := object,
+        properties := #{
             <<"not">> := #{
-                <<"oneOf">> := SchemaOneOf
+                one_of := SchemaOneOf
             }
         }
     } = proplists:get_value(oas_3_0_Schema, Schemas),
     Expected = lists:sort([
-        #{<<"$ref">> => <<"oas_3_0_Reference">>}, #{<<"$ref">> => <<"oas_3_0_Schema">>}
+        #{ref => <<"oas_3_0_Reference">>}, #{ref => <<"oas_3_0_Schema">>}
     ]),
     Actual = lists:sort(SchemaOneOf),
     ?assertEqual(Expected, Actual).

@@ -22,9 +22,9 @@ With `ndto`, you can define validation schemas that describe the structure and c
 2. Define an `ndto` schema.
 ```erl
 Schema = #{
-    <<"type">> => <<"string">>,
-    <<"minLength">> => 8,
-    <<"pattern">> => <<"^hello">>
+    type => string,
+    min_length => 8,
+    pattern => <<"^hello">>
 }.
 ```
 
