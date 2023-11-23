@@ -45,13 +45,16 @@
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
 -type ref_schema() :: #{
-    ref := binary()
+    ref := binary(),
+    nullable => boolean()
 }.
 -type enum_schema() :: #{
-    enum := [value()]
+    enum := [value()],
+    nullable => boolean()
 }.
 -type boolean_schema() :: #{
-    type := boolean
+    type := boolean,
+    nullable => boolean()
 }.
 -type integer_schema() :: #{
     type := integer,
@@ -59,28 +62,32 @@
     exclusive_minimum => boolean(),
     maximum => integer(),
     exclusive_maximum => boolean(),
-    multiple_of => integer()
+    multiple_of => integer(),
+    nullable => boolean()
 }.
 -type float_schema() :: #{
     type := float,
     minimum => float(),
     exclusive_minimum => boolean(),
     maximum => float(),
-    exclusive_maximum => boolean()
+    exclusive_maximum => boolean(),
+    nullable => boolean()
 }.
 -type string_schema() :: #{
     type := string,
     min_length => non_neg_integer(),
     max_length => non_neg_integer(),
     format => format(),
-    pattern => pattern()
+    pattern => pattern(),
+    nullable => boolean()
 }.
 -type array_schema() :: #{
     type := array,
     items => schema(),
     min_items => non_neg_integer(),
     max_items => non_neg_integer(),
-    unique_items => boolean()
+    unique_items => boolean(),
+    nullable => boolean()
 }.
 -type object_schema() :: #{
     type := object,
@@ -89,29 +96,36 @@
     min_properties => non_neg_integer(),
     max_properties => non_neg_integer(),
     pattern_properties => #{pattern() => schema()},
-    additional_properties => schema()
+    additional_properties => schema(),
+    nullable => boolean()
 }.
 -type union_schema() :: #{
-    any_of := [schema()]
+    any_of := [schema()],
+    nullable => boolean()
 }.
 -type intersection_schema() :: #{
-    all_of := [schema()]
+    all_of := [schema()],
+    nullable => boolean()
 }.
 -type complement_schema() :: #{
-    'not' := schema()
+    'not' := schema(),
+    nullable => boolean()
 }.
 -type symmetric_difference_schema() :: #{
-    one_of := [schema()]
+    one_of := [schema()],
+    nullable => boolean()
 }.
 
 -type value() ::
-    boolean()
+    null()
+    | boolean()
     | integer()
     | float()
     | binary()
     | array()
     | object().
 -type array() :: [value()].
+-type null() :: null.
 -type object() :: #{binary() => value()}.
 -type format() :: iso8601 | base64.
 % TODO: use openapi defined formats
