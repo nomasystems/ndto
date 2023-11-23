@@ -97,11 +97,10 @@ clean_schema(Schema) ->
     Result :: {ok, json_schema()} | {error, Reason},
     Reason :: term().
 deserialize_spec(Bin) ->
-    try
-        Data = njson:decode(Bin),
-        {ok, Data}
-    catch
-        _Error:Reason ->
+    case njson:decode(Bin) of
+        {ok, Spec} ->
+            {ok, Spec};
+        {error, Reason} ->
             {error, {invalid_json, Reason}}
     end.
 

@@ -31,6 +31,7 @@ all() ->
         unique_items,
         pattern_properties,
         additional_properties,
+        required,
         {group, string_formats},
         {group, examples}
     ].
@@ -159,7 +160,7 @@ nullable(_Conf) ->
             DTO1 = ndto:generate(test_nullable1, Schema1),
             ok = ndto:load(DTO1),
 
-            ?assertEqual(true, test_nullable1:is_valid(undefined)),
+            ?assertEqual(true, test_nullable1:is_valid(null)),
 
             Schema2 = #{
                 type => Type
@@ -167,7 +168,7 @@ nullable(_Conf) ->
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
 
-            ?assertEqual(false, test_nullable2:is_valid(undefined))
+            ?assertEqual(false, test_nullable2:is_valid(null))
         end,
         ndto_dom:types()
     ).
@@ -325,6 +326,25 @@ additional_properties(_Conf) ->
         false, test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
+required(_Conf) ->
+    Schema = #{
+        type => object,
+        properties => #{
+            <<"foo">> => #{
+                type => string
+            },
+            <<"bar">> => #{
+                type => integer
+            }
+        },
+        required => [<<"foo">>]
+    },
+    DTO = ndto:generate(test_required, Schema),
+    ok = ndto:load(DTO),
+
+    ?assertEqual(true, test_required:is_valid(#{<<"foo">> => <<"foobar">>})),
+    ok.
+
 unique_items(_Conf) ->
     Schema = #{
         type => array,
@@ -372,7 +392,7 @@ petstore(_Conf) ->
     {ok, PetstoreBin} = file:read_file(
         erlang:list_to_binary(code:lib_dir(ndto, priv) ++ "/oas/3.0/examples/petstore.json")
     ),
-    Petstore = njson:decode(PetstoreBin),
+    {ok, Petstore} = njson:decode(PetstoreBin),
 
     ?assertEqual(
         true,
