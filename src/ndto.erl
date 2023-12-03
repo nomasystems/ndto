@@ -46,14 +46,17 @@
 -type universal_schema() :: true | #{} | union_schema().
 -type ref_schema() :: #{
     ref := binary(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type enum_schema() :: #{
     enum := [value()],
+    optional => boolean(),
     nullable => boolean()
 }.
 -type boolean_schema() :: #{
     type := boolean,
+    optional => boolean(),
     nullable => boolean()
 }.
 -type integer_schema() :: #{
@@ -63,6 +66,7 @@
     maximum => integer(),
     exclusive_maximum => boolean(),
     multiple_of => integer(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type float_schema() :: #{
@@ -71,6 +75,7 @@
     exclusive_minimum => boolean(),
     maximum => float(),
     exclusive_maximum => boolean(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type string_schema() :: #{
@@ -79,6 +84,7 @@
     max_length => non_neg_integer(),
     format => format(),
     pattern => pattern(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type array_schema() :: #{
@@ -87,6 +93,7 @@
     min_items => non_neg_integer(),
     max_items => non_neg_integer(),
     unique_items => boolean(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type object_schema() :: #{
@@ -97,18 +104,22 @@
     max_properties => non_neg_integer(),
     pattern_properties => #{pattern() => schema()},
     additional_properties => schema(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type union_schema() :: #{
     any_of := [schema()],
+    optional => boolean(),
     nullable => boolean()
 }.
 -type intersection_schema() :: #{
     all_of := [schema()],
+    optional => boolean(),
     nullable => boolean()
 }.
 -type complement_schema() :: #{
     'not' := schema(),
+    optional => boolean(),
     nullable => boolean()
 }.
 -type symmetric_difference_schema() :: #{
