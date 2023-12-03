@@ -756,7 +756,9 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
     {PropertiesFuns, ExtraFuns} = maps:fold(
         fun(PropertyName, Property, {IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidPropertyFun, ExtraPropertyFuns} =
-                is_valid(<<FunName/binary, "_", PropertyName/binary, "_">>, Property#{optional => true}),
+                is_valid(<<FunName/binary, "_", PropertyName/binary, "_">>, Property#{
+                    optional => true
+                }),
             {
                 [{PropertyName, IsValidPropertyFun} | IsValidFunsAcc],
                 ExtraFunsAcc ++ ExtraPropertyFuns
