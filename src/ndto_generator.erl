@@ -95,7 +95,7 @@ generate(Name, Schema) ->
 is_valid(Prefix, #{ref := Ref} = Schema) ->
     FunName = <<Prefix/binary, "ref_", Ref/binary>>,
     DTO = erlang:binary_to_atom(Ref),
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -119,7 +119,7 @@ is_valid(Prefix, #{ref := Ref} = Schema) ->
     {Fun, []};
 is_valid(Prefix, #{enum := Enum} = Schema) ->
     FunName = <<Prefix/binary, "enum">>,
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClauses = lists:map(
         fun(EnumVal) ->
@@ -170,7 +170,7 @@ is_valid(Prefix, #{type := string} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -217,7 +217,7 @@ is_valid(Prefix, #{type := integer} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -262,7 +262,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -279,7 +279,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
     {Fun, ExtraFuns};
 is_valid(Prefix, #{type := boolean} = Schema) ->
     FunName = <<Prefix/binary, "boolean">>,
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -329,7 +329,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
         )
      || Fun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -381,7 +381,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
         )
      || Fun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -419,7 +419,7 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
         )
      || IsValidFun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -457,7 +457,7 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
         )
      || IsValidFun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -495,7 +495,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
         )
      || IsValidFun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
@@ -512,7 +512,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
 is_valid(Prefix, #{'not' := Subschema} = Schema) ->
     FunName = <<Prefix/binary, "not">>,
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, Subschema),
-    OptionalClause = optional_clause(),
+    OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -1601,12 +1601,14 @@ null_clause(#{nullable := true}) ->
 null_clause(_Schema) ->
     undefined.
 
-optional_clause() ->
+optional_clause(#{optional := true}) ->
     erl_syntax:clause(
         [erl_syntax:atom('undefined')],
         none,
         [erl_syntax:atom(true)]
-    ).
+    );
+optional_clause(_Schema) ->
+    undefined.
 
 type_guard(Type) ->
     type_guard(Type, 'Val').
