@@ -89,7 +89,8 @@
 }.
 -type array_schema() :: #{
     type := array,
-    items => schema(),
+    items => schema() | [schema()],
+    additional_items => schema(),
     min_items => non_neg_integer(),
     max_items => non_neg_integer(),
     unique_items => boolean(),
@@ -124,6 +125,7 @@
 }.
 -type symmetric_difference_schema() :: #{
     one_of := [schema()],
+    optional => boolean(),
     nullable => boolean()
 }.
 
@@ -139,7 +141,7 @@
 -type null() :: null.
 -type object() :: #{binary() => value()}.
 -type format() :: iso8601 | base64.
-% TODO: use openapi defined formats
+% TODO: support json_schema and openapi defined formats
 -type pattern() :: binary().
 
 %%% TYPE EXPORTS

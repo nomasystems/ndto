@@ -11,7 +11,7 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License
--module(ndto_parser_json_schema_draft_04_SUITE).
+-module(ndto_parser_json_schema_SUITE).
 
 %%% INCLUDE FILES
 -include_lib("stdlib/include/assert.hrl").
@@ -24,7 +24,7 @@
 %%%-----------------------------------------------------------------------------
 all() ->
     [
-        oas_3_0
+        draft_04
     ].
 
 %%%-----------------------------------------------------------------------------
@@ -58,9 +58,17 @@ end_per_testcase(Case, Conf) ->
 %%%-----------------------------------------------------------------------------
 %%% TEST CASES
 %%%-----------------------------------------------------------------------------
-oas_3_0(_Conf) ->
-    SpecPath = filename:join(code:lib_dir(ndto, priv), "oas/3.0/specs/oas_3_0.json"),
-    {ok, Schemas} = ndto_parser:parse(ndto_parser_json_schema_draft_04, oas_3_0, SpecPath),
+draft_04(_Conf) ->
+    SpecPath = erlang:list_to_binary(
+        filename:join(
+            code:lib_dir(ndto, priv),
+            "oas/3.0/specs/oas_3_0.json"
+        )
+    ),
+    {ok, Schemas} = ndto_parser:parse(
+        ndto_parser_json_schema,
+        SpecPath
+    ),
     #{
         type := object,
         properties := #{

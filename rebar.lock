@@ -4,5 +4,5 @@
   0},
  {<<"njson">>,
   {git,"git@github.com:nomasystems/njson.git",
-       {ref,"338ecbac922343874765abebfbcc8af131724732"}},
+       {ref,"b230b3e6fb5e35320aeaa203762f3f12277c9970"}},
   0}].
