@@ -381,20 +381,35 @@ base64(_Conf) ->
     ?assertEqual(true, test_base64:is_valid(String)).
 
 petstore(_Conf) ->
-    Schema = ndto_parser:parse(
-        ndto_parser_json_schema_draft_04,
-        test_oas_3_0,
-        erlang:list_to_binary(code:lib_dir(ndto, priv) ++ "/oas/3.0/specs/oas_3_0.json")
+    SpecPath = erlang:list_to_binary(
+        filename:join(
+            code:lib_dir(ndto, priv),
+            "oas/3.0/specs/oas_3_0.json"
+        )
     ),
-    DTO = ndto:generate(test_oas_3_0, Schema),
-    ok = ndto:load(DTO),
+    {ok, [{PetstoreDTO, _Schema} | _Rest] = Schemas} = ndto_parser:parse(
+        ndto_parser_json_schema,
+        SpecPath
+    ),
+    lists:foreach(
+        fun({SchemaName, Schema}) ->
+            DTO = ndto:generate(SchemaName, Schema),
+            ok = ndto:load(DTO)
+        end,
+        Schemas
+    ),
 
     {ok, PetstoreBin} = file:read_file(
-        erlang:list_to_binary(code:lib_dir(ndto, priv) ++ "/oas/3.0/examples/petstore.json")
+        erlang:list_to_binary(
+            filename:join(
+                code:lib_dir(ndto, priv),
+                "oas/3.0/examples/petstore.json"
+            )
+        )
     ),
     {ok, Petstore} = njson:decode(PetstoreBin),
 
     ?assertEqual(
         true,
-        test_oas_3_0:is_valid(Petstore)
+        PetstoreDTO:is_valid(Petstore)
     ).
