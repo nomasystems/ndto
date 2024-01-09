@@ -1,6 +1,6 @@
 {application, ndto, [
     {description, "Erlang library for DTOs validation"},
-    {vsn, "0.1.0"},
+    {vsn, "0.2.0"},
     {registered, []},
     {applications, [kernel, stdlib, compiler, syntax_tools]},
     {env, []}

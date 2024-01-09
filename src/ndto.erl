@@ -32,7 +32,7 @@
     | enum_schema()
     | boolean_schema()
     | integer_schema()
-    | number_schema()
+    | float_schema()
     | string_schema()
     | array_schema()
     | object_schema()
@@ -44,76 +44,104 @@
 
 -type empty_schema() :: false.
 -type universal_schema() :: true | #{} | union_schema().
--type ref_schema() :: map().
-% <code>#{&lt;&lt;&quot;ref&quot;&gt;&gt; := binary()}</code>
--type enum_schema() :: map().
-% <code>#{&lt;&lt;&quot;enum&quot;&gt;&gt; := [value()]}</code>
--type boolean_schema() :: map().
-% <code>#{&lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;boolean&quot;&gt;&gt;}</code>
--type integer_schema() :: map().
-% <code>#{
-%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;integer&quot;&gt;&gt;,
-%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
-%   &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => integer(),
-%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
-% }</code>
--type number_schema() :: map().
-% <code>#{
-%   &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;number&quot;&gt;&gt;,
-%   &lt;&lt;&quot;minimum&quot;&gt;&gt; => integer(),
-%   &lt;&lt;&quot;exclusiveMinimum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;maximum&quot;&gt;&gt; => integer(),
-%   &lt;&lt;&quot;exclusiveMaximum&quot;&gt;&gt; => boolean(),
-%   &lt;&lt;&quot;multipleOf&quot;&gt;&gt; => integer()
-% }</code>
--type string_schema() :: map().
-% <code>#{
-%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;string&quot;&gt;&gt;,
-%     &lt;&lt;&quot;minLength&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;maxLength&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;format&quot;&gt;&gt; => format(),
-%     &lt;&lt;&quot;pattern&quot;&gt;&gt; => pattern()
-% }</code>
--type array_schema() :: map().
-% <code>#{
-%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;array&quot;&gt;&gt;,
-%     &lt;&lt;&quot;items&quot;&gt;&gt; => schema(),
-%     &lt;&lt;&quot;minItems&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;maxItems&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;uniqueItems&quot;&gt;&gt; => boolean()
-% }</code>
--type object_schema() :: map().
-% <code>#{
-%     &lt;&lt;&quot;type&quot;&gt;&gt; := &lt;&lt;&quot;object&quot;&gt;&gt;,
-%     &lt;&lt;&quot;properties&quot;&gt;&gt; => #{binary() => schema()},
-%     &lt;&lt;&quot;required&quot;&gt;&gt; => [binary()],
-%     &lt;&lt;&quot;minProperties&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;maxProperties&quot;&gt;&gt; => non_neg_integer(),
-%     &lt;&lt;&quot;patternProperties&quot;&gt;&gt; => #{pattern() => schema()},
-%     &lt;&lt;&quot;additionalProperties&quot;&gt;&gt; => schema()
-% }</code>
--type union_schema() :: map().
-% <code>#{&lt;&lt;&quot;anyOf&quot;&gt;&gt; := [schema()]}</code>
--type intersection_schema() :: map().
-% <code>#{&lt;&lt;&quot;allOf&quot;&gt;&gt; := [schema()]}</code>
--type complement_schema() :: map().
-% <code>#{&lt;&lt;&quot;not&quot;&gt;&gt; := schema()}</code>
--type symmetric_difference_schema() :: map().
-% <code>#{&lt;&lt;&quot;oneOf&quot;&gt;&gt; := [schema()]}</code>
+-type ref_schema() :: #{
+    ref := binary(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type enum_schema() :: #{
+    enum := [value()],
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type boolean_schema() :: #{
+    type := boolean,
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type integer_schema() :: #{
+    type := integer,
+    minimum => integer(),
+    exclusive_minimum => boolean(),
+    maximum => integer(),
+    exclusive_maximum => boolean(),
+    multiple_of => integer(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type float_schema() :: #{
+    type := float,
+    minimum => float(),
+    exclusive_minimum => boolean(),
+    maximum => float(),
+    exclusive_maximum => boolean(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type string_schema() :: #{
+    type := string,
+    min_length => non_neg_integer(),
+    max_length => non_neg_integer(),
+    format => format(),
+    pattern => pattern(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type array_schema() :: #{
+    type := array,
+    items => schema() | [schema()],
+    additional_items => schema(),
+    min_items => non_neg_integer(),
+    max_items => non_neg_integer(),
+    unique_items => boolean(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type object_schema() :: #{
+    type := object,
+    properties => #{binary() => schema()},
+    required => [binary()],
+    min_properties => non_neg_integer(),
+    max_properties => non_neg_integer(),
+    pattern_properties => #{pattern() => schema()},
+    additional_properties => schema(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type union_schema() :: #{
+    any_of := [schema()],
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type intersection_schema() :: #{
+    all_of := [schema()],
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type complement_schema() :: #{
+    'not' := schema(),
+    optional => boolean(),
+    nullable => boolean()
+}.
+-type symmetric_difference_schema() :: #{
+    one_of := [schema()],
+    optional => boolean(),
+    nullable => boolean()
+}.
 
 -type value() ::
-    boolean()
+    null()
+    | boolean()
     | integer()
     | float()
     | binary()
     | array()
     | object().
 -type array() :: [value()].
+-type null() :: null.
 -type object() :: #{binary() => value()}.
--type format() :: binary().
-% <code>&lt;&lt;&quot;iso8601&quot;&gt;&gt; | &lt;&lt;&quot;base64&quot;&gt;&gt;</code>
+-type format() :: iso8601 | base64.
+% TODO: support json_schema and openapi defined formats
 -type pattern() :: binary().
 
 %%% TYPE EXPORTS
@@ -127,7 +155,7 @@
     enum_schema/0,
     boolean_schema/0,
     integer_schema/0,
-    number_schema/0,
+    float_schema/0,
     string_schema/0,
     array_schema/0,
     object_schema/0,

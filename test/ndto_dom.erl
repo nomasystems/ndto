@@ -21,7 +21,7 @@
     any_value/0,
     undefined_value/0,
     string_value/0,
-    number_value/0,
+    float_value/0,
     integer_value/0,
     boolean_value/0,
     array_value/0,
@@ -34,7 +34,7 @@
 -export([types/0]).
 
 %%% MACROS
--define(NON_RECURSIVE_TYPES, lists:subtract(types(), [<<"array">>, <<"object">>])).
+-define(NON_RECURSIVE_TYPES, lists:subtract(types(), [array, object])).
 
 %%%-----------------------------------------------------------------------------
 %%% VALUE EXPORTS
@@ -43,7 +43,7 @@ any_value() ->
     triq_dom:oneof([
         undefined_value(),
         string_value(),
-        number_value(),
+        float_value(),
         integer_value(),
         boolean_value(),
         array_value(),
@@ -56,8 +56,8 @@ undefined_value() ->
 string_value() ->
     triq_dom:unicode_binary().
 
-number_value() ->
-    triq_dom:oneof([triq_dom:int(), triq_dom:float()]).
+float_value() ->
+    triq_dom:float().
 
 integer_value() ->
     triq_dom:int().
@@ -68,22 +68,22 @@ boolean_value() ->
 array_value() ->
     ?LET(Type, triq_dom:elements(types()), array_value(Type)).
 
-array_value(<<"array">>) ->
+array_value(array) ->
     triq_dom:list(
         ?LET(Type, triq_dom:elements(?NON_RECURSIVE_TYPES), array_value(Type))
     );
-array_value(<<"object">>) ->
+array_value(object) ->
     triq_dom:list(
         ?LET(Type, triq_dom:elements(?NON_RECURSIVE_TYPES), object_value(Type))
     );
 array_value(Type) ->
-    Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
+    Fun = erlang:binary_to_atom(<<(erlang:atom_to_binary(Type))/binary, "_value">>),
     triq_dom:list(erlang:apply(?MODULE, Fun, [])).
 
 object_value() ->
     ?LET(Type, triq_dom:elements(types()), object_value(Type)).
 
-object_value(<<"array">>) ->
+object_value(array) ->
     ?LET(
         Proplist,
         ?LET(
@@ -93,7 +93,7 @@ object_value(<<"array">>) ->
         ),
         maps:from_list(Proplist)
     );
-object_value(<<"object">>) ->
+object_value(object) ->
     ?LET(
         Proplist,
         ?LET(
@@ -104,7 +104,7 @@ object_value(<<"object">>) ->
         maps:from_list(Proplist)
     );
 object_value(Type) ->
-    Fun = erlang:binary_to_atom(<<Type/binary, "_value">>),
+    Fun = erlang:binary_to_atom(<<(erlang:atom_to_binary(Type))/binary, "_value">>),
     ?LET(
         Proplist,
         triq_dom:list({
@@ -117,4 +117,4 @@ object_value(Type) ->
 %%% UTIL EXPORTS
 %%%-----------------------------------------------------------------------------
 types() ->
-    [<<"string">>, <<"number">>, <<"integer">>, <<"boolean">>, <<"array">>, <<"object">>].
+    [string, float, integer, boolean, array, object].
