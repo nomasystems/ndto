@@ -168,7 +168,10 @@ nullable(_Conf) ->
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
 
-            ?assertEqual(false, test_nullable2:is_valid(null))
+            ?assertEqual(
+                {false, list_to_atom("is_valid_" ++ atom_to_list(Type))},
+                test_nullable2:is_valid(null)
+            )
         end,
         ndto_dom:types()
     ).
@@ -184,8 +187,8 @@ one_of(_Conf) ->
     DTO = ndto:generate(test_one_of, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual(false, test_one_of:is_valid(<<"0">>)),
-    ?assertEqual(false, test_one_of:is_valid(1)),
+    ?assertEqual({false, none_matched}, test_one_of:is_valid(<<"0">>)),
+    ?assertEqual({false, many_matched}, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 any_of(_Conf) ->
@@ -213,9 +216,9 @@ all_of(_Conf) ->
     DTO = ndto:generate(test_all_of, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual(false, test_all_of:is_valid(<<"1">>)),
-    ?assertEqual(false, test_all_of:is_valid(0)),
-    ?assertEqual(false, test_all_of:is_valid(1.0)),
+    ?assertEqual({false, is_valid_all_of_1_integer}, test_all_of:is_valid(<<"1">>)),
+    ?assertEqual({false, is_valid_all_of_1_integer_minimum}, test_all_of:is_valid(0)),
+    ?assertEqual({false, is_valid_all_of_1_integer}, test_all_of:is_valid(1.0)),
     ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
@@ -249,7 +252,10 @@ pattern_properties(_Conf) ->
     DTO = ndto:generate(test_pattern_properties, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual(false, test_pattern_properties:is_valid(#{<<"foo">> => 0})),
+    ?assertEqual(
+        {false, is_valid_object_pattern_properties},
+        test_pattern_properties:is_valid(#{<<"foo">> => 0})
+    ),
     ?assertEqual(true, test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>})),
     ?assertEqual(true, test_pattern_properties:is_valid(#{<<"0">> => <<"foo">>})).
 
@@ -269,7 +275,7 @@ additional_properties(_Conf) ->
         test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
     ),
     ?assertEqual(
-        false,
+        {false, is_valid_object_pattern_properties},
         test_additional_properties1:is_valid(#{
             <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
         })
@@ -302,10 +308,12 @@ additional_properties(_Conf) ->
     ok = ndto:load(DTO3),
 
     ?assertEqual(
-        false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
+        {false, is_valid_object_pattern_properties},
+        test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
     ),
     ?assertEqual(
-        false, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
+        {false, is_valid_object_additional_properties},
+        test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
     ),
     ?assertEqual(
         true, test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => true})
@@ -323,7 +331,8 @@ additional_properties(_Conf) ->
         true, test_additional_properties4:is_valid(#{<<"FOO">> => true, <<"BAR">> => 1})
     ),
     ?assertEqual(
-        false, test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
+        {false, is_valid_object_additional_properties},
+        test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
 required(_Conf) ->
