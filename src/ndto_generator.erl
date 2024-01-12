@@ -44,7 +44,7 @@ generate(Name, Schema) ->
     ]),
     ExportHeader2 = erl_syntax:comment([?CLINE, ?EXPORTS_HEADER, ?CLINE]),
 
-    {IsValidFun, ExtraFuns} = is_valid(<<"is_valid_">>, Schema),
+    {IsValidFun, ExtraFuns} = is_valid(<<"$">>, Schema),
     Fun =
         erl_syntax:function(
             erl_syntax:atom(is_valid),
@@ -153,7 +153,7 @@ is_valid(Prefix, #{enum := Enum} = Schema) ->
     ),
     {Fun, []};
 is_valid(Prefix, #{type := string} = Schema) ->
-    FunName = <<Prefix/binary, "string">>,
+    FunName = <<Prefix/binary>>,
     ExtraFuns =
         lists:foldl(
             fun(Keyword, Acc) ->
@@ -205,7 +205,7 @@ is_valid(Prefix, #{type := string} = Schema) ->
     ),
     {Fun, ExtraFuns};
 is_valid(Prefix, #{type := integer} = Schema) ->
-    FunName = <<Prefix/binary, "integer">>,
+    FunName = <<Prefix/binary>>,
     ExtraFuns = lists:foldl(
         fun(Keyword, Acc) ->
             case maps:get(Keyword, Schema, undefined) of
@@ -307,7 +307,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
     ),
     {Fun, ExtraFuns};
 is_valid(Prefix, #{type := boolean} = Schema) ->
-    FunName = <<Prefix/binary, "boolean">>,
+    FunName = <<Prefix/binary>>,
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
@@ -324,7 +324,7 @@ is_valid(Prefix, #{type := boolean} = Schema) ->
     ),
     {Fun, []};
 is_valid(Prefix, #{type := array} = Schema) ->
-    FunName = <<Prefix/binary, "array">>,
+    FunName = <<Prefix/binary>>,
     {IsValidFuns, ExtraFuns} =
         lists:foldl(
             fun(Keyword, {IsValidFunsAcc, ExtraFunsAcc} = Acc) ->
@@ -332,7 +332,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
                     undefined ->
                         Acc;
                     _Value ->
-                        case is_valid_array(<<FunName/binary, "_">>, Keyword, Schema) of
+                        case is_valid_array(<<FunName/binary, "[*]">>, Keyword, Schema) of
                             {undefined, _EmptyList} ->
                                 Acc;
                             {NewIsValidFun, NewExtraFuns} ->
@@ -379,7 +379,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{type := object} = Schema) ->
-    FunName = <<Prefix/binary, "object">>,
+    FunName = <<Prefix/binary, ".">>,
     {IsValidFuns, ExtraFuns} =
         lists:foldl(
             fun(Keyword, {IsValidFunsAcc, ExtraFunsAcc} = Acc) ->
@@ -387,7 +387,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
                     undefined ->
                         Acc;
                     _Value ->
-                        case is_valid_object(<<FunName/binary, "_">>, Keyword, Schema) of
+                        case is_valid_object(<<FunName/binary>>, Keyword, Schema) of
                             {undefined, _EmptyList} ->
                                 Acc;
                             {NewIsValidFun, NewExtraFuns} ->
@@ -440,7 +440,7 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", (erlang:integer_to_binary(Idx))/binary, "_">>, Subschema
+                <<FunName/binary, "_", (erlang:integer_to_binary(Idx))/binary>>, Subschema
             ),
             {
                 Idx + 1,
@@ -632,7 +632,7 @@ generate(Name, Schema) ->
     ]),
     ExportHeader2 = erl_syntax:comment([?CLINE, ?EXPORTS_HEADER, ?CLINE]),
 
-    {IsValidFun, ExtraFuns} = is_valid(<<"is_valid_">>, Schema),
+    {IsValidFun, ExtraFuns} = is_valid(<<"$">>, Schema),
     Fun =
         erl_syntax:function(
             erl_syntax:atom(is_valid),
@@ -724,7 +724,7 @@ is_valid(Prefix, #{enum := Enum} = Schema) ->
         end,
         Enum
     ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, "enum"),
     Clauses = clauses(lists:flatten([OptionalClause, NullClause, TrueClauses, FalseClause])),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -732,9 +732,24 @@ is_valid(Prefix, #{enum := Enum} = Schema) ->
     ),
     {Fun, []};
 is_valid(Prefix, #{type := string} = Schema) ->
-    FunName = <<Prefix/binary, "string">>,
+    FunName = <<Prefix/binary>>,
+    OptionalClause = optional_clause(Schema),
+    NullClause = null_clause(Schema),
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            type_guard(string),
+            [erl_syntax:atom('true')]
+        ),
+    FalseClause = false_clause(<<FunName/binary>>, "string"),
+    Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
+    TypeFun = 
+        erl_syntax:function(
+            erl_syntax:atom(erlang:binary_to_atom(<<FunName/binary, "_string">>)),
+            Clauses
+        ),
     ExtraFuns =
-        lists:foldl(
+        [TypeFun | lists:foldl(
             fun(Keyword, Acc) ->
                 case maps:get(Keyword, Schema, undefined) of
                     undefined ->
@@ -755,7 +770,7 @@ is_valid(Prefix, #{type := string} = Schema) ->
                 format,
                 pattern
             ]
-        ),
+        )],
     BodyFunCalls = [
         erl_syntax:application(
             erl_syntax:function_name(Fun),
@@ -763,24 +778,33 @@ is_valid(Prefix, #{type := string} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+        )]
+    ),
+    {Fun, ExtraFuns};
+is_valid(Prefix, #{type := integer} = Schema) ->
+    FunName = <<Prefix/binary>>,
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
-            type_guard(string),
-            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+            type_guard(integer),
+            [erl_syntax:atom('true')]
         ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, "integer"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
-    Fun = erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
-    ),
-    {Fun, ExtraFuns};
-is_valid(Prefix, #{type := integer} = Schema) ->
-    FunName = <<Prefix/binary, "integer">>,
-    ExtraFuns = lists:foldl(
+    TypeFun = 
+        erl_syntax:function(
+            erl_syntax:atom(erlang:binary_to_atom(<<FunName/binary, "_integer">>)),
+            Clauses
+        ),
+    ExtraFuns = [TypeFun | lists:foldl(
         fun(Keyword, Acc) ->
             case maps:get(Keyword, Schema, undefined) of
                 undefined ->
@@ -802,7 +826,7 @@ is_valid(Prefix, #{type := integer} = Schema) ->
             maximum,
             multipleOf
         ]
-    ),
+    )],
     BodyFunCalls = [
         erl_syntax:application(
             erl_syntax:function_name(Fun),
@@ -810,24 +834,34 @@ is_valid(Prefix, #{type := integer} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
+    
+    Fun = erl_syntax:function(
+        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+        [erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+        )]
+    ),
+    {Fun, ExtraFuns};
+is_valid(Prefix, #{type := float} = Schema) ->
+    FunName = <<Prefix/binary>>,
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
-            type_guard(integer),
-            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+            type_guard(float),
+            [erl_syntax:atom('true')]
         ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, "float"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
-    Fun = erl_syntax:function(
-        erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
-    ),
-    {Fun, ExtraFuns};
-is_valid(Prefix, #{type := float} = Schema) ->
-    FunName = <<Prefix/binary, "float">>,
-    ExtraFuns = lists:foldl(
+    TypeFun = 
+        erl_syntax:function(
+            erl_syntax:atom(erlang:binary_to_atom(<<FunName/binary, "_float">>)),
+            Clauses
+        ),
+    ExtraFuns = [TypeFun | lists:foldl(
         fun(Keyword, Acc) ->
             case maps:get(Keyword, Schema, undefined) of
                 undefined ->
@@ -847,7 +881,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
             maximum,
             multipleOf
         ]
-    ),
+    )],
     BodyFunCalls = [
         erl_syntax:application(
             erl_syntax:function_name(Fun),
@@ -855,23 +889,17 @@ is_valid(Prefix, #{type := float} = Schema) ->
         )
      || Fun <- ExtraFuns
     ],
-    OptionalClause = optional_clause(Schema),
-    NullClause = null_clause(Schema),
-    TrueClause =
-        erl_syntax:clause(
-            [erl_syntax:variable('Val')],
-            type_guard(float),
-            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
-        ),
-    FalseClause = false_clause(FunName),
-    Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
+        [erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+        )]
     ),
     {Fun, ExtraFuns};
 is_valid(Prefix, #{type := boolean} = Schema) ->
-    FunName = <<Prefix/binary, "boolean">>,
+    FunName = <<Prefix/binary>>,
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
     TrueClause =
@@ -880,7 +908,7 @@ is_valid(Prefix, #{type := boolean} = Schema) ->
             type_guard(boolean),
             [erl_syntax:atom(true)]
         ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, "boolean"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -888,8 +916,23 @@ is_valid(Prefix, #{type := boolean} = Schema) ->
     ),
     {Fun, []};
 is_valid(Prefix, #{type := array} = Schema) ->
-    FunName = <<Prefix/binary, "array">>,
-    {IsValidFuns, ExtraFuns} =
+    FunName = <<Prefix/binary>>,
+    OptionalClause = optional_clause(Schema),
+    NullClause = null_clause(Schema),
+    TrueClause =
+        erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            type_guard(array),
+            [erl_syntax:atom(true)]
+        ),
+    FalseClause = false_clause(FunName, "array"),
+    Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
+    TypeFun = 
+        erl_syntax:function(
+            erl_syntax:atom(erlang:binary_to_atom(<<FunName/binary, "_array">>)),
+            Clauses
+        ),
+    {IsValidFuns0, ExtraFuns} =
         lists:foldl(
             fun(Keyword, {IsValidFunsAcc, ExtraFunsAcc} = Acc) ->
                 case maps:get(Keyword, Schema, undefined) of
@@ -915,6 +958,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
                 unique_items
             ]
         ),
+    IsValidFuns = [TypeFun | IsValidFuns0],
     BodyFunCalls = [
         erl_syntax:application(
             erl_syntax:function_name(Fun),
@@ -922,23 +966,17 @@ is_valid(Prefix, #{type := array} = Schema) ->
         )
      || Fun <- IsValidFuns
     ],
-    OptionalClause = optional_clause(Schema),
-    NullClause = null_clause(Schema),
-    TrueClause =
-        erl_syntax:clause(
-            [erl_syntax:variable('Val')],
-            type_guard(array),
-            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
-        ),
-    FalseClause = false_clause(FunName),
-    Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        Clauses
+        [erl_syntax:clause(
+            [erl_syntax:variable('Val')],
+            none,
+            chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
+        )]
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{type := object} = Schema) ->
-    FunName = <<Prefix/binary, "object">>,
+    FunName = <<Prefix/binary, ".">>,
     {IsValidFuns, ExtraFuns} =
         lists:foldl(
             fun(Keyword, {IsValidFunsAcc, ExtraFunsAcc} = Acc) ->
@@ -946,7 +984,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
                     undefined ->
                         Acc;
                     _Value ->
-                        case is_valid_object(<<FunName/binary, "_">>, Keyword, Schema) of
+                        case is_valid_object(<<FunName/binary>>, Keyword, Schema) of
                             {undefined, _EmptyList} ->
                                 Acc;
                             {NewIsValidFun, NewExtraFuns} ->
@@ -982,7 +1020,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
             type_guard(object),
             chain_conditions({mfa_call, BodyFunCalls}, 'andalso')
         ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, "object"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -1330,7 +1368,7 @@ is_valid_array(Prefix, min_items, #{min_items := MinItems}) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, io_lib:format("array with at least ~p items",[MinItems])),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
@@ -1347,7 +1385,7 @@ is_valid_array(Prefix, max_items, #{max_items := MaxItems}) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName),
+    FalseClause = false_clause(FunName, io_lib:format("array with at most ~p items",[MaxItems])),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
@@ -1400,8 +1438,9 @@ is_valid_number(_Type, Prefix, minimum, Minimum, Schema) ->
             _Float ->
                 erl_syntax:float(Minimum)
         end,
+    ExclusiveMinimum = maps:get(exclusive_minimum, Schema, false),
     Operator =
-        case maps:get(exclusive_minimum, Schema, false) of
+        case ExclusiveMinimum of
             true ->
                 erl_syntax:operator('>');
             _false ->
@@ -1416,7 +1455,13 @@ is_valid_number(_Type, Prefix, minimum, Minimum, Schema) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName),
+    ComparisonTerm = case ExclusiveMinimum of
+        true ->
+            "than";
+        false ->
+            "or equal to"
+    end,
+    FalseClause = false_clause(FunName, lists:flatten(io_lib:format("number greater ~s ~p", [ComparisonTerm, Minimum]))),
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
@@ -1430,8 +1475,9 @@ is_valid_number(_Type, Prefix, maximum, Maximum, Schema) ->
             _Float ->
                 erl_syntax:float(Maximum)
         end,
+    ExclusiveMaximum = maps:get(exclusive_maximum, Schema, false),
     Operator =
-        case maps:get(exclusive_maximum, Schema, false) of
+        case ExclusiveMaximum of
             true ->
                 erl_syntax:operator('<');
             _false ->
@@ -1446,7 +1492,13 @@ is_valid_number(_Type, Prefix, maximum, Maximum, Schema) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName),
+    ComparisonTerm = case ExclusiveMaximum of
+        true ->
+            "than";
+        false ->
+            "or equal to"
+    end,
+    FalseClause = false_clause(FunName, lists:flatten(io_lib:format("number lower ~s ~p", [ComparisonTerm, Maximum]))),
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
@@ -1484,11 +1536,11 @@ is_valid_number(_Number, _Prefix, multiple_of, _Value, _Schema) ->
     Fun :: erl_syntax:syntaxTree() | undefined,
     ExtraFuns :: [erl_syntax:syntaxTree()].
 is_valid_object(Prefix, properties, #{properties := Properties}) ->
-    FunName = <<Prefix/binary, "properties">>,
+    FunName = <<Prefix/binary, "*">>,
     {PropertiesFuns, ExtraFuns} = maps:fold(
         fun(PropertyName, Property, {IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidPropertyFun, ExtraPropertyFuns} =
-                is_valid(<<FunName/binary, "_", PropertyName/binary, "_">>, Property#{
+                is_valid(<<Prefix/binary, PropertyName/binary>>, Property#{
                     optional => true
                 }),
             {
@@ -1563,7 +1615,7 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                     erl_syntax:clause(
                         [erl_syntax:atom('false')],
                         none,
-                        [false_return(FunName)]
+                        [false_return(FunName, "valid value for a required term")]
                     )
                 ]
             )
@@ -1743,7 +1795,7 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
                         erl_syntax:clause(
                             [erl_syntax:atom('false')],
                             none,
-                            [false_return(FunName)]
+                            [false_return(FunName, "value supported by the schema")]
                         )
                     ]
                 ),
@@ -2338,6 +2390,8 @@ is_valid_string(_Prefix, format, _Format) ->
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
 -if(?OTP_RELEASE < 26).
+chain_conditions({_, []}, _EvalueMode) ->
+    [erl_syntax:atom('true')];
 chain_conditions({FunPiecesType, FunPieces}, EvalueMode) ->
     [
         erl_syntax:application(
@@ -2577,17 +2631,26 @@ object_properties_fun_pieces(PropertiesFuns) ->
 clauses(Clauses) ->
     lists:filter(fun(Clause) -> Clause =/= undefined end, Clauses).
 
-false_clause(FunName) ->
+false_clause(FunName, ExpectedDescription) ->
     erl_syntax:clause(
-        [erl_syntax:variable('_Val')],
+        [erl_syntax:variable('Val')],
         none,
-        [false_return(FunName)]
+        [false_return(FunName, ExpectedDescription)]
     ).
 
-false_return(FunName) ->
+false_return(FunName, ExpectedDescription) ->
+    ErrorMessage = erl_syntax:application(
+        erl_syntax:atom('io_lib'),
+        erl_syntax:atom('format'),
+        [
+            erl_syntax:string("\~p is not a " ++ ExpectedDescription), 
+            erl_syntax:list([
+                erl_syntax:variable('Val')
+            ])]),
     erl_syntax:tuple([
         erl_syntax:atom('false'),
-        erl_syntax:atom(binary_to_list(FunName))
+        erl_syntax:atom(binary_to_list(FunName)),
+        ErrorMessage
     ]).
 
 guard(Pred, Var) ->
