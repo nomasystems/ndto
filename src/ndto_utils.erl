@@ -2,7 +2,8 @@
 
 %%% EXTERNAL EXPORTS
 -export([
-    evalue_conditions/2
+    evalue_conditions/2,
+    mfoldl/3
 ]).
 
 %%%-----------------------------------------------------------------------------
@@ -25,6 +26,16 @@ evalue_conditions(fun_call, [Fun | Rest], EvalueMode) ->
     next_evalue_condition(fun_call, Fun(), Rest, EvalueMode);
 evalue_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
     next_evalue_condition(mfa_call, Function(Args), Rest, EvalueMode).
+
+mfoldl(_Fun, Acc, []) ->
+    {true, Acc};
+mfoldl(Fun, Acc, [H | T]) ->
+    case Fun(H, Acc) of
+        {true, NewAcc} ->
+            mfoldl(Fun, NewAcc, T);
+        {{false, {_Function, Reason}}, NewAcc} ->
+            {false, NewAcc, Reason}
+    end.
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS

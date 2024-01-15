@@ -167,9 +167,13 @@ nullable(_Conf) ->
             },
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
+            FunName = fun
+                (object) -> '$.';
+                (_) -> '$'
+            end,
 
             ?assertEqual(
-                {false, list_to_atom("is_valid_" ++ atom_to_list(Type))},
+                {false, {FunName(Type), <<"null is not a ", (atom_to_binary(Type))/binary>>}},
                 test_nullable2:is_valid(null)
             )
         end,
@@ -216,9 +220,14 @@ all_of(_Conf) ->
     DTO = ndto:generate(test_all_of, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual({false, is_valid_all_of_1_integer}, test_all_of:is_valid(<<"1">>)),
-    ?assertEqual({false, is_valid_all_of_1_integer_minimum}, test_all_of:is_valid(0)),
-    ?assertEqual({false, is_valid_all_of_1_integer}, test_all_of:is_valid(1.0)),
+    ?assertEqual(
+        {false, {'$all_of[1]', <<"<<\"1\">> is not a integer">>}}, test_all_of:is_valid(<<"1">>)
+    ),
+    ?assertEqual(
+        {false, {'$all_of[1]', <<"0 is not a number greater or equal to 1">>}},
+        test_all_of:is_valid(0)
+    ),
+    ?assertEqual({false, {'$all_of[1]', <<"1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
     ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
@@ -253,7 +262,7 @@ pattern_properties(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false, is_valid_object_pattern_properties},
+        {false, {'$.', <<"#{<<\"foo\">> => 0} is not a value supported by the schema">>}},
         test_pattern_properties:is_valid(#{<<"foo">> => 0})
     ),
     ?assertEqual(true, test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>})),
@@ -275,7 +284,9 @@ additional_properties(_Conf) ->
         test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
     ),
     ?assertEqual(
-        {false, is_valid_object_pattern_properties},
+        {false,
+            {'$.',
+                <<"#{<<\"baz\">> => <<\"qux\">>,<<\"foo\">> => <<\"bar\">>,<<\"foobar\">> => 0} is not a value supported by the schema">>}},
         test_additional_properties1:is_valid(#{
             <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
         })
@@ -308,11 +319,13 @@ additional_properties(_Conf) ->
     ok = ndto:load(DTO3),
 
     ?assertEqual(
-        {false, is_valid_object_pattern_properties},
+        {false,
+            {'$.',
+                <<"#{<<\"baz\">> => true,<<\"foo\">> => <<\"bar\">>} is not a value supported by the schema">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
     ),
     ?assertEqual(
-        {false, is_valid_object_additional_properties},
+        {false, {'$.', <<"$. has unsupported keys">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
     ),
     ?assertEqual(
@@ -331,7 +344,7 @@ additional_properties(_Conf) ->
         true, test_additional_properties4:is_valid(#{<<"FOO">> => true, <<"BAR">> => 1})
     ),
     ?assertEqual(
-        {false, is_valid_object_additional_properties},
+        {false, {'$.', <<"$. has unsupported keys">>}},
         test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
