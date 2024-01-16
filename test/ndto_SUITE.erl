@@ -191,8 +191,8 @@ one_of(_Conf) ->
     DTO = ndto:generate(test_one_of, Schema),
     ok = ndto:load(DTO),
 
-    ?assertEqual({false, none_matched}, test_one_of:is_valid(<<"0">>)),
-    ?assertEqual({false, many_matched}, test_one_of:is_valid(1)),
+    ?assertEqual({false, {'.', none_matched}}, test_one_of:is_valid(<<"0">>)),
+    ?assertEqual({false, {'.', many_matched}}, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 any_of(_Conf) ->
@@ -221,13 +221,13 @@ all_of(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false, {'$all_of[1]', <<"<<\"1\">> is not a integer">>}}, test_all_of:is_valid(<<"1">>)
+        {false, {'$_all_of[1]', <<"<<\"1\">> is not a integer">>}}, test_all_of:is_valid(<<"1">>)
     ),
     ?assertEqual(
-        {false, {'$all_of[1]', <<"0 is not a number greater or equal to 1">>}},
+        {false, {'$_all_of[1]', <<"0 is not a number greater or equal to 1">>}},
         test_all_of:is_valid(0)
     ),
-    ?assertEqual({false, {'$all_of[1]', <<"1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
+    ?assertEqual({false, {'$_all_of[1]', <<"1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
     ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
@@ -416,7 +416,7 @@ petstore(_Conf) ->
     lists:foreach(
         fun({SchemaName, Schema}) ->
             DTO = ndto:generate(SchemaName, Schema),
-            ok = ndto:load(DTO)
+            ok = ndto:load(DTO, [report])
         end,
         Schemas
     ),
@@ -430,6 +430,12 @@ petstore(_Conf) ->
         )
     ),
     {ok, Petstore} = njson:decode(PetstoreBin),
+
+    dbg:tracer(),dbg:p(all,c),dbg:tpl('oas_3_0',cx),
+    dbg:tpl('oas_3_0_Responses', cx),
+    dbg:tpl('oas_3_0_Response', cx),
+    dbg:tpl('oas_3_0_Header', cx),
+    dbg:tpl('oas_3_0_Reference', cx),
 
     ?assertEqual(
         true,

@@ -3,7 +3,8 @@
 %%% EXTERNAL EXPORTS
 -export([
     evalue_conditions/2,
-    mfoldl/3
+    mfoldl/3,
+    find/2
 ]).
 
 %%%-----------------------------------------------------------------------------
@@ -27,6 +28,12 @@ evalue_conditions(fun_call, [Fun | Rest], EvalueMode) ->
 evalue_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
     next_evalue_condition(mfa_call, Function(Args), Rest, EvalueMode).
 
+-spec mfoldl(Fun, Acc, List) -> Resp when
+    Fun :: function(),
+    Acc :: term(),
+    List :: list(),
+    Resp :: {true, term()} | {false, term(), Reason},
+    Reason :: binary().
 mfoldl(_Fun, Acc, []) ->
     {true, Acc};
 mfoldl(Fun, Acc, [H | T]) ->
@@ -35,6 +42,18 @@ mfoldl(Fun, Acc, [H | T]) ->
             mfoldl(Fun, NewAcc, T);
         {{false, {_Function, Reason}}, NewAcc} ->
             {false, NewAcc, Reason}
+    end.
+
+-spec find(Fun, List) -> Resp when
+    Fun :: function(),
+    List :: list(),
+    Resp :: {true, term()} | {false, none}.
+find(_Fun, []) -> 
+    {false, none};
+find(Fun, [H|T]) ->
+    case Fun(H) of
+        false -> find(Fun, T);
+        true -> {true, H}
     end.
 
 %%%-----------------------------------------------------------------------------

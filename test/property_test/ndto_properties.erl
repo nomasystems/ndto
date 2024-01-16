@@ -48,7 +48,7 @@ prop_ref() ->
             ReferencedDTO = ndto:generate(ReferencedName, ReferencedSchema),
             ok = ndto:load(ReferencedDTO),
             DTO = ndto:generate(test_ref, Schema),
-            ok = ndto:load(DTO),
+            ok = ndto:load(DTO, [report]),
 
             ?assertEqual(true, test_ref:is_valid(Any)),
             true
@@ -220,7 +220,8 @@ prop_object() ->
                 max_properties => erlang:length(maps:keys(Object)) + 1
             },
             DTO = ndto:generate(test_object, Schema),
-            ok = ndto:load(DTO),
+            io:format("Object ~n~p",[Object]),
+            ok = ndto:load(DTO, [report]),
 
             ?assertEqual(
                 true,

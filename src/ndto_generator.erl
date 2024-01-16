@@ -107,7 +107,7 @@ is_valid(Prefix, false) ->
     ),
     {Fun, []};
 is_valid(Prefix, #{ref := Ref} = Schema) ->
-    FunName = <<Prefix/binary, "ref_", Ref/binary>>,
+    FunName = <<Prefix/binary, "_ref_", Ref/binary>>,
     DTO = erlang:binary_to_atom(Ref),
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
@@ -436,11 +436,11 @@ is_valid(Prefix, #{type := object} = Schema) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "one_of">>,
+    FunName = <<Prefix/binary, "_one_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", (erlang:integer_to_binary(Idx))/binary>>, Subschema
+                <<FunName/binary, "[", (erlang:integer_to_binary(Idx))/binary, "]">>, Subschema
             ),
             {
                 Idx + 1,
@@ -478,12 +478,12 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "any_of">>,
+    FunName = <<Prefix/binary, "_any_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/binary, "_">>, Subschema
+                <<FunName/binary, "[", Idx/binary, "]">>, Subschema
             ),
             {
                 RawIdx + 1,
@@ -521,12 +521,12 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "all_of">>,
+    FunName = <<Prefix/binary, "_all_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/binary, "_">>, Subschema
+                <<FunName/binary, "[", Idx/binary, "]">>, Subschema
             ),
             {
                 RawIdx + 1,
@@ -686,7 +686,7 @@ generate(Name, Schema) ->
     IsValidFun :: erl_syntax:syntaxTree(),
     ExtraFuns :: [erl_syntax:syntaxTree()].
 is_valid(Prefix, #{ref := Ref} = Schema) ->
-    FunName = <<Prefix/binary, "ref_", Ref/binary>>,
+    FunName = <<Prefix/binary, "_ref_", Ref/binary>>,
     DTO = erlang:binary_to_atom(Ref),
     OptionalClause = optional_clause(Schema),
     NullClause = null_clause(Schema),
@@ -695,13 +695,61 @@ is_valid(Prefix, #{ref := Ref} = Schema) ->
             [erl_syntax:variable('Val')],
             none,
             [
-                erl_syntax:application(
-                    erl_syntax:atom(DTO),
-                    erl_syntax:atom(is_valid),
+                erl_syntax:case_expr(
+                    erl_syntax:application(
+                        erl_syntax:atom(DTO),
+                        erl_syntax:atom(is_valid),
+                        [
+                            erl_syntax:variable('Val')
+                        ]
+                    ),
                     [
-                        erl_syntax:variable('Val')
+                        erl_syntax:clause(
+                            [erl_syntax:atom('true')],
+                            none,
+                            [erl_syntax:atom('true')]
+                        ),
+                        erl_syntax:clause(
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:atom('false'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:variable('RefPrefix'),
+                                        erl_syntax:variable('RefReason')
+                                    ])
+                                ])
+                            ],
+                            none,
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:atom('false'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:application(
+                                            erl_syntax:atom('binary_to_atom'),
+                                            [
+                                                erl_syntax:binary([
+                                                    erl_syntax:binary_field(
+                                                        erl_syntax:string(binary_to_list(Prefix)),
+                                                        []
+                                                    ),
+                                                    erl_syntax:binary_field(
+                                                        erl_syntax:application(
+                                                            erl_syntax:atom('atom_to_binary'),
+                                                            [erl_syntax:variable('RefPrefix')]
+                                                        ),
+                                                        [erl_syntax:atom('binary')]
+                                                    )
+                                                ])
+                                            ]
+                                        ),
+                                        erl_syntax:variable('RefReason')
+                                    ])
+                                ])
+                            ]
+                        )
                     ]
                 )
+                
             ]
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
@@ -1056,11 +1104,11 @@ is_valid(Prefix, #{type := object} = Schema) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "one_of">>,
+    FunName = <<Prefix/binary, "_one_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", (erlang:integer_to_binary(Idx))/binary, "_">>, Subschema
+                <<FunName/binary, "[", (erlang:integer_to_binary(Idx))/binary, "]">>, Subschema
             ),
             {
                 Idx + 1,
@@ -1093,12 +1141,12 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "any_of">>,
+    FunName = <<Prefix/binary, "_any_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, "_", Idx/binary, "_">>, Subschema
+                <<FunName/binary, "[", Idx/binary, "]">>, Subschema
             ),
             {
                 RawIdx + 1,
@@ -1131,7 +1179,7 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
-    FunName = <<Prefix/binary, "all_of">>,
+    FunName = <<Prefix/binary, "_all_of">>,
     {_Idx, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
@@ -1233,6 +1281,13 @@ is_valid(Prefix, _Schema) ->
 is_valid_array(Prefix, items, #{items := Items}) when is_map(Items) ->
     FunName = <<Prefix/binary, "_items">>,
     {IsValidFun, ExtraFuns} = is_valid(<<Prefix/binary, "[]">>, Items),
+    UndefinedClause = erl_syntax:clause(
+        [erl_syntax:atom('undefined')],
+        none,
+        [
+            erl_syntax:atom('true')
+        ]
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1335,7 +1390,7 @@ is_valid_array(Prefix, items, #{items := Items}) when is_map(Items) ->
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        [UndefinedClause, TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
 is_valid_array(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
@@ -1457,7 +1512,7 @@ is_valid_array(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
     ),
     {Fun, ExtraFuns ++ [IsValidAdditionalItemsFun | AdditionalItemsExtraFuns]};
 is_valid_array(Prefix, min_items, #{min_items := MinItems}) ->
-    FunName = <<Prefix/binary, "min_items">>,
+    FunName = <<Prefix/binary, "_min_items">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         erl_syntax:infix_expr(
@@ -1467,7 +1522,7 @@ is_valid_array(Prefix, min_items, #{min_items := MinItems}) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName, io_lib:format("array with at least ~p items", [MinItems])),
+    FalseClause = false_clause(FunName, lists:flatten(io_lib:format("array with at least ~p items", [MinItems]))),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
@@ -1484,14 +1539,21 @@ is_valid_array(Prefix, max_items, #{max_items := MaxItems}) ->
         ),
         [erl_syntax:atom(true)]
     ),
-    FalseClause = false_clause(FunName, io_lib:format("array with at most ~p items", [MaxItems])),
+    FalseClause = false_clause(FunName, lists:flatten(io_lib:format("array with at most ~p items", [MaxItems]))),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     ),
     {Fun, []};
 is_valid_array(Prefix, unique_items, #{unique_items := true}) ->
-    FunName = <<Prefix/binary, "unique_items">>,
+    FunName = <<Prefix/binary, "_unique_items">>,
+    UndefinedClause = erl_syntax:clause(
+        [erl_syntax:atom('undefined')],
+        none,
+        [
+            erl_syntax:atom('true')
+        ]
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1515,7 +1577,7 @@ is_valid_array(Prefix, unique_items, #{unique_items := true}) ->
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        [UndefinedClause, TrueClause]
     ),
     {Fun, []};
 is_valid_array(_Prefix, unique_items, #{unique_items := false}) ->
@@ -1671,28 +1733,31 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
     {_PropertyNames, IsValidFuns} = lists:unzip(PropertiesFuns),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid_object(Prefix, required, #{required := Required}) ->
-    FunName = <<Prefix/binary, "required">>,
+    FunName = <<Prefix/binary, "_required">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
         [
             erl_syntax:case_expr(
                 erl_syntax:application(
-                    erl_syntax:atom(lists),
-                    erl_syntax:atom(all),
+                    erl_syntax:atom(ndto_utils),
+                    erl_syntax:atom(find),
                     [
                         erl_syntax:fun_expr([
                             erl_syntax:clause(
                                 [erl_syntax:variable('Property')],
                                 none,
                                 [
-                                    erl_syntax:application(
-                                        erl_syntax:atom(maps),
-                                        erl_syntax:atom(is_key),
-                                        [
-                                            erl_syntax:variable('Property'),
-                                            erl_syntax:variable('Val')
-                                        ]
+                                    erl_syntax:prefix_expr(
+                                        erl_syntax:operator('not'),
+                                        erl_syntax:application(
+                                            erl_syntax:atom(maps),
+                                            erl_syntax:atom(is_key),
+                                            [
+                                                erl_syntax:variable('Property'),
+                                                erl_syntax:variable('Val')
+                                            ]
+                                        )
                                     )
                                 ]
                             )
@@ -1713,14 +1778,60 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                 ),
                 [
                     erl_syntax:clause(
-                        [erl_syntax:atom('true')],
+                        [
+                            erl_syntax:tuple([
+                                erl_syntax:atom('false'),
+                                erl_syntax:atom('none')
+                            ])
+                        ],
                         none,
                         [erl_syntax:atom('true')]
                     ),
                     erl_syntax:clause(
-                        [erl_syntax:atom('false')],
+                        [
+                            erl_syntax:tuple([
+                                erl_syntax:atom('true'),
+                                erl_syntax:variable('MissingProperty')
+                            ])
+                        ],
                         none,
-                        [false_return(FunName, "valid value for a required term")]
+                        [
+                            erl_syntax:tuple([
+                                erl_syntax:atom('false'),
+                                erl_syntax:tuple([
+                                    erl_syntax:atom(binary_to_list(Prefix)),
+                                    erl_syntax:application(
+                                        erl_syntax:atom(erlang),
+                                        erl_syntax:atom(list_to_binary),
+                                        [
+                                            erl_syntax:application(
+                                                erl_syntax:atom('lists'),
+                                                erl_syntax:atom('flatten'),
+                                                [
+                                                    erl_syntax:application(
+                                                        erl_syntax:atom('io_lib'),
+                                                        erl_syntax:atom('format'),
+                                                        [
+                                                            erl_syntax:string(
+                                                                lists:flatten(
+                                                                    io_lib:format(
+                                                                        "~s is missing required property ~~p",
+                                                                        [binary_to_list(Prefix)]
+                                                                    )
+                                                                )
+                                                            ),
+                                                            erl_syntax:list([
+                                                                erl_syntax:variable('MissingProperty')
+                                                            ])
+                                                        ]
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ])
+                            ]
+                        )]
                     )
                 ]
             )
@@ -1732,7 +1843,7 @@ is_valid_object(Prefix, required, #{required := Required}) ->
     ),
     {Fun, []};
 is_valid_object(Prefix, min_properties, #{min_properties := MinProperties}) ->
-    FunName = <<Prefix/binary, "min_properties">>,
+    FunName = <<Prefix/binary, "_min_properties">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1760,7 +1871,7 @@ is_valid_object(Prefix, min_properties, #{min_properties := MinProperties}) ->
     ),
     {Fun, []};
 is_valid_object(Prefix, max_properties, #{max_properties := MaxProperties}) ->
-    FunName = <<Prefix/binary, "max_properties">>,
+    FunName = <<Prefix/binary, "_max_properties">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1927,6 +2038,13 @@ is_valid_object(
     #{additional_properties := false} = Schema
 ) ->
     FunName = <<Prefix/binary, "_additional_properties">>,
+    UndefinedClause = erl_syntax:clause(
+        [erl_syntax:atom('undefined')],
+        none,
+        [
+            erl_syntax:atom('true')
+        ]
+    ),
     Properties = maps:get(properties, Schema, #{}),
     PatternProperties = maps:get(pattern_properties, Schema, #{}),
     PatternPropertiesList = erl_syntax:application(
@@ -2090,7 +2208,7 @@ is_valid_object(
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        [UndefinedClause, TrueClause]
     ),
     {Fun, []};
 is_valid_object(
@@ -2098,7 +2216,14 @@ is_valid_object(
     additional_properties,
     #{additional_properties := AdditionalProperties} = Schema
 ) ->
-    FunName = <<Prefix/binary, "additional_properties">>,
+    FunName = <<Prefix/binary, "_additional_properties">>,
+    UndefinedClause = erl_syntax:clause(
+        [erl_syntax:atom('undefined')],
+        none,
+        [
+            erl_syntax:atom('true')
+        ]
+    ),
     {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "_">>, AdditionalProperties),
     Properties = maps:get(properties, Schema, #{}),
     PatternProperties = maps:get(pattern_properties, Schema, #{}),
@@ -2283,7 +2408,7 @@ is_valid_object(
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
-        [TrueClause]
+        [UndefinedClause, TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
 is_valid_object(_Prefix, additional_properties, _Schema) ->
@@ -2295,7 +2420,7 @@ is_valid_object(_Prefix, additional_properties, _Schema) ->
     Value :: term(),
     Result :: undefined | erl_syntax:syntaxTree().
 is_valid_string(Prefix, min_length, MinLength) ->
-    FunName = <<Prefix/binary, "min_length">>,
+    FunName = <<Prefix/binary, "_min_length">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2314,7 +2439,7 @@ is_valid_string(Prefix, min_length, MinLength) ->
         [TrueClause]
     );
 is_valid_string(Prefix, max_length, MaxLength) ->
-    FunName = <<Prefix/binary, "max_length">>,
+    FunName = <<Prefix/binary, "_max_length">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2333,7 +2458,7 @@ is_valid_string(Prefix, max_length, MaxLength) ->
         [TrueClause]
     );
 is_valid_string(Prefix, pattern, Pattern) ->
-    FunName = <<Prefix/binary, "pattern">>,
+    FunName = <<Prefix/binary, "_pattern">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2375,7 +2500,7 @@ is_valid_string(Prefix, pattern, Pattern) ->
         [TrueClause]
     );
 is_valid_string(Prefix, format, iso8601) ->
-    FunName = <<Prefix/binary, "format">>,
+    FunName = <<Prefix/binary, "_format">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2395,7 +2520,7 @@ is_valid_string(Prefix, format, iso8601) ->
         [TrueClause]
     );
 is_valid_string(Prefix, format, base64) ->
-    FunName = <<Prefix/binary, "format">>,
+    FunName = <<Prefix/binary, "_format">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2620,7 +2745,10 @@ chain_conditions({mfa_call, BodyFunCalls}, 'xor') ->
                         erl_syntax:operator('orelse'),
                         erl_syntax:tuple([
                             erl_syntax:atom('false'),
-                            erl_syntax:atom('none_matched')
+                            erl_syntax:tuple([
+                                erl_syntax:atom("."),
+                                erl_syntax:atom('none_matched')
+                            ])
                         ])
                     )
                 ]
@@ -2692,7 +2820,10 @@ xor_maybe_entry(N, Opt1, Opt2) ->
                 [
                     erl_syntax:tuple([
                         erl_syntax:atom('false'),
-                        erl_syntax:atom('many_matched')
+                        erl_syntax:tuple([
+                            erl_syntax:atom('.'),
+                            erl_syntax:atom('many_matched')
+                        ])
                     ])
                 ]
             ),
