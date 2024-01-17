@@ -316,7 +316,7 @@ additional_properties(_Conf) ->
         additional_properties => #{type => boolean}
     },
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
-    ok = ndto:load(DTO3),
+    ok = ndto:load(DTO3, [report]),
 
     ?assertEqual(
         {false,
@@ -416,6 +416,7 @@ petstore(_Conf) ->
     lists:foreach(
         fun({SchemaName, Schema}) ->
             DTO = ndto:generate(SchemaName, Schema),
+            file:write_file("../../../../generated/" ++ atom_to_list(SchemaName)++".erl", erl_prettypr:format(DTO)),
             ok = ndto:load(DTO, [report])
         end,
         Schemas
@@ -430,12 +431,6 @@ petstore(_Conf) ->
         )
     ),
     {ok, Petstore} = njson:decode(PetstoreBin),
-
-    dbg:tracer(),dbg:p(all,c),dbg:tpl('oas_3_0',cx),
-    dbg:tpl('oas_3_0_Responses', cx),
-    dbg:tpl('oas_3_0_Response', cx),
-    dbg:tpl('oas_3_0_Header', cx),
-    dbg:tpl('oas_3_0_Reference', cx),
 
     ?assertEqual(
         true,
