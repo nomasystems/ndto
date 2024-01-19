@@ -4,7 +4,8 @@
 -export([
     evalue_conditions/4,
     mfoldl/3,
-    find/2
+    find/2,
+    remove_all_of_prefix/1
 ]).
 
 %%%-----------------------------------------------------------------------------
@@ -12,7 +13,7 @@
 %%%-----------------------------------------------------------------------------
 -spec evalue_conditions(FunctionName, Conditions, EvalueMode, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
-    Conditions :: {mfa_call, [] | [MfaCall]} | {fun_call, [] | [FunCall]},
+    Conditions :: {mfa_call, [MfaCall]} | {fun_call, [FunCall]},
     MfaCall :: {function(), term()},
     FunCall :: function(),
     EvalueMode :: 'orelse' | 'andalso' | 'xor',
@@ -25,14 +26,15 @@ evalue_conditions(FunctionName, {_ConditionsType, []}, _EvalueMode, _IsSchemaCom
 evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) ->
     case internal_evalue_conditions(ConditionsType, Conditions, 'andalso') of
         true -> true;
-        {false, {ReasonPath, ReasonMsg}, N} ->
+        {false, {AllOfReasonPath, ReasonMsg}, N} ->
+            ReasonPath = remove_all_of_prefix(atom_to_list(AllOfReasonPath)),
             {false, {
                 FunctionName, 
                 list_to_binary(
                     lists:flatten(
                         io_lib:format(
-                            "Value is not matching all conditions. Condition ~p failed because of field ~p : ~s", 
-                            [N, ReasonPath, ReasonMsg]
+                            "Value is not matching all conditions. Condition ~p failed because of field ~ts : ~ts", 
+                            [N, list_to_atom(ReasonPath), ReasonMsg]
                         )
                     )
                 )
@@ -104,6 +106,9 @@ find(Fun, [H|T]) ->
         false -> find(Fun, T);
         true -> {true, H}
     end.
+
+remove_all_of_prefix(ReasonPath) ->
+    re:replace(ReasonPath, "[\.]?_all_of\[[0-9]*\]", "", [{return, list}]).
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS

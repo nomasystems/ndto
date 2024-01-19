@@ -527,7 +527,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<Prefix/binary, "[", Idx/binary, "]">>, Subschema
+                <<FunName/binary, "[", Idx/binary, "]">>, Subschema
             ),
             {
                 RawIdx + 1,
@@ -1389,7 +1389,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
         fun(Subschema, {RawIdx, IsValidFunsAcc, ExtraFunsAcc}) ->
             Idx = erlang:integer_to_binary(RawIdx),
             {IsValidFun, ExtraFuns} = is_valid(
-                <<Prefix/binary, "[", Idx/binary, "]">>, Subschema
+                <<FunName/binary, "[", Idx/binary, "]">>, Subschema
             ),
             {
                 RawIdx + 1,
@@ -1468,10 +1468,17 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
                                                         erl_syntax:atom('io_lib'),
                                                         erl_syntax:atom('format'),
                                                         [
-                                                            erl_syntax:string("Value is not matching all conditions. Condition ~p failed because of field ~p : ~s"),
+                                                            erl_syntax:string("Value is not matching all conditions. Condition ~p failed because of field ~ts : ~s"),
                                                             erl_syntax:list([
                                                                 erl_syntax:variable('ConditionIndex'),
-                                                                erl_syntax:variable('ReasonPath'),
+                                                                erl_syntax:application(
+                                                                    erl_syntax:atom(ndto_utils),
+                                                                    erl_syntax:atom(remove_all_of_prefix),
+                                                                    [erl_syntax:application(
+                                                                        erl_syntax:atom(atom_to_list),                                                                        
+                                                                        [erl_syntax:variable('ReasonPath')]
+                                                                    )]
+                                                                ),
                                                                 erl_syntax:variable('ReasonMsg')
                                                             ])
                                                         ]
@@ -2079,8 +2086,8 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                                                             erl_syntax:string(
                                                                 lists:flatten(
                                                                     io_lib:format(
-                                                                        "~s is missing required property ~~p",
-                                                                        [binary_to_list(Prefix)]
+                                                                        "~ts is missing required property ~~p",
+                                                                        [ndto_utils:remove_all_of_prefix(binary_to_list(Prefix))]
                                                                     )
                                                                 )
                                                             ),
@@ -3045,7 +3052,8 @@ false_clause(FunName, ExpectedDescription) ->
         [false_return(FunName, ExpectedDescription)]
     ).
 
-false_return(FunName, ExpectedDescription) ->
+false_return(FunName0, ExpectedDescription) ->
+    FunName = ndto_utils:remove_all_of_prefix(FunName0),
     ErrorMessage = erl_syntax:application(
         erl_syntax:atom(erlang),
         erl_syntax:atom(list_to_binary),
@@ -3065,7 +3073,7 @@ false_return(FunName, ExpectedDescription) ->
     erl_syntax:tuple([
         erl_syntax:atom('false'),
         erl_syntax:tuple([
-            erl_syntax:atom(binary_to_list(FunName)),
+            erl_syntax:atom(FunName),
             ErrorMessage
         ])
     ]).
