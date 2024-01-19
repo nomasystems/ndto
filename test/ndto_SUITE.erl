@@ -189,10 +189,10 @@ one_of(_Conf) ->
         ]
     },
     DTO = ndto:generate(test_one_of, Schema),
-    ok = ndto:load(DTO),
+    ok = ndto:load(DTO, [report]),
 
-    ?assertEqual({false, {'.', none_matched}}, test_one_of:is_valid(<<"0">>)),
-    ?assertEqual({false, {'.', many_matched}}, test_one_of:is_valid(1)),
+    ?assertEqual({false, {'$', <<"Value is not matching exactly one condition. None matched.">>}}, test_one_of:is_valid(<<"0">>)),
+    ?assertEqual({false, {'$', <<"Value is not matching exactly one condition. More than one (conditions 0 and 1) matched.">>}}, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 any_of(_Conf) ->
@@ -204,9 +204,9 @@ any_of(_Conf) ->
         ]
     },
     DTO = ndto:generate(test_any_of, Schema),
-    ok = ndto:load(DTO),
+    ok = ndto:load(DTO, [report]),
 
-    ?assertEqual(false, test_any_of:is_valid(<<"0">>)),
+    ?assertEqual({false,{'$', <<"Value is not matching at least one condition. None matched.">>}}, test_any_of:is_valid(<<"0">>)),
     ?assertEqual(true, test_any_of:is_valid(0)),
     ?assertEqual(true, test_any_of:is_valid(0.0)).
 
@@ -221,13 +221,14 @@ all_of(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false, {'$_all_of[1]', <<"<<\"1\">> is not a integer">>}}, test_all_of:is_valid(<<"1">>)
+        {false, {'$', <<"Value is not matching all conditions. Condition 1 failed because of field '$[1]' : <<\"1\">> is not a integer">>}}, 
+        test_all_of:is_valid(<<"1">>)
     ),
     ?assertEqual(
-        {false, {'$_all_of[1]', <<"0 is not a number greater or equal to 1">>}},
+        {false,{'$',<<"Value is not matching all conditions. Condition 1 failed because of field '$[1]' : 0 is not a number greater or equal to 1">>}},
         test_all_of:is_valid(0)
     ),
-    ?assertEqual({false, {'$_all_of[1]', <<"1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
+    ?assertEqual({false,{'$',<<"Value is not matching all conditions. Condition 1 failed because of field '$[1]' : 1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
     ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
@@ -235,7 +236,7 @@ all_of(_Conf) ->
         'not' => #{type => integer, minimum => 0}
     },
     DTO = ndto:generate(test_not, Schema),
-    ok = ndto:load(DTO),
+    ok = ndto:load(DTO, [report]),
 
     ?assertEqual(false, test_not:is_valid(0)),
     ?assertEqual(true, test_not:is_valid(<<"0">>)),
@@ -262,7 +263,7 @@ pattern_properties(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false, {'$.', <<"#{<<\"foo\">> => 0} is not a value supported by the schema">>}},
+        {false,{'$.',<<"#{<<\"foo\">> => 0} is not a value supported by the schema">>}},
         test_pattern_properties:is_valid(#{<<"foo">> => 0})
     ),
     ?assertEqual(true, test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>})),
@@ -284,9 +285,7 @@ additional_properties(_Conf) ->
         test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
     ),
     ?assertEqual(
-        {false,
-            {'$.',
-                <<"#{<<\"baz\">> => <<\"qux\">>,<<\"foo\">> => <<\"bar\">>,<<\"foobar\">> => 0} is not a value supported by the schema">>}},
+        {false,{'$.',<<"#{<<\"baz\">> => <<\"qux\">>,<<\"foo\">> => <<\"bar\">>,<<\"foobar\">> => 0} is not a value supported by the schema">>}},
         test_additional_properties1:is_valid(#{
             <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
         })
@@ -319,13 +318,11 @@ additional_properties(_Conf) ->
     ok = ndto:load(DTO3, [report]),
 
     ?assertEqual(
-        {false,
-            {'$.',
-                <<"#{<<\"baz\">> => true,<<\"foo\">> => <<\"bar\">>} is not a value supported by the schema">>}},
+        {false,{'$.',<<"#{<<\"baz\">> => true,<<\"foo\">> => <<\"bar\">>} is not a value supported by the schema">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
     ),
     ?assertEqual(
-        {false, {'$.', <<"$. has unsupported keys">>}},
+        {false,{'$.',<<"$. has unsupported keys">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
     ),
     ?assertEqual(
@@ -344,7 +341,7 @@ additional_properties(_Conf) ->
         true, test_additional_properties4:is_valid(#{<<"FOO">> => true, <<"BAR">> => 1})
     ),
     ?assertEqual(
-        {false, {'$.', <<"$. has unsupported keys">>}},
+        {false,{'$.',<<"$. has unsupported keys">>}},
         test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
