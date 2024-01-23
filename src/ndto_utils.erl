@@ -5,8 +5,27 @@
     evalue_conditions/4,
     mfoldl/3,
     find/2,
-    remove_all_of_prefix/1
+    find_value/2,
+    remove_all_of_prefix/1,
+    format_properties/1
 ]).
+
+-export([test/0]).
+
+test() ->
+    lists:foreach(
+        fun({Idx, Schema, Values}) -> 
+            DTO = ndto:generate(schema, Schema),
+            ok = ndto:load(DTO, [report]),
+            file:write_file("generated.erl", erl_prettypr:format(DTO)),
+            io:format("################# ~p~n",[Idx]),
+            lists:foreach(
+                fun(Val) -> io:format("~p -> ~n~p~n~n",[Val, schema:is_valid(Val)]) end,
+                Values
+            )
+        end,
+        element(2, file:consult("many_schemas.erl"))
+    ).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
@@ -33,7 +52,7 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) -
                 list_to_binary(
                     lists:flatten(
                         io_lib:format(
-                            "Value is not matching all conditions. Condition ~p failed because of field ~ts : ~ts", 
+                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts", 
                             [N, list_to_atom(ReasonPath), ReasonMsg]
                         )
                     )
@@ -91,14 +110,15 @@ mfoldl(Fun, Acc, [H | T]) ->
     case Fun(H, Acc) of
         {true, NewAcc} ->
             mfoldl(Fun, NewAcc, T);
-        {{false, {_Function, Reason}}, NewAcc} ->
+        {{false, Reason}, NewAcc} ->
             {false, NewAcc, Reason}
     end.
 
 -spec find(Fun, List) -> Resp when
     Fun :: function(),
     List :: list(),
-    Resp :: {true, term()} | {false, none}.
+    Resp :: {true, FoundItem} | {false, none},
+    FoundItem :: term().
 find(_Fun, []) -> 
     {false, none};
 find(Fun, [H|T]) ->
@@ -106,6 +126,33 @@ find(Fun, [H|T]) ->
         false -> find(Fun, T);
         true -> {true, H}
     end.
+
+-spec find_value(Fun, List) -> Resp when
+    Fun :: function(),
+    List :: list(),
+    Resp :: {true, FoundResult} | {false, none},
+    FoundResult :: term().
+find_value(_Fun, []) -> 
+    {false, none};
+find_value(Fun, [H|T]) ->
+    case Fun(H) of
+        false -> find_value(Fun, T);
+        {true, Result} -> {true, H, Result}
+    end.
+
+-spec format_properties(List) -> Resp when
+    List :: list(Property),
+    Property :: binary(),
+    Resp :: binary().
+format_properties([Head | List]) ->
+    lists:foldl(fun(Term, Acc) ->
+            <<Acc/binary, ", \"", Term/binary, "\"">>
+        end,
+        <<"\"", Head/binary, "\"">>,
+        List
+    ).
+
+
 
 remove_all_of_prefix(ReasonPath) ->
     re:replace(ReasonPath, "[\.]?_all_of\[[0-9]*\]", "", [{return, list}]).

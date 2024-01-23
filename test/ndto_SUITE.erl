@@ -167,13 +167,10 @@ nullable(_Conf) ->
             },
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
-            FunName = fun
-                (object) -> '$.';
-                (_) -> '$'
-            end,
+
 
             ?assertEqual(
-                {false, {FunName(Type), <<"null is not a ", (atom_to_binary(Type))/binary>>}},
+                {false, {'$.type', <<"null is not a ", (atom_to_binary(Type))/binary>>}},
                 test_nullable2:is_valid(null)
             )
         end,
@@ -191,8 +188,8 @@ one_of(_Conf) ->
     DTO = ndto:generate(test_one_of, Schema),
     ok = ndto:load(DTO, [report]),
 
-    ?assertEqual({false, {'$', <<"Value is not matching exactly one condition. None matched.">>}}, test_one_of:is_valid(<<"0">>)),
-    ?assertEqual({false, {'$', <<"Value is not matching exactly one condition. More than one (conditions 0 and 1) matched.">>}}, test_one_of:is_valid(1)),
+    ?assertEqual({false, {'$.one_of', <<"Value is not matching exactly one condition. None matched.">>}}, test_one_of:is_valid(<<"0">>)),
+    ?assertEqual({false, {'$.one_of', <<"Value is not matching exactly one condition. More than one (conditions 0 and 1) matched.">>}}, test_one_of:is_valid(1)),
     ?assertEqual(true, test_one_of:is_valid(0.0)).
 
 any_of(_Conf) ->
@@ -206,7 +203,7 @@ any_of(_Conf) ->
     DTO = ndto:generate(test_any_of, Schema),
     ok = ndto:load(DTO, [report]),
 
-    ?assertEqual({false,{'$', <<"Value is not matching at least one condition. None matched.">>}}, test_any_of:is_valid(<<"0">>)),
+    ?assertEqual({false,{'$.any_of', <<"Value is not matching at least one condition. None matched.">>}}, test_any_of:is_valid(<<"0">>)),
     ?assertEqual(true, test_any_of:is_valid(0)),
     ?assertEqual(true, test_any_of:is_valid(0.0)).
 
@@ -221,14 +218,14 @@ all_of(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false, {'$', <<"Value is not matching all conditions. Condition 1 failed because of field $ : <<\"1\">> is not a integer">>}}, 
+        {false, {'$.all_of', <<"Value is not matching all conditions. Condition 1 failed because of schema path '$.all_of[1].type' : <<\"1\">> is not a integer">>}}, 
         test_all_of:is_valid(<<"1">>)
     ),
     ?assertEqual(
-        {false,{'$',<<"Value is not matching all conditions. Condition 1 failed because of field $ : 0 is not a number greater or equal to 1">>}},
+        {false,{'$.all_of',<<"Value is not matching all conditions. Condition 1 failed because of schema path '$.all_of[1].minimum' : 0 is not a number greater or equal to 1">>}},
         test_all_of:is_valid(0)
     ),
-    ?assertEqual({false,{'$',<<"Value is not matching all conditions. Condition 1 failed because of field $ : 1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
+    ?assertEqual({false,{'$.all_of',<<"Value is not matching all conditions. Condition 1 failed because of schema path '$.all_of[1].type' : 1.0 is not a integer">>}}, test_all_of:is_valid(1.0)),
     ?assertEqual(true, test_all_of:is_valid(1)).
 
 'not'(_Conf) ->
@@ -263,7 +260,7 @@ pattern_properties(_Conf) ->
     ok = ndto:load(DTO),
 
     ?assertEqual(
-        {false,{'$.',<<"#{<<\"foo\">> => 0} is not a value supported by the schema">>}},
+        {false,{'$.pattern_properties."[a-z]+".type',<<"Property \"foo\" failed validation: 0 is not a string">>}},
         test_pattern_properties:is_valid(#{<<"foo">> => 0})
     ),
     ?assertEqual(true, test_pattern_properties:is_valid(#{<<"foo">> => <<"bar">>})),
@@ -277,7 +274,7 @@ additional_properties(_Conf) ->
         additional_properties => false
     },
     DTO1 = ndto:generate(test_additional_properties1, Schema1),
-    ok = ndto:load(DTO1),
+    ok = ndto:load(DTO1, [report]),
 
     ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>})),
     ?assertEqual(
@@ -285,7 +282,7 @@ additional_properties(_Conf) ->
         test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>})
     ),
     ?assertEqual(
-        {false,{'$.',<<"#{<<\"baz\">> => <<\"qux\">>,<<\"foo\">> => <<\"bar\">>,<<\"foobar\">> => 0} is not a value supported by the schema">>}},
+        {false,{'$.pattern_properties.\"[a-z]+\".type',<<"Property \"foobar\" failed validation: 0 is not a string">>}},
         test_additional_properties1:is_valid(#{
             <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
         })
@@ -318,11 +315,11 @@ additional_properties(_Conf) ->
     ok = ndto:load(DTO3, [report]),
 
     ?assertEqual(
-        {false,{'$.',<<"#{<<\"baz\">> => true,<<\"foo\">> => <<\"bar\">>} is not a value supported by the schema">>}},
+        {false,{'$.pattern_properties.\"[a-z]+\".type',<<"Property \"baz\" failed validation: true is not a string">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
     ),
     ?assertEqual(
-        {false,{'$.',<<"$. has unsupported keys">>}},
+        {false,{'$.additional_properties.type',<<"Property \"1\" failed validation: <<\"baz\">> is not a boolean">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"1">> => <<"baz">>})
     ),
     ?assertEqual(
@@ -340,8 +337,9 @@ additional_properties(_Conf) ->
     ?assertEqual(
         true, test_additional_properties4:is_valid(#{<<"FOO">> => true, <<"BAR">> => 1})
     ),
+
     ?assertEqual(
-        {false,{'$.',<<"$. has unsupported keys">>}},
+        {false,{'$.additional_properties',<<"There are unsupported additional keys: \"Foo\"">>}},
         test_additional_properties4:is_valid(#{<<"Foo">> => true, <<"BAR">> => 1})
     ).
 
