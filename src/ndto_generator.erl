@@ -1182,30 +1182,24 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
                                     erl_syntax:atom(list_to_binary),
                                     [
                                         erl_syntax:application(
-                                            erl_syntax:atom('lists'),
-                                            erl_syntax:atom('flatten'),
+                                            erl_syntax:atom('io_lib'),
+                                            erl_syntax:atom('format'),
                                             [
-                                                erl_syntax:application(
-                                                    erl_syntax:atom('io_lib'),
-                                                    erl_syntax:atom('format'),
-                                                    [
-                                                        erl_syntax:string(
-                                                            "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched."
-                                                        ),
-                                                        erl_syntax:list([
-                                                            erl_syntax:variable(
-                                                                list_to_atom(
-                                                                    "One_" ++ integer_to_list(Index)
-                                                                )
-                                                            ),
-                                                            erl_syntax:variable(
-                                                                list_to_atom(
-                                                                    "Two_" ++ integer_to_list(Index)
-                                                                )
-                                                            )
-                                                        ])
-                                                    ]
-                                                )
+                                                erl_syntax:string(
+                                                    "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched."
+                                                ),
+                                                erl_syntax:list([
+                                                    erl_syntax:variable(
+                                                        list_to_atom(
+                                                            "One_" ++ integer_to_list(Index)
+                                                        )
+                                                    ),
+                                                    erl_syntax:variable(
+                                                        list_to_atom(
+                                                            "Two_" ++ integer_to_list(Index)
+                                                        )
+                                                    )
+                                                ])
                                             ]
                                         )
                                     ]
@@ -1282,33 +1276,28 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
                                                         erl_syntax:atom(list_to_binary),
                                                         [
                                                             erl_syntax:application(
-                                                                erl_syntax:atom('lists'),
-                                                                erl_syntax:atom('flatten'),
+                                                                erl_syntax:atom('io_lib'),
+                                                                erl_syntax:atom('format'),
                                                                 [
-                                                                    erl_syntax:application(
-                                                                        erl_syntax:atom('io_lib'),
-                                                                        erl_syntax:atom('format'),
-                                                                        [
-                                                                            erl_syntax:binary([
-                                                                                erl_syntax:binary_field(
-                                                                                    erl_syntax:string(
-                                                                                        "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched."
-                                                                                    )
-                                                                                )
-                                                                            ]),
-                                                                            erl_syntax:list([
-                                                                                erl_syntax:variable(
-                                                                                    'One'
-                                                                                ),
-                                                                                erl_syntax:variable(
-                                                                                    'Two'
-                                                                                )
-                                                                            ])
-                                                                        ]
-                                                                    )
+                                                                    erl_syntax:binary([
+                                                                        erl_syntax:binary_field(
+                                                                            erl_syntax:string(
+                                                                                "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched."
+                                                                            )
+                                                                        )
+                                                                    ]),
+                                                                    erl_syntax:list([
+                                                                        erl_syntax:variable(
+                                                                            'One'
+                                                                        ),
+                                                                        erl_syntax:variable(
+                                                                            'Two'
+                                                                        )
+                                                                    ])
                                                                 ]
                                                             )
                                                         ]
+                                                            
                                                     )
                                                 ])
                                             ])
@@ -1503,27 +1492,21 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
                                             erl_syntax:atom(list_to_binary),
                                             [
                                                 erl_syntax:application(
-                                                    erl_syntax:atom('lists'),
-                                                    erl_syntax:atom('flatten'),
+                                                    erl_syntax:atom('io_lib'),
+                                                    erl_syntax:atom('format'),
                                                     [
-                                                        erl_syntax:application(
-                                                            erl_syntax:atom('io_lib'),
-                                                            erl_syntax:atom('format'),
-                                                            [
-                                                                erl_syntax:string(
-                                                                    "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~s"
-                                                                ),
-                                                                erl_syntax:list([
-                                                                    erl_syntax:variable(
-                                                                        'ConditionIndex'
-                                                                    ),
-                                                                    erl_syntax:variable(
-                                                                        'ReasonPath'
-                                                                    ),
-                                                                    erl_syntax:variable('ReasonMsg')
-                                                                ])
-                                                            ]
-                                                        )
+                                                        erl_syntax:string(
+                                                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~s"
+                                                        ),
+                                                        erl_syntax:list([
+                                                            erl_syntax:variable(
+                                                                'ConditionIndex'
+                                                            ),
+                                                            erl_syntax:variable(
+                                                                'ReasonPath'
+                                                            ),
+                                                            erl_syntax:variable('ReasonMsg')
+                                                        ])
                                                     ]
                                                 )
                                             ]
@@ -1678,25 +1661,19 @@ is_valid_array(Prefix, items, #{items := Items} = Schema) when is_map(Items) ->
                                         erl_syntax:atom(list_to_binary),
                                         [
                                             erl_syntax:application(
-                                                erl_syntax:atom('lists'),
-                                                erl_syntax:atom('flatten'),
+                                                erl_syntax:atom('io_lib'),
+                                                erl_syntax:atom('format'),
                                                 [
-                                                    erl_syntax:application(
-                                                        erl_syntax:atom('io_lib'),
-                                                        erl_syntax:atom('format'),
-                                                        [
-                                                            erl_syntax:string(
-                                                                "Item ~p in ~ts is invalid. ~s"
-                                                            ),
-                                                            erl_syntax:list([
-                                                                erl_syntax:variable('Acc'),
-                                                                erl_syntax:string(
-                                                                    binary_to_list(Prefix)
-                                                                ),
-                                                                erl_syntax:variable('Reason')
-                                                            ])
-                                                        ]
-                                                    )
+                                                    erl_syntax:string(
+                                                        "Item ~p in ~ts is invalid. ~s"
+                                                    ),
+                                                    erl_syntax:list([
+                                                        erl_syntax:variable('Acc'),
+                                                        erl_syntax:string(
+                                                            binary_to_list(Prefix)
+                                                        ),
+                                                        erl_syntax:variable('Reason')
+                                                    ])
                                                 ]
                                             )
                                         ]
@@ -2274,28 +2251,22 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                                         erl_syntax:atom(list_to_binary),
                                         [
                                             erl_syntax:application(
-                                                erl_syntax:atom('lists'),
-                                                erl_syntax:atom('flatten'),
+                                                erl_syntax:atom('io_lib'),
+                                                erl_syntax:atom('format'),
                                                 [
-                                                    erl_syntax:application(
-                                                        erl_syntax:atom('io_lib'),
-                                                        erl_syntax:atom('format'),
-                                                        [
-                                                            erl_syntax:string(
-                                                                lists:flatten(
-                                                                    io_lib:format(
-                                                                        "~ts is missing required property ~~p",
-                                                                        [binary_to_list(Prefix)]
-                                                                    )
-                                                                )
-                                                            ),
-                                                            erl_syntax:list([
-                                                                erl_syntax:variable(
-                                                                    'MissingProperty'
-                                                                )
-                                                            ])
-                                                        ]
-                                                    )
+                                                    erl_syntax:string(
+                                                        lists:flatten(
+                                                            io_lib:format(
+                                                                "~ts is missing required property ~~p",
+                                                                [binary_to_list(Prefix)]
+                                                            )
+                                                        )
+                                                    ),
+                                                    erl_syntax:list([
+                                                        erl_syntax:variable(
+                                                            'MissingProperty'
+                                                        )
+                                                    ])
                                                 ]
                                             )
                                         ]

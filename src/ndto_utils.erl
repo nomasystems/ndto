@@ -33,11 +33,9 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) -
             {false, {
                 FunctionName,
                 list_to_binary(
-                    lists:flatten(
-                        io_lib:format(
-                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts",
-                            [N, list_to_atom(ReasonPath), ReasonMsg]
-                        )
+                    io_lib:format(
+                        "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts",
+                        [N, list_to_atom(ReasonPath), ReasonMsg]
                     )
                 )
             }}
@@ -65,13 +63,11 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSch
             {false, {
                 FunctionName,
                 list_to_binary(
-                    lists:flatten(
-                        io_lib:format(
-                            "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched.",
-                            [Second, First]
-                        )
+                    io_lib:format(
+                        "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched.",
+                        [Second, First]
                     )
-                )
+            )
             }}
     end.
 
