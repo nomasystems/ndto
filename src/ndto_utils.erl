@@ -80,14 +80,9 @@ evaluate_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsS
                         "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched.",
                         [Second, First]
                     )
-            )
+                )
             }}
     end.
-
-internal_evaluate_conditions(fun_call, [Fun | Rest], EvalueMode) ->
-    next_evaluate_condition(fun_call, Fun(), Rest, EvalueMode);
-internal_evaluate_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
-    next_evaluate_condition(mfa_call, Function(Args), Rest, EvalueMode).
 
 -spec mfoldl(Fun, Acc, List) -> Resp when
     Fun :: function(),
@@ -148,6 +143,11 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
+internal_evaluate_conditions(fun_call, [Fun | Rest], EvalueMode) ->
+    next_evaluate_condition(fun_call, Fun(), Rest, EvalueMode);
+internal_evaluate_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
+    next_evaluate_condition(mfa_call, Function(Args), Rest, EvalueMode).
+
 -spec next_evaluate_condition(ConditionsType, CurrentResult, Conditions, EvalueMode) -> Resp when
     ConditionsType :: fun_call | mfa_call,
     CurrentResult :: true | {false, term()},

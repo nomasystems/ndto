@@ -1297,7 +1297,6 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
                                                                 ]
                                                             )
                                                         ]
-                                                            
                                                     )
                                                 ])
                                             ])
