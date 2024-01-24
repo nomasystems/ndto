@@ -2,7 +2,7 @@
 
 %%% EXTERNAL EXPORTS
 -export([
-    evalue_conditions/4,
+    evaluate_conditions/4,
     mfoldl/3,
     find/2,
     find_value/2,
@@ -12,7 +12,7 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec evalue_conditions(FunctionName, Conditions, EvalueMode, IsSchemaComposition) -> Resp when
+-spec evaluate_conditions(FunctionName, Conditions, EvalueMode, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
     Conditions :: {mfa_call, [MfaCall]} | {fun_call, [FunCall]},
     MfaCall :: {function(), term()},
@@ -20,12 +20,12 @@
     EvalueMode :: 'orelse' | 'andalso' | 'xor',
     IsSchemaComposition :: boolean(),
     Resp :: boolean() | {false, term()}.
-evalue_conditions(_FunctionName, {_ConditionsType, []}, 'andalso', _IsSchemaComposition) ->
+evaluate_conditions(_FunctionName, {_ConditionsType, []}, 'andalso', _IsSchemaComposition) ->
     true;
-evalue_conditions(FunctionName, {_ConditionsType, []}, _EvalueMode, _IsSchemaComposition) ->
+evaluate_conditions(FunctionName, {_ConditionsType, []}, _EvalueMode, _IsSchemaComposition) ->
     {false, {FunctionName, <<"Value is not matching any of the (0) given conditions">>}};
-evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) ->
-    case internal_evalue_conditions(ConditionsType, Conditions, 'andalso') of
+evaluate_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) ->
+    case internal_evaluate_conditions(ConditionsType, Conditions, 'andalso') of
         true ->
             true;
         {false, {AllOfReasonPath, ReasonMsg}, N} ->
@@ -40,13 +40,13 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) -
                 )
             }}
     end;
-evalue_conditions(_FunctionName, {ConditionsType, Conditions}, EvalueMode, false) ->
-    case internal_evalue_conditions(ConditionsType, Conditions, EvalueMode) of
+evaluate_conditions(_FunctionName, {ConditionsType, Conditions}, EvalueMode, false) ->
+    case internal_evaluate_conditions(ConditionsType, Conditions, EvalueMode) of
         true -> true;
         {false, {ReasonPath, ReasonMsg}, _N} -> {false, {ReasonPath, ReasonMsg}}
     end;
-evalue_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSchemaComposition) ->
-    case internal_evalue_conditions(ConditionsType, Conditions, EvalueMode) of
+evaluate_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSchemaComposition) ->
+    case internal_evaluate_conditions(ConditionsType, Conditions, EvalueMode) of
         true ->
             true;
         false ->
@@ -71,10 +71,10 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSch
             }}
     end.
 
-internal_evalue_conditions(fun_call, [Fun | Rest], EvalueMode) ->
-    next_evalue_condition(fun_call, Fun(), Rest, EvalueMode);
-internal_evalue_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
-    next_evalue_condition(mfa_call, Function(Args), Rest, EvalueMode).
+internal_evaluate_conditions(fun_call, [Fun | Rest], EvalueMode) ->
+    next_evaluate_condition(fun_call, Fun(), Rest, EvalueMode);
+internal_evaluate_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
+    next_evaluate_condition(mfa_call, Function(Args), Rest, EvalueMode).
 
 -spec mfoldl(Fun, Acc, List) -> Resp when
     Fun :: function(),
@@ -135,7 +135,7 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
--spec next_evalue_condition(ConditionsType, CurrentResult, Conditions, EvalueMode) -> Resp when
+-spec next_evaluate_condition(ConditionsType, CurrentResult, Conditions, EvalueMode) -> Resp when
     ConditionsType :: fun_call | mfa_call,
     CurrentResult :: true | {false, term()},
     Conditions :: [Condition],
@@ -151,37 +151,37 @@ format_properties([Head | List]) ->
     Resp :: boolean() | {false, Reason} | {false, AndalsoReason, ConditionIndex},
     Reason :: none_matched | {many_matched, MatchedIndexes},
     AndalsoReason :: term().
-next_evalue_condition(_ConditionsType, true, _Rest, 'orelse') ->
+next_evaluate_condition(_ConditionsType, true, _Rest, 'orelse') ->
     true;
-next_evalue_condition(_ConditionsType, _Result, [], 'orelse') ->
+next_evaluate_condition(_ConditionsType, _Result, [], 'orelse') ->
     false;
-next_evalue_condition(ConditionsType, {false, _}, Rest, 'orelse') ->
-    internal_evalue_conditions(ConditionsType, Rest, 'orelse');
-next_evalue_condition(ConditionsType, Result, Rest, 'xor') ->
+next_evaluate_condition(ConditionsType, {false, _}, Rest, 'orelse') ->
+    internal_evaluate_conditions(ConditionsType, Rest, 'orelse');
+next_evaluate_condition(ConditionsType, Result, Rest, 'xor') ->
     ConditionIndex = length(Rest),
-    next_evalue_condition(ConditionsType, Result, Rest, {'xor', ConditionIndex, []});
-next_evalue_condition(_ConditionsType, true, [], {'xor', _N, []}) ->
+    next_evaluate_condition(ConditionsType, Result, Rest, {'xor', ConditionIndex, []});
+next_evaluate_condition(_ConditionsType, true, [], {'xor', _N, []}) ->
     true;
-next_evalue_condition(_ConditionsType, _Result, [], {'xor', _N, []}) ->
+next_evaluate_condition(_ConditionsType, _Result, [], {'xor', _N, []}) ->
     {false, none_matched};
-next_evalue_condition(_ConditionsType, true, _Rest, {'xor', N, [One]}) ->
+next_evaluate_condition(_ConditionsType, true, _Rest, {'xor', N, [One]}) ->
     {false, {many_matched, [One, N]}};
-next_evalue_condition(_ConditionsType, _Result, [], {'xor', _N, [_One]}) ->
+next_evaluate_condition(_ConditionsType, _Result, [], {'xor', _N, [_One]}) ->
     true;
-next_evalue_condition(ConditionsType, true, Rest, {'xor', N, []}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, [N]});
-next_evalue_condition(ConditionsType, {false, _}, Rest, {'xor', N, []}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, []});
-next_evalue_condition(ConditionsType, {false, _}, Rest, {'xor', N, [One]}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, [One]});
-next_evalue_condition(_ConditionsType, Result, Rest, 'andalso') ->
+next_evaluate_condition(ConditionsType, true, Rest, {'xor', N, []}) ->
+    internal_evaluate_conditions(ConditionsType, Rest, {'xor', N - 1, [N]});
+next_evaluate_condition(ConditionsType, {false, _}, Rest, {'xor', N, []}) ->
+    internal_evaluate_conditions(ConditionsType, Rest, {'xor', N - 1, []});
+next_evaluate_condition(ConditionsType, {false, _}, Rest, {'xor', N, [One]}) ->
+    internal_evaluate_conditions(ConditionsType, Rest, {'xor', N - 1, [One]});
+next_evaluate_condition(_ConditionsType, Result, Rest, 'andalso') ->
     ConditionIndex = length(Rest),
-    next_evalue_condition(_ConditionsType, Result, Rest, {'andalso', ConditionIndex});
-next_evalue_condition(_ConditionsType, true, [], {'andalso', _N}) ->
+    next_evaluate_condition(_ConditionsType, Result, Rest, {'andalso', ConditionIndex});
+next_evaluate_condition(_ConditionsType, true, [], {'andalso', _N}) ->
     true;
-next_evalue_condition(_ConditionsType, {false, Reason}, [], {'andalso', N}) ->
+next_evaluate_condition(_ConditionsType, {false, Reason}, [], {'andalso', N}) ->
     {false, Reason, N};
-next_evalue_condition(ConditionsType, true, Rest, {'andalso', N}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'andalso', N - 11});
-next_evalue_condition(_ConditionsType, {false, Reason}, _Rest, {'andalso', N}) ->
+next_evaluate_condition(ConditionsType, true, Rest, {'andalso', N}) ->
+    internal_evaluate_conditions(ConditionsType, Rest, {'andalso', N - 11});
+next_evaluate_condition(_ConditionsType, {false, Reason}, _Rest, {'andalso', N}) ->
     {false, Reason, N}.

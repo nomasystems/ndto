@@ -3349,7 +3349,7 @@ chain_conditions(Prefix, {FunPiecesType, FunPieces}, EvalueMode, IsSchemaComposi
     [
         erl_syntax:application(
             erl_syntax:atom(ndto_utils),
-            erl_syntax:atom(evalue_conditions),
+            erl_syntax:atom(evaluate_conditions),
             [
                 erl_syntax:atom(binary_to_atom(Prefix)),
                 erl_syntax:tuple([
