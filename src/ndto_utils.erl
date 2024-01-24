@@ -45,7 +45,7 @@ evaluate_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true)
             ReasonPath = atom_to_list(AllOfReasonPath),
             {false, {
                 FunctionName,
-                list_to_binary(
+                unicode:characters_to_binary(
                     io_lib:format(
                         "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts",
                         [N, list_to_atom(ReasonPath), ReasonMsg]
@@ -75,7 +75,7 @@ evaluate_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsS
         {false, {many_matched, [First, Second]}} ->
             {false, {
                 FunctionName,
-                list_to_binary(
+                unicode:characters_to_binary(
                     io_lib:format(
                         "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched.",
                         [Second, First]
