@@ -6,26 +6,8 @@
     mfoldl/3,
     find/2,
     find_value/2,
-    remove_all_of_prefix/1,
     format_properties/1
 ]).
-
--export([test/0]).
-
-test() ->
-    lists:foreach(
-        fun({Idx, Schema, Values}) -> 
-            DTO = ndto:generate(schema, Schema),
-            ok = ndto:load(DTO, [report]),
-            file:write_file("generated.erl", erl_prettypr:format(DTO)),
-            io:format("################# ~p~n",[Idx]),
-            lists:foreach(
-                fun(Val) -> io:format("~p -> ~n~p~n~n",[Val, schema:is_valid(Val)]) end,
-                Values
-            )
-        end,
-        element(2, file:consult("many_schemas.erl"))
-    ).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
@@ -44,15 +26,16 @@ evalue_conditions(FunctionName, {_ConditionsType, []}, _EvalueMode, _IsSchemaCom
     {false, {FunctionName, <<"Value is not matching any of the (0) given conditions">>}};
 evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) ->
     case internal_evalue_conditions(ConditionsType, Conditions, 'andalso') of
-        true -> true;
+        true ->
+            true;
         {false, {AllOfReasonPath, ReasonMsg}, N} ->
-            ReasonPath = remove_all_of_prefix(atom_to_list(AllOfReasonPath)),
+            ReasonPath = atom_to_list(AllOfReasonPath),
             {false, {
-                FunctionName, 
+                FunctionName,
                 list_to_binary(
                     lists:flatten(
                         io_lib:format(
-                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts", 
+                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts",
                             [N, list_to_atom(ReasonPath), ReasonMsg]
                         )
                     )
@@ -62,14 +45,13 @@ evalue_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) -
 evalue_conditions(_FunctionName, {ConditionsType, Conditions}, EvalueMode, false) ->
     case internal_evalue_conditions(ConditionsType, Conditions, EvalueMode) of
         true -> true;
-        {false, {ReasonPath, ReasonMsg}, _N} ->
-            {false, {ReasonPath, ReasonMsg}}
+        {false, {ReasonPath, ReasonMsg}, _N} -> {false, {ReasonPath, ReasonMsg}}
     end;
 evalue_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSchemaComposition) ->
     case internal_evalue_conditions(ConditionsType, Conditions, EvalueMode) of
         true ->
             true;
-        false -> 
+        false ->
             {false, {
                 FunctionName,
                 <<"Value is not matching at least one condition. None matched.">>
@@ -119,9 +101,9 @@ mfoldl(Fun, Acc, [H | T]) ->
     List :: list(),
     Resp :: {true, FoundItem} | {false, none},
     FoundItem :: term().
-find(_Fun, []) -> 
+find(_Fun, []) ->
     {false, none};
-find(Fun, [H|T]) ->
+find(Fun, [H | T]) ->
     case Fun(H) of
         false -> find(Fun, T);
         true -> {true, H}
@@ -130,32 +112,29 @@ find(Fun, [H|T]) ->
 -spec find_value(Fun, List) -> Resp when
     Fun :: function(),
     List :: list(),
-    Resp :: {true, FoundResult} | {false, none},
-    FoundResult :: term().
-find_value(_Fun, []) -> 
+    Resp :: {true, ListElement, FunResult} | {false, none},
+    ListElement :: term(),
+    FunResult :: term().
+find_value(_Fun, []) ->
     {false, none};
-find_value(Fun, [H|T]) ->
+find_value(Fun, [H | T]) ->
     case Fun(H) of
         false -> find_value(Fun, T);
         {true, Result} -> {true, H, Result}
     end.
 
 -spec format_properties(List) -> Resp when
-    List :: list(Property),
+    List :: nonempty_list(Property),
     Property :: binary(),
     Resp :: binary().
 format_properties([Head | List]) ->
-    lists:foldl(fun(Term, Acc) ->
+    lists:foldl(
+        fun(Term, Acc) ->
             <<Acc/binary, ", \"", Term/binary, "\"">>
         end,
         <<"\"", Head/binary, "\"">>,
         List
     ).
-
-
-
-remove_all_of_prefix(ReasonPath) ->
-    re:replace(ReasonPath, "[\.]?_all_of\[[0-9]*\]", "", [{return, list}]).
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
@@ -165,19 +144,26 @@ remove_all_of_prefix(ReasonPath) ->
     CurrentResult :: true | {false, term()},
     Conditions :: [Condition],
     Condition :: {fun_call, fun()} | {mfa_call, {function(), term()}},
-    EvalueMode :: 'orelse' | 'andalso' | 'xor' | {'xor', 0 | 1},
-    Resp :: boolean() | {false, term()}.
+    EvalueMode ::
+        'orelse'
+        | 'andalso'
+        | {'andalso', ConditionIndex}
+        | 'xor'
+        | {'xor', ConditionIndex, MatchedIndexes},
+    ConditionIndex :: non_neg_integer(),
+    MatchedIndexes :: [ConditionIndex],
+    Resp :: boolean() | {false, Reason} | {false, AndalsoReason, ConditionIndex},
+    Reason :: none_matched | {many_matched, MatchedIndexes},
+    AndalsoReason :: term().
 next_evalue_condition(_ConditionsType, true, _Rest, 'orelse') ->
     true;
 next_evalue_condition(_ConditionsType, _Result, [], 'orelse') ->
     false;
 next_evalue_condition(ConditionsType, {false, _}, Rest, 'orelse') ->
     internal_evalue_conditions(ConditionsType, Rest, 'orelse');
-
 next_evalue_condition(ConditionsType, Result, Rest, 'xor') ->
     ConditionIndex = length(Rest),
     next_evalue_condition(ConditionsType, Result, Rest, {'xor', ConditionIndex, []});
-
 next_evalue_condition(_ConditionsType, true, [], {'xor', _N, []}) ->
     true;
 next_evalue_condition(_ConditionsType, _Result, [], {'xor', _N, []}) ->
@@ -187,12 +173,11 @@ next_evalue_condition(_ConditionsType, true, _Rest, {'xor', N, [One]}) ->
 next_evalue_condition(_ConditionsType, _Result, [], {'xor', _N, [_One]}) ->
     true;
 next_evalue_condition(ConditionsType, true, Rest, {'xor', N, []}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N-1, [N]});
+    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, [N]});
 next_evalue_condition(ConditionsType, {false, _}, Rest, {'xor', N, []}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N-1, []});
+    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, []});
 next_evalue_condition(ConditionsType, {false, _}, Rest, {'xor', N, [One]}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'xor', N-1, [One]});
-
+    internal_evalue_conditions(ConditionsType, Rest, {'xor', N - 1, [One]});
 next_evalue_condition(_ConditionsType, Result, Rest, 'andalso') ->
     ConditionIndex = length(Rest),
     next_evalue_condition(_ConditionsType, Result, Rest, {'andalso', ConditionIndex});
@@ -201,6 +186,6 @@ next_evalue_condition(_ConditionsType, true, [], {'andalso', _N}) ->
 next_evalue_condition(_ConditionsType, {false, Reason}, [], {'andalso', N}) ->
     {false, Reason, N};
 next_evalue_condition(ConditionsType, true, Rest, {'andalso', N}) ->
-    internal_evalue_conditions(ConditionsType, Rest, {'andalso', N-11});
+    internal_evalue_conditions(ConditionsType, Rest, {'andalso', N - 11});
 next_evalue_condition(_ConditionsType, {false, Reason}, _Rest, {'andalso', N}) ->
     {false, Reason, N}.
