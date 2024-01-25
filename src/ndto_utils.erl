@@ -25,17 +25,17 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec evaluate_conditions(FunctionName, Conditions, EvalueMode, IsSchemaComposition) -> Resp when
+-spec evaluate_conditions(FunctionName, Conditions, EvaluateMode, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
     Conditions :: {mfa_call, [MfaCall]} | {fun_call, [FunCall]},
     MfaCall :: {function(), term()},
     FunCall :: function(),
-    EvalueMode :: 'orelse' | 'andalso' | 'xor',
+    EvaluateMode :: 'orelse' | 'andalso' | 'xor',
     IsSchemaComposition :: boolean(),
     Resp :: boolean() | {false, term()}.
 evaluate_conditions(_FunctionName, {_ConditionsType, []}, 'andalso', _IsSchemaComposition) ->
     true;
-evaluate_conditions(FunctionName, {_ConditionsType, []}, _EvalueMode, _IsSchemaComposition) ->
+evaluate_conditions(FunctionName, {_ConditionsType, []}, _EvaluateMode, _IsSchemaComposition) ->
     {false, {FunctionName, <<"Value is not matching any of the (0) given conditions">>}};
 evaluate_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true) ->
     case internal_evaluate_conditions(ConditionsType, Conditions, 'andalso') of
@@ -53,13 +53,13 @@ evaluate_conditions(FunctionName, {ConditionsType, Conditions}, 'andalso', true)
                 )
             }}
     end;
-evaluate_conditions(_FunctionName, {ConditionsType, Conditions}, EvalueMode, false) ->
-    case internal_evaluate_conditions(ConditionsType, Conditions, EvalueMode) of
+evaluate_conditions(_FunctionName, {ConditionsType, Conditions}, EvaluateMode, false) ->
+    case internal_evaluate_conditions(ConditionsType, Conditions, EvaluateMode) of
         true -> true;
         {false, {ReasonPath, ReasonMsg}, _N} -> {false, {ReasonPath, ReasonMsg}}
     end;
-evaluate_conditions(FunctionName, {ConditionsType, Conditions}, EvalueMode, _IsSchemaComposition) ->
-    case internal_evaluate_conditions(ConditionsType, Conditions, EvalueMode) of
+evaluate_conditions(FunctionName, {ConditionsType, Conditions}, EvaluateMode, _IsSchemaComposition) ->
+    case internal_evaluate_conditions(ConditionsType, Conditions, EvaluateMode) of
         true ->
             true;
         false ->
@@ -143,17 +143,17 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-internal_evaluate_conditions(fun_call, [Fun | Rest], EvalueMode) ->
-    next_evaluate_condition(fun_call, Fun(), Rest, EvalueMode);
-internal_evaluate_conditions(mfa_call, [{Function, Args} | Rest], EvalueMode) ->
-    next_evaluate_condition(mfa_call, Function(Args), Rest, EvalueMode).
+internal_evaluate_conditions(fun_call, [Fun | Rest], EvaluateMode) ->
+    next_evaluate_condition(fun_call, Fun(), Rest, EvaluateMode);
+internal_evaluate_conditions(mfa_call, [{Function, Args} | Rest], EvaluateMode) ->
+    next_evaluate_condition(mfa_call, Function(Args), Rest, EvaluateMode).
 
--spec next_evaluate_condition(ConditionsType, CurrentResult, Conditions, EvalueMode) -> Resp when
+-spec next_evaluate_condition(ConditionsType, CurrentResult, Conditions, EvaluateMode) -> Resp when
     ConditionsType :: fun_call | mfa_call,
     CurrentResult :: true | {false, term()},
     Conditions :: [Condition],
     Condition :: {fun_call, fun()} | {mfa_call, {function(), term()}},
-    EvalueMode ::
+    EvaluateMode ::
         'orelse'
         | 'andalso'
         | {'andalso', ConditionIndex}
