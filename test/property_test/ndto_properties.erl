@@ -191,7 +191,7 @@ prop_array() ->
                 unique_items => false
             },
             DTO = ndto:generate(test_array, Schema),
-            ok = ndto:load(DTO),
+            ok = ndto:load(DTO,[report]),
 
             ?assertEqual(
                 true,

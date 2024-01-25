@@ -325,7 +325,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
                     undefined ->
                         Acc;
                     _Value ->
-                        case is_valid_array(<<FunName/binary, "[]">>, Keyword, Schema) of
+                        case is_valid_array(FunName, Keyword, Schema) of
                             {undefined, _EmptyList} ->
                                 Acc;
                             {NewIsValidFun, NewExtraFuns} ->
@@ -941,7 +941,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
                     undefined ->
                         Acc;
                     _Value ->
-                        case is_valid_array(FunName, Keyword, Schema) of
+                        case is_valid_array(Prefix, Keyword, Schema) of
                             {undefined, _EmptyList} ->
                                 Acc;
                             {NewIsValidFun, NewExtraFuns} ->
@@ -1521,7 +1521,7 @@ is_valid(Prefix, _Schema) ->
     ExtraFuns :: [erl_syntax:syntaxTree()].
 is_valid_array(Prefix, items, #{items := Items} = Schema) when is_map(Items) ->
     FunName = <<Prefix/binary, ".items">>,
-    {IsValidFun, ExtraFuns} = is_valid(FunName, Items),
+    {IsValidFun, ExtraFuns} = is_valid(<<FunName/binary, "[*]">>, Items),
     OptionalClause = optional_clause(Schema),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -1624,16 +1624,16 @@ is_valid_array(Prefix, items, #{items := Items} = Schema) when is_map(Items) ->
     ),
     {Fun, [IsValidFun | ExtraFuns]};
 is_valid_array(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
+    FunName = <<Prefix/binary, ".items">>,
     {_Size, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Item, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
-            ItemFunName = <<Prefix/binary, "[", (erlang:integer_to_binary(Idx))/binary, "]">>,
+            ItemFunName = <<FunName/binary, "[", (erlang:integer_to_binary(Idx))/binary, "]">>,
             {ItemIsValidFun, ItemExtraFuns} = is_valid(ItemFunName, Item),
             {Idx + 1, [{Idx, ItemIsValidFun} | IsValidFunsAcc], ItemExtraFuns ++ ExtraFunsAcc}
         end,
         {1, [], []},
         Items
     ),
-    FunName = <<Prefix/binary, ".items">>,
     AdditionalItems = maps:get(additional_items, Schema, true),
     {IsValidAdditionalItemsFun, AdditionalItemsExtraFuns} =
         is_valid(<<FunName/binary, ".additional_items">>, AdditionalItems),
@@ -1883,7 +1883,10 @@ is_valid_array(Prefix, min_items, #{min_items := MinItems}) ->
         [erl_syntax:atom(true)]
     ),
     FalseClause = false_clause(
-        FunName, unicode:characters_to_list(io_lib:format("Array does not have at least ~p items", [MinItems]))
+        FunName,
+        unicode:characters_to_list(
+            io_lib:format("Array does not have at least ~p items", [MinItems])
+        )
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -1902,7 +1905,10 @@ is_valid_array(Prefix, max_items, #{max_items := MaxItems}) ->
         [erl_syntax:atom(true)]
     ),
     FalseClause = false_clause(
-        FunName, unicode:characters_to_list(io_lib:format("Array does not have at most ~p items", [MaxItems]))
+        FunName,
+        unicode:characters_to_list(
+            io_lib:format("Array does not have at most ~p items", [MaxItems])
+        )
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -1940,12 +1946,14 @@ is_valid_array(Prefix, unique_items, #{unique_items := true}) ->
                     erl_syntax:clause(
                         [erl_syntax:variable('_')],
                         none,
-                        [false_return(
-                            FunName,
-                            unicode:characters_to_list(
-                                io_lib:format("Array has non unique items", [])
+                        [
+                            false_return(
+                                FunName,
+                                unicode:characters_to_list(
+                                    io_lib:format("Array has non unique items", [])
+                                )
                             )
-                        )]
+                        ]
                     )
                 ]
             )
@@ -2044,7 +2052,9 @@ is_valid_number(_Type, Prefix, maximum, Maximum, Schema) ->
         end,
     FalseClause = false_clause(
         FunName,
-        unicode:characters_to_list(io_lib:format("Number is not lower ~s ~p", [ComparisonTerm, Maximum]))
+        unicode:characters_to_list(
+            io_lib:format("Number is not lower ~s ~p", [ComparisonTerm, Maximum])
+        )
     ),
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -2130,7 +2140,7 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
     {_PropertyNames, IsValidFuns} = lists:unzip(PropertiesFuns),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid_object(Prefix, required, #{required := Required}) ->
-    FunName = <<Prefix/binary, "_required">>,
+    FunName = <<Prefix/binary, ".required">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2206,10 +2216,10 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                                                 erl_syntax:atom('format'),
                                                 [
                                                     erl_syntax:string(
-                                                        unicode:characters_to_list(
+                                                        lists:flatten(
                                                             io_lib:format(
                                                                 "~ts is missing required property ~~p",
-                                                                [binary_to_list(Prefix)]
+                                                                [Prefix]
                                                             )
                                                         )
                                                     ),
