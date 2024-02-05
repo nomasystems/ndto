@@ -304,7 +304,7 @@ additional_properties(_Conf) ->
         additional_properties => false
     },
     DTO1 = ndto:generate(test_additional_properties1, Schema1),
-    ok = ndto:load(DTO1, [report]),
+    ok = ndto:load(DTO1),
 
     ?assertEqual(true, test_additional_properties1:is_valid(#{<<"foo">> => <<"bar">>})),
     ?assertEqual(
@@ -344,7 +344,7 @@ additional_properties(_Conf) ->
         additional_properties => #{type => boolean}
     },
     DTO3 = ndto:generate(test_additional_properties3, Schema3),
-    ok = ndto:load(DTO3, [report]),
+    ok = ndto:load(DTO3),
 
     ?assertEqual(
         {false,
