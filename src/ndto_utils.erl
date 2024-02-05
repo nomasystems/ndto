@@ -27,8 +27,8 @@
 %%%-----------------------------------------------------------------------------
 -spec evaluate_conditions(FunctionName, Conditions, EvaluateMode, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
-    Conditions :: {function_condition, [FArgCondition]} | {fun_condition, [FunCondition]},
-    FArgCondition :: {FunctionName, Argument},
+    Conditions :: {fa_condition, [FACondition]} | {fun_condition, [FunCondition]},
+    FACondition :: {FunctionName, Argument},
     FunctionName :: atom(),
     Argument :: term(),
     FunCondition :: function(),
@@ -170,13 +170,13 @@ internal_evaluate_andalso(ConditionsType, Conditions) ->
 
 internal_evaluate_andalso(fun_condition, [Fun | Rest], Acc) ->
     next_evaluate_andalso(fun_condition, Fun(), Rest, Acc);
-internal_evaluate_andalso(function_condition, [{Function, Args} | Rest], Acc) ->
-    next_evaluate_andalso(function_condition, Function(Args), Rest, Acc).
+internal_evaluate_andalso(fa_condition, [{Function, Args} | Rest], Acc) ->
+    next_evaluate_andalso(fa_condition, Function(Args), Rest, Acc).
 
 internal_evaluate_orelse(fun_condition, [Fun | Rest]) ->
     next_evaluate_orelse(fun_condition, Fun(), Rest);
-internal_evaluate_orelse(function_condition, [{Function, Args} | Rest]) ->
-    next_evaluate_orelse(function_condition, Function(Args), Rest).
+internal_evaluate_orelse(fa_condition, [{Function, Args} | Rest]) ->
+    next_evaluate_orelse(fa_condition, Function(Args), Rest).
 
 internal_evaluate_xor(ConditionsType, Conditions) ->
     FirstConditionIndex = length(Conditions) - 1,
@@ -184,8 +184,8 @@ internal_evaluate_xor(ConditionsType, Conditions) ->
 
 internal_evaluate_xor(fun_condition, [Fun | Rest], Acc) ->
     next_evaluate_xor(fun_condition, Fun(), Rest, Acc);
-internal_evaluate_xor(function_condition, [{Function, Args} | Rest], Acc) ->
-    next_evaluate_xor(function_condition, Function(Args), Rest, Acc).
+internal_evaluate_xor(fa_condition, [{Function, Args} | Rest], Acc) ->
+    next_evaluate_xor(fa_condition, Function(Args), Rest, Acc).
 
 next_evaluate_andalso(_ConditionsType, true, [], _ConditionIndex) ->
     true;

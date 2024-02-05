@@ -189,7 +189,7 @@ is_valid(Prefix, #{type := string} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(string),
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not a string"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -239,7 +239,7 @@ is_valid(Prefix, #{type := integer} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(integer),
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an integer"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -289,7 +289,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(float),
-            chain_conditions(Prefix, {function_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(Prefix, {fa_condition, BodyFunPieces}, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not a float"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -361,7 +361,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(array),
-            chain_conditions(Prefix, {function_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(Prefix, {fa_condition, BodyFunPieces}, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an array"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -418,7 +418,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(object),
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an object"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -461,7 +461,7 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'xor', true)
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'xor', true)
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -504,7 +504,7 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'orelse', true)
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'orelse', true)
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -547,7 +547,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {function_condition, BodyFunPieces}, 'andalso', true)
+            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso', true)
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -1223,7 +1223,7 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
         Properties
     ),
     FunPieces = object_properties_fun_pieces(PropertiesFuns),
-    FunBody = chain_conditions(FunName, {function_condition, FunPieces}, 'andalso'),
+    FunBody = chain_conditions(FunName, {fa_condition, FunPieces}, 'andalso'),
 
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
