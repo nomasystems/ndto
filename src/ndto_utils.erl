@@ -28,7 +28,8 @@
 -spec evaluate_conditions(FunctionName, Conditions, EvaluateMode, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
     Conditions :: {function_condition, [FArgCondition]} | {fun_condition, [FunCondition]},
-    FArgCondition :: {function(), Argument},
+    FArgCondition :: {FunctionName, Argument},
+    FunctionName :: atom(),
     Argument :: term(),
     FunCondition :: function(),
     EvaluateMode :: 'orelse' | 'andalso' | 'xor',
