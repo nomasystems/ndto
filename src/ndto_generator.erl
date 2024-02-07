@@ -94,7 +94,7 @@ generate(Name, Schema) ->
     ExtraFuns :: [erl_syntax:syntaxTree()].
 is_valid(Prefix, false) ->
     FunName = Prefix,
-    FalseClause = false_clause(Prefix, "Value is false"),
+    FalseClause = false_clause(Prefix, "Unexpected value for false schema"),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [FalseClause]
