@@ -15,7 +15,7 @@
 
 %%% EXTERNAL EXPORTS
 -export([
-    chain_conditions/4,
+    chain_conditions/2,
     mfoldl/3,
     find/2,
     find_value/2,
@@ -25,22 +25,20 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec chain_conditions(FunctionName, Conditions, Operator, IsSchemaComposition) -> Resp when
-    FunctionName :: atom(),
-    Conditions :: {fa_condition, [FACondition]} | {fun_condition, [FunCondition]},
-    FACondition :: {FunctionName, Argument},
+-spec chain_conditions(Conditions, Operator) -> Result when
+    Conditions :: [Condition],
+    Condition :: {FunctionName, Argument} | fun(() -> Result),
     FunctionName :: atom(),
     Argument :: term(),
-    FunCondition :: function(),
     Operator :: 'orelse' | 'andalso' | 'xor',
-    IsSchemaComposition :: boolean(),
-    Resp :: boolean() | {false, term()}.
-chain_conditions(FunctionName, Conditions, 'andalso', IsSchemaComposition) ->
-    andalso_(FunctionName, Conditions, IsSchemaComposition);
-chain_conditions(FunctionName, Conditions, 'orelse', IsSchemaComposition) ->
-    orelse_(FunctionName, Conditions, IsSchemaComposition);
-chain_conditions(FunctionName, Conditions, 'xor', _IsSchemaComposition) ->
-    xor_(FunctionName, Conditions).
+    Result :: true | {false, Reason},
+    Reason :: term().
+chain_conditions(Conditions, 'andalso') ->
+    andalso_(Conditions);
+chain_conditions(Conditions, 'orelse') ->
+    orelse_(Conditions);
+chain_conditions(Conditions, 'xor') ->
+    xor_(Conditions).
 
 -spec mfoldl(Fun, Acc, List) -> Resp when
     Fun :: function(),
@@ -101,119 +99,69 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-andalso_(_FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
+andalso_([]) ->
     true;
-andalso_(FunctionName, {ConditionsType, Conditions}, true) ->
-    case evaluate_andalso(ConditionsType, Conditions) of
-        true ->
-            true;
-        {false, {AllOfReasonPath, ReasonMsg}, N} ->
-            ReasonPath = atom_to_list(AllOfReasonPath),
-            {false, {
-                FunctionName,
-                unicode:characters_to_binary(
-                    io_lib:format(
-                        "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts",
-                        [N, list_to_atom(ReasonPath), ReasonMsg]
-                    )
-                )
-            }}
-    end;
-andalso_(_FunctionName, {ConditionsType, Conditions}, false) ->
-    case evaluate_andalso(ConditionsType, Conditions) of
-        true -> true;
-        {false, {ReasonPath, ReasonMsg}, _ConditionIndex} -> {false, {ReasonPath, ReasonMsg}}
-    end.
+andalso_(Conditions) ->
+    evaluate_andalso(Conditions).
 
-orelse_(FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
-    {false, {FunctionName, <<"Value is not matching any of the (0) given conditions">>}};
-orelse_(FunctionName, {ConditionsType, Conditions}, false) ->
-    case evaluate_orelse(ConditionsType, Conditions) of
-        true -> true;
-        false -> {false, {FunctionName, <<"Value is not matching any of the given conditions">>}}
-    end;
-orelse_(FunctionName, {ConditionsType, Conditions}, _IsSchemaComposition) ->
-    case evaluate_orelse(ConditionsType, Conditions) of
-        true ->
-            true;
-        false ->
-            {false, {
-                FunctionName,
-                <<"Value is not matching at least one condition. None matched.">>
-            }}
-    end.
-
-xor_(FunctionName, {ConditionsType, Conditions}) ->
-    case evaluate_xor(ConditionsType, Conditions) of
-        true ->
-            true;
-        {false, none_matched} ->
-            {false, {
-                FunctionName,
-                <<"Value is not matching exactly one condition. None matched.">>
-            }};
-        {false, {many_matched, [First, Second]}} ->
-            {false, {
-                FunctionName,
-                unicode:characters_to_binary(
-                    io_lib:format(
-                        "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched.",
-                        [Second, First]
-                    )
-                )
-            }}
-    end.
-
-evaluate_andalso(ConditionsType, Conditions) ->
-    Acc = length(Conditions) - 1,
-    evaluate_andalso(ConditionsType, Conditions, Acc).
-
-evaluate_andalso(fun_condition, [Fun | Rest], Acc) ->
-    next_andalso_(fun_condition, Fun(), Rest, Acc);
-evaluate_andalso(fa_condition, [{Function, Args} | Rest], Acc) ->
-    next_andalso_(fa_condition, Function(Args), Rest, Acc).
-
-evaluate_orelse(fun_condition, [Fun | Rest]) ->
-    next_orelse_(fun_condition, Fun(), Rest);
-evaluate_orelse(fa_condition, [{Function, Args} | Rest]) ->
-    next_orelse_(fa_condition, Function(Args), Rest).
-
-evaluate_xor(ConditionsType, Conditions) ->
-    FirstConditionIndex = length(Conditions) - 1,
-    evaluate_xor(ConditionsType, Conditions, {FirstConditionIndex, []}).
-
-evaluate_xor(fun_condition, [Fun | Rest], Acc) ->
-    next_xor_(fun_condition, Fun(), Rest, Acc);
-evaluate_xor(fa_condition, [{Function, Args} | Rest], Acc) ->
-    next_xor_(fa_condition, Function(Args), Rest, Acc).
-
-next_andalso_(_ConditionsType, true, [], _ConditionIndex) ->
-    true;
-next_andalso_(_ConditionsType, {false, Reason}, [], ConditionIndex) ->
-    {false, Reason, ConditionIndex};
-next_andalso_(ConditionsType, true, Rest, ConditionIndex) ->
-    evaluate_andalso(ConditionsType, Rest, ConditionIndex - 1);
-next_andalso_(_ConditionsType, {false, Reason}, _Rest, ConditionIndex) ->
-    {false, Reason, ConditionIndex}.
-
-next_orelse_(_ConditionsType, true, _Rest) ->
-    true;
-next_orelse_(_ConditionsType, _Result, []) ->
+orelse_([]) ->
     false;
-next_orelse_(ConditionsType, {false, _}, Rest) ->
-    evaluate_orelse(ConditionsType, Rest).
+orelse_(Conditions) ->
+    evaluate_orelse(Conditions).
 
-next_xor_(_ConditionsType, true, [], {_ConditionIndex, []}) ->
+xor_(Conditions) ->
+    evaluate_xor(Conditions).
+
+evaluate_andalso(Conditions) ->
+    Acc = erlang:length(Conditions) - 1,
+    evaluate_andalso(Conditions, Acc).
+
+evaluate_andalso([{Function, Args} | Rest], Acc) ->
+    next_andalso_(Function(Args), Rest, Acc);
+evaluate_andalso([Fun | Rest], Acc) ->
+    next_andalso_(Fun(), Rest, Acc).
+
+evaluate_orelse([{Function, Args} | Rest]) ->
+    next_orelse_(Function(Args), Rest);
+evaluate_orelse([Fun | Rest]) ->
+    next_orelse_(Fun(), Rest).
+
+evaluate_xor(Conditions) ->
+    FirstConditionIndex = erlang:length(Conditions) - 1,
+    evaluate_xor(Conditions, {FirstConditionIndex, []}).
+
+evaluate_xor([{Function, Args} | Rest], Acc) ->
+    next_xor_(Function(Args), Rest, Acc);
+evaluate_xor([Fun | Rest], Acc) ->
+    next_xor_(Fun(), Rest, Acc).
+
+next_andalso_(true, [], _ConditionIndex) ->
     true;
-next_xor_(_ConditionsType, _Result, [], {_ConditionIndex, []}) ->
+next_andalso_({false, Reason}, [], ConditionIndex) ->
+    {false, {Reason, ConditionIndex}};
+next_andalso_(true, Rest, ConditionIndex) ->
+    evaluate_andalso(Rest, ConditionIndex - 1);
+next_andalso_({false, Reason}, _Rest, ConditionIndex) ->
+    {false, {Reason, ConditionIndex}}.
+
+next_orelse_(true, _Rest) ->
+    true;
+next_orelse_(_Result, []) ->
+    false;
+next_orelse_({false, _}, Rest) ->
+    evaluate_orelse(Rest).
+
+next_xor_(true, [], {_ConditionIndex, []}) ->
+    true;
+next_xor_(_Result, [], {_ConditionIndex, []}) ->
     {false, none_matched};
-next_xor_(_ConditionsType, true, _Rest, {ConditionIndex, [LastMatchedCondition]}) ->
+next_xor_(true, _Rest, {ConditionIndex, [LastMatchedCondition]}) ->
     {false, {many_matched, [LastMatchedCondition, ConditionIndex]}};
-next_xor_(_ConditionsType, _Result, [], {_ConditionIndex, [_LastMatchedCondition]}) ->
+next_xor_(_Result, [], {_ConditionIndex, [_LastMatchedCondition]}) ->
     true;
-next_xor_(ConditionsType, true, Rest, {ConditionIndex, []}) ->
-    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [ConditionIndex]});
-next_xor_(ConditionsType, {false, _}, Rest, {ConditionIndex, []}) ->
-    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, []});
-next_xor_(ConditionsType, {false, _}, Rest, {ConditionIndex, [LastMatchedCondition]}) ->
-    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [LastMatchedCondition]}).
+next_xor_(true, Rest, {ConditionIndex, []}) ->
+    evaluate_xor(Rest, {ConditionIndex - 1, [ConditionIndex]});
+next_xor_({false, _}, Rest, {ConditionIndex, []}) ->
+    evaluate_xor(Rest, {ConditionIndex - 1, []});
+next_xor_({false, _}, Rest, {ConditionIndex, [LastMatchedCondition]}) ->
+    evaluate_xor(Rest, {ConditionIndex - 1, [LastMatchedCondition]}).

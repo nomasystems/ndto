@@ -189,7 +189,7 @@ is_valid(Prefix, #{type := string} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(string),
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, BodyFunPieces, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not a string"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -239,7 +239,7 @@ is_valid(Prefix, #{type := integer} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(integer),
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, BodyFunPieces, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an integer"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -289,7 +289,7 @@ is_valid(Prefix, #{type := float} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(float),
-            chain_conditions(Prefix, {fa_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, BodyFunPieces, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not a float"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -361,7 +361,7 @@ is_valid(Prefix, #{type := array} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(array),
-            chain_conditions(Prefix, {fa_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, BodyFunPieces, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an array"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -418,7 +418,7 @@ is_valid(Prefix, #{type := object} = Schema) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             type_guard(object),
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso')
+            chain_conditions(FunName, BodyFunPieces, 'andalso')
         ),
     FalseClause = false_clause(<<FunName/binary, ".type">>, "Value is not an object"),
     Clauses = clauses([OptionalClause, NullClause, TrueClause, FalseClause]),
@@ -461,7 +461,31 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'xor', true)
+            chain_conditions(FunName, BodyFunPieces, 'xor')
+            % [
+            %     erl_syntax:case_expr(
+            %         hd(chain_conditions(FunName, BodyFunPieces, 'xor', true)),
+            %         [
+            %             erl_syntax:clause(
+            %                 [erl_syntax:atom(true)],
+            %                 none,
+            %                 [erl_syntax:atom(true)]
+            %             ),
+            %             erl_syntax:clause(
+            %                 [erl_syntax:atom(false)],
+            %                 none,
+            %                 [erl_syntax:tuple([
+            %                     erl_syntax:atom(binary_to_atom(FunName)),
+            %                     erl_syntax:binary([
+            %                         erl_syntax:binary_field(
+            %                             erl_syntax:string("Value is not matching exactly one condition. None matched.")
+            %                         )
+            %                     ])
+            %                 ])]
+            %             )
+            %         ]
+            %     )
+            % ]
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -504,7 +528,37 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'orelse', true)
+            [
+                erl_syntax:case_expr(
+                    hd(chain_conditions(FunName, BodyFunPieces, 'orelse', true)),
+                    [
+                        erl_syntax:clause(
+                            [erl_syntax:atom('true')],
+                            none,
+                            [erl_syntax:atom('true')]
+                        ),
+                        erl_syntax:clause(
+                            [erl_syntax:atom('false')],
+                            none,
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:atom('false'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+                                        erl_syntax:binary([
+                                            erl_syntax:binary_field(
+                                                erl_syntax:string(
+                                                    "Value is not matching at least one condition. None matched."
+                                                )
+                                            )
+                                        ])
+                                    ])
+                                ])
+                            ]
+                        )
+                    ]
+                )
+            ]
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -547,7 +601,61 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
             none,
-            chain_conditions(FunName, {fa_condition, BodyFunPieces}, 'andalso', true)
+            [
+                erl_syntax:case_expr(
+                    hd(chain_conditions(FunName, BodyFunPieces, 'andalso', true)),
+                    [
+                        erl_syntax:clause(
+                            [erl_syntax:atom('true')],
+                            none,
+                            [erl_syntax:atom('true')]
+                        ),
+                        erl_syntax:clause(
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:atom('false'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:tuple([
+                                            erl_syntax:variable('AllOfReasonPath'),
+                                            erl_syntax:variable('ReasonMsg')
+                                        ]),
+                                        erl_syntax:variable('N')
+                                    ])
+                                ])
+                            ],
+                            none,
+                            [
+                                erl_syntax:tuple([
+                                    erl_syntax:atom('false'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:atom(erlang:binary_to_atom(FunName)),
+                                        erl_syntax:application(
+                                            erl_syntax:atom('unicode'),
+                                            erl_syntax:atom('characters_to_binary'),
+                                            [
+                                                erl_syntax:application(
+                                                    erl_syntax:atom('io_lib'),
+                                                    erl_syntax:atom('format'),
+                                                    [
+                                                        erl_syntax:string(
+                                                            "Value is not matching all conditions. Condition ~p failed because of schema path '~ts' : ~ts"
+                                                        ),
+                                                        erl_syntax:list([
+                                                            erl_syntax:variable('N'),
+                                                            erl_syntax:variable('AllOfReasonPath'),
+                                                            erl_syntax:variable('ReasonMsg')
+                                                        ])
+                                                    ]
+                                                )
+                                            ]
+                                        )
+                                    ])
+                                ])
+                            ]
+                        )
+                    ]
+                )
+            ]
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -816,7 +924,7 @@ is_valid_array(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
                                                                             ),
                                                                             erl_syntax:tuple([
                                                                                 erl_syntax:atom(
-                                                                                    binary_to_atom(
+                                                                                    erlang:binary_to_atom(
                                                                                         FunName
                                                                                     )
                                                                                 ),
@@ -1222,8 +1330,31 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
         {[], []},
         Properties
     ),
-    FunPieces = object_properties_fun_pieces(PropertiesFuns),
-    FunBody = chain_conditions(FunName, {fa_condition, FunPieces}, 'andalso'),
+    FunPieces = [
+        erl_syntax:tuple([
+            erl_syntax:implicit_fun(
+                erl_syntax:arity_qualifier(
+                    erl_syntax:function_name(PropertyFun),
+                    erl_syntax:integer(erl_syntax:function_arity(PropertyFun))
+                )
+            ),
+            erl_syntax:application(
+                erl_syntax:atom(maps),
+                erl_syntax:atom(get),
+                [
+                    erl_syntax:binary([
+                        erl_syntax:binary_field(
+                            erl_syntax:string(erlang:binary_to_list(PropertyName))
+                        )
+                    ]),
+                    erl_syntax:variable('Val'),
+                    erl_syntax:atom(undefined)
+                ]
+            )
+        ])
+     || {PropertyName, PropertyFun} <- PropertiesFuns
+    ],
+    FunBody = chain_conditions(FunName, FunPieces, 'andalso'),
 
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -1303,7 +1434,7 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                             erl_syntax:tuple([
                                 erl_syntax:atom('false'),
                                 erl_syntax:tuple([
-                                    erl_syntax:atom(binary_to_list(Prefix)),
+                                    erl_syntax:atom(erlang:binary_to_list(Prefix)),
                                     erl_syntax:application(
                                         erl_syntax:atom(erlang),
                                         erl_syntax:atom(list_to_binary),
@@ -1651,7 +1782,7 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
-        chain_conditions(FunName, {fun_condition, Conditions}, 'andalso')
+        chain_conditions(FunName, Conditions, 'andalso')
     ),
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
@@ -1811,7 +1942,7 @@ is_valid_object(
                             erl_syntax:tuple([
                                 erl_syntax:atom('false'),
                                 erl_syntax:tuple([
-                                    erl_syntax:atom(binary_to_list(FunName)),
+                                    erl_syntax:atom(erlang:binary_to_list(FunName)),
                                     erl_syntax:application(
                                         erl_syntax:atom(erlang),
                                         erl_syntax:atom(list_to_binary),
@@ -2398,50 +2529,129 @@ is_valid_string(_Prefix, format, _Format) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator) ->
-    chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator, false).
+chain_conditions(FunName, FunPieces, Operator) ->
+    chain_conditions(FunName, FunPieces, Operator, false).
 
-chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator, IsSchemaComposition) ->
+chain_conditions(FunName, FunPieces, 'andalso', false) ->
+    [
+        erl_syntax:case_expr(
+            hd(chain_conditions(FunName, FunPieces, 'andalso', true)),
+            [
+                erl_syntax:clause(
+                    [erl_syntax:atom('true')],
+                    none,
+                    [erl_syntax:atom('true')]
+                ),
+                erl_syntax:clause(
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:tuple([
+                                erl_syntax:variable('Reason'),
+                                erl_syntax:variable('_N')
+                            ])
+                        ])
+                    ],
+                    none,
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:variable('Reason')
+                        ])
+                    ]
+                )
+            ]
+        )
+    ];
+chain_conditions(FunName, FunPieces, 'xor', false) ->
+    [
+        erl_syntax:case_expr(
+            hd(chain_conditions(FunName, FunPieces, 'xor', true)),
+            [
+                erl_syntax:clause(
+                    [erl_syntax:atom('true')],
+                    none,
+                    [erl_syntax:atom('true')]
+                ),
+                erl_syntax:clause(
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:atom('none_matched')
+                        ])
+                    ],
+                    none,
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:tuple([
+                                erl_syntax:atom(binary_to_atom(FunName)),
+                                erl_syntax:binary([
+                                    erl_syntax:binary_field(
+                                        erl_syntax:string(
+                                            "Value is not matching exactly one condition. None matched."
+                                        )
+                                    )
+                                ])
+                            ])
+                        ])
+                    ]
+                ),
+                erl_syntax:clause(
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:tuple([
+                                erl_syntax:atom('many_matched'),
+                                erl_syntax:list([
+                                    erl_syntax:variable('First'),
+                                    erl_syntax:variable('Second')
+                                ])
+                            ])
+                        ])
+                    ],
+                    none,
+                    [
+                        erl_syntax:tuple([
+                            erl_syntax:atom('false'),
+                            erl_syntax:tuple([
+                                erl_syntax:atom(binary_to_atom(FunName)),
+                                erl_syntax:application(
+                                    erl_syntax:atom('unicode'),
+                                    erl_syntax:atom('characters_to_binary'),
+                                    [
+                                        erl_syntax:application(
+                                            erl_syntax:atom('io_lib'),
+                                            erl_syntax:atom('format'),
+                                            [
+                                                erl_syntax:string(
+                                                    "Value is not matching exactly one condition. More than one (conditions ~p and ~p) matched."
+                                                ),
+                                                erl_syntax:list([
+                                                    erl_syntax:variable('Second'),
+                                                    erl_syntax:variable('First')
+                                                ])
+                                            ]
+                                        )
+                                    ]
+                                )
+                            ])
+                        ])
+                    ]
+                )
+            ]
+        )
+    ];
+chain_conditions(_FunName, FunPieces, Operator, true) ->
     [
         erl_syntax:application(
             erl_syntax:atom(ndto_utils),
             erl_syntax:atom(chain_conditions),
             [
-                erl_syntax:atom(binary_to_atom(Prefix)),
-                erl_syntax:tuple([
-                    erl_syntax:atom(FunPiecesType),
-                    erl_syntax:list(FunPieces)
-                ]),
-                erl_syntax:atom(Operator),
-                erl_syntax:atom(IsSchemaComposition)
+                erl_syntax:list(FunPieces),
+                erl_syntax:atom(Operator)
             ]
         )
-    ].
-
-object_properties_fun_pieces(PropertiesFuns) ->
-    [
-        erl_syntax:tuple([
-            erl_syntax:implicit_fun(
-                erl_syntax:arity_qualifier(
-                    erl_syntax:function_name(PropertyFun),
-                    erl_syntax:integer(erl_syntax:function_arity(PropertyFun))
-                )
-            ),
-            erl_syntax:application(
-                erl_syntax:atom(maps),
-                erl_syntax:atom(get),
-                [
-                    erl_syntax:binary([
-                        erl_syntax:binary_field(
-                            erl_syntax:string(erlang:binary_to_list(PropertyName))
-                        )
-                    ]),
-                    erl_syntax:variable('Val'),
-                    erl_syntax:atom(undefined)
-                ]
-            )
-        ])
-     || {PropertyName, PropertyFun} <- PropertiesFuns
     ].
 
 clauses(Clauses) ->
@@ -2458,7 +2668,7 @@ false_return(FunName, ErrorMessage) ->
     erl_syntax:tuple([
         erl_syntax:atom('false'),
         erl_syntax:tuple([
-            erl_syntax:atom(binary_to_list(FunName)),
+            erl_syntax:atom(erlang:binary_to_list(FunName)),
             erl_syntax:binary([
                 erl_syntax:binary_field(
                     erl_syntax:string(ErrorMessage)
