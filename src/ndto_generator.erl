@@ -2398,21 +2398,21 @@ is_valid_string(_Prefix, format, _Format) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-chain_conditions(Prefix, {FunPiecesType, FunPieces}, EvaluateMode) ->
-    chain_conditions(Prefix, {FunPiecesType, FunPieces}, EvaluateMode, false).
+chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator) ->
+    chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator, false).
 
-chain_conditions(Prefix, {FunPiecesType, FunPieces}, EvaluateMode, IsSchemaComposition) ->
+chain_conditions(Prefix, {FunPiecesType, FunPieces}, Operator, IsSchemaComposition) ->
     [
         erl_syntax:application(
             erl_syntax:atom(ndto_utils),
-            erl_syntax:atom(evaluate_conditions),
+            erl_syntax:atom(chain_conditions),
             [
                 erl_syntax:atom(binary_to_atom(Prefix)),
                 erl_syntax:tuple([
                     erl_syntax:atom(FunPiecesType),
                     erl_syntax:list(FunPieces)
                 ]),
-                erl_syntax:atom(EvaluateMode),
+                erl_syntax:atom(Operator),
                 erl_syntax:atom(IsSchemaComposition)
             ]
         )

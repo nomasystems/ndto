@@ -15,7 +15,7 @@
 
 %%% EXTERNAL EXPORTS
 -export([
-    evaluate_conditions/4,
+    chain_conditions/4,
     mfoldl/3,
     find/2,
     find_value/2,
@@ -25,22 +25,22 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec evaluate_conditions(FunctionName, Conditions, EvaluateMode, IsSchemaComposition) -> Resp when
+-spec chain_conditions(FunctionName, Conditions, Operator, IsSchemaComposition) -> Resp when
     FunctionName :: atom(),
     Conditions :: {fa_condition, [FACondition]} | {fun_condition, [FunCondition]},
     FACondition :: {FunctionName, Argument},
     FunctionName :: atom(),
     Argument :: term(),
     FunCondition :: function(),
-    EvaluateMode :: 'orelse' | 'andalso' | 'xor',
+    Operator :: 'orelse' | 'andalso' | 'xor',
     IsSchemaComposition :: boolean(),
     Resp :: boolean() | {false, term()}.
-evaluate_conditions(FunctionName, Conditions, 'andalso', IsSchemaComposition) ->
-    evaluate_andalso(FunctionName, Conditions, IsSchemaComposition);
-evaluate_conditions(FunctionName, Conditions, 'orelse', IsSchemaComposition) ->
-    evaluate_orelse(FunctionName, Conditions, IsSchemaComposition);
-evaluate_conditions(FunctionName, Conditions, 'xor', _IsSchemaComposition) ->
-    evaluate_xor(FunctionName, Conditions).
+chain_conditions(FunctionName, Conditions, 'andalso', IsSchemaComposition) ->
+    andalso_(FunctionName, Conditions, IsSchemaComposition);
+chain_conditions(FunctionName, Conditions, 'orelse', IsSchemaComposition) ->
+    orelse_(FunctionName, Conditions, IsSchemaComposition);
+chain_conditions(FunctionName, Conditions, 'xor', _IsSchemaComposition) ->
+    xor_(FunctionName, Conditions).
 
 -spec mfoldl(Fun, Acc, List) -> Resp when
     Fun :: function(),
@@ -101,10 +101,10 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-evaluate_andalso(_FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
+andalso_(_FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
     true;
-evaluate_andalso(FunctionName, {ConditionsType, Conditions}, true) ->
-    case internal_evaluate_andalso(ConditionsType, Conditions) of
+andalso_(FunctionName, {ConditionsType, Conditions}, true) ->
+    case evaluate_andalso(ConditionsType, Conditions) of
         true ->
             true;
         {false, {AllOfReasonPath, ReasonMsg}, N} ->
@@ -119,21 +119,21 @@ evaluate_andalso(FunctionName, {ConditionsType, Conditions}, true) ->
                 )
             }}
     end;
-evaluate_andalso(_FunctionName, {ConditionsType, Conditions}, false) ->
-    case internal_evaluate_andalso(ConditionsType, Conditions) of
+andalso_(_FunctionName, {ConditionsType, Conditions}, false) ->
+    case evaluate_andalso(ConditionsType, Conditions) of
         true -> true;
         {false, {ReasonPath, ReasonMsg}, _ConditionIndex} -> {false, {ReasonPath, ReasonMsg}}
     end.
 
-evaluate_orelse(FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
+orelse_(FunctionName, {_ConditionsType, []}, _IsSchemaComposition) ->
     {false, {FunctionName, <<"Value is not matching any of the (0) given conditions">>}};
-evaluate_orelse(FunctionName, {ConditionsType, Conditions}, false) ->
-    case internal_evaluate_orelse(ConditionsType, Conditions) of
+orelse_(FunctionName, {ConditionsType, Conditions}, false) ->
+    case evaluate_orelse(ConditionsType, Conditions) of
         true -> true;
         false -> {false, {FunctionName, <<"Value is not matching any of the given conditions">>}}
     end;
-evaluate_orelse(FunctionName, {ConditionsType, Conditions}, _IsSchemaComposition) ->
-    case internal_evaluate_orelse(ConditionsType, Conditions) of
+orelse_(FunctionName, {ConditionsType, Conditions}, _IsSchemaComposition) ->
+    case evaluate_orelse(ConditionsType, Conditions) of
         true ->
             true;
         false ->
@@ -143,8 +143,8 @@ evaluate_orelse(FunctionName, {ConditionsType, Conditions}, _IsSchemaComposition
             }}
     end.
 
-evaluate_xor(FunctionName, {ConditionsType, Conditions}) ->
-    case internal_evaluate_xor(ConditionsType, Conditions) of
+xor_(FunctionName, {ConditionsType, Conditions}) ->
+    case evaluate_xor(ConditionsType, Conditions) of
         true ->
             true;
         {false, none_matched} ->
@@ -164,56 +164,56 @@ evaluate_xor(FunctionName, {ConditionsType, Conditions}) ->
             }}
     end.
 
-internal_evaluate_andalso(ConditionsType, Conditions) ->
+evaluate_andalso(ConditionsType, Conditions) ->
     Acc = length(Conditions) - 1,
-    internal_evaluate_andalso(ConditionsType, Conditions, Acc).
+    evaluate_andalso(ConditionsType, Conditions, Acc).
 
-internal_evaluate_andalso(fun_condition, [Fun | Rest], Acc) ->
-    next_evaluate_andalso(fun_condition, Fun(), Rest, Acc);
-internal_evaluate_andalso(fa_condition, [{Function, Args} | Rest], Acc) ->
-    next_evaluate_andalso(fa_condition, Function(Args), Rest, Acc).
+evaluate_andalso(fun_condition, [Fun | Rest], Acc) ->
+    next_andalso_(fun_condition, Fun(), Rest, Acc);
+evaluate_andalso(fa_condition, [{Function, Args} | Rest], Acc) ->
+    next_andalso_(fa_condition, Function(Args), Rest, Acc).
 
-internal_evaluate_orelse(fun_condition, [Fun | Rest]) ->
-    next_evaluate_orelse(fun_condition, Fun(), Rest);
-internal_evaluate_orelse(fa_condition, [{Function, Args} | Rest]) ->
-    next_evaluate_orelse(fa_condition, Function(Args), Rest).
+evaluate_orelse(fun_condition, [Fun | Rest]) ->
+    next_orelse_(fun_condition, Fun(), Rest);
+evaluate_orelse(fa_condition, [{Function, Args} | Rest]) ->
+    next_orelse_(fa_condition, Function(Args), Rest).
 
-internal_evaluate_xor(ConditionsType, Conditions) ->
+evaluate_xor(ConditionsType, Conditions) ->
     FirstConditionIndex = length(Conditions) - 1,
-    internal_evaluate_xor(ConditionsType, Conditions, {FirstConditionIndex, []}).
+    evaluate_xor(ConditionsType, Conditions, {FirstConditionIndex, []}).
 
-internal_evaluate_xor(fun_condition, [Fun | Rest], Acc) ->
-    next_evaluate_xor(fun_condition, Fun(), Rest, Acc);
-internal_evaluate_xor(fa_condition, [{Function, Args} | Rest], Acc) ->
-    next_evaluate_xor(fa_condition, Function(Args), Rest, Acc).
+evaluate_xor(fun_condition, [Fun | Rest], Acc) ->
+    next_xor_(fun_condition, Fun(), Rest, Acc);
+evaluate_xor(fa_condition, [{Function, Args} | Rest], Acc) ->
+    next_xor_(fa_condition, Function(Args), Rest, Acc).
 
-next_evaluate_andalso(_ConditionsType, true, [], _ConditionIndex) ->
+next_andalso_(_ConditionsType, true, [], _ConditionIndex) ->
     true;
-next_evaluate_andalso(_ConditionsType, {false, Reason}, [], ConditionIndex) ->
+next_andalso_(_ConditionsType, {false, Reason}, [], ConditionIndex) ->
     {false, Reason, ConditionIndex};
-next_evaluate_andalso(ConditionsType, true, Rest, ConditionIndex) ->
-    internal_evaluate_andalso(ConditionsType, Rest, ConditionIndex - 1);
-next_evaluate_andalso(_ConditionsType, {false, Reason}, _Rest, ConditionIndex) ->
+next_andalso_(ConditionsType, true, Rest, ConditionIndex) ->
+    evaluate_andalso(ConditionsType, Rest, ConditionIndex - 1);
+next_andalso_(_ConditionsType, {false, Reason}, _Rest, ConditionIndex) ->
     {false, Reason, ConditionIndex}.
 
-next_evaluate_orelse(_ConditionsType, true, _Rest) ->
+next_orelse_(_ConditionsType, true, _Rest) ->
     true;
-next_evaluate_orelse(_ConditionsType, _Result, []) ->
+next_orelse_(_ConditionsType, _Result, []) ->
     false;
-next_evaluate_orelse(ConditionsType, {false, _}, Rest) ->
-    internal_evaluate_orelse(ConditionsType, Rest).
+next_orelse_(ConditionsType, {false, _}, Rest) ->
+    evaluate_orelse(ConditionsType, Rest).
 
-next_evaluate_xor(_ConditionsType, true, [], {_ConditionIndex, []}) ->
+next_xor_(_ConditionsType, true, [], {_ConditionIndex, []}) ->
     true;
-next_evaluate_xor(_ConditionsType, _Result, [], {_ConditionIndex, []}) ->
+next_xor_(_ConditionsType, _Result, [], {_ConditionIndex, []}) ->
     {false, none_matched};
-next_evaluate_xor(_ConditionsType, true, _Rest, {ConditionIndex, [LastMatchedCondition]}) ->
+next_xor_(_ConditionsType, true, _Rest, {ConditionIndex, [LastMatchedCondition]}) ->
     {false, {many_matched, [LastMatchedCondition, ConditionIndex]}};
-next_evaluate_xor(_ConditionsType, _Result, [], {_ConditionIndex, [_LastMatchedCondition]}) ->
+next_xor_(_ConditionsType, _Result, [], {_ConditionIndex, [_LastMatchedCondition]}) ->
     true;
-next_evaluate_xor(ConditionsType, true, Rest, {ConditionIndex, []}) ->
-    internal_evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [ConditionIndex]});
-next_evaluate_xor(ConditionsType, {false, _}, Rest, {ConditionIndex, []}) ->
-    internal_evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, []});
-next_evaluate_xor(ConditionsType, {false, _}, Rest, {ConditionIndex, [LastMatchedCondition]}) ->
-    internal_evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [LastMatchedCondition]}).
+next_xor_(ConditionsType, true, Rest, {ConditionIndex, []}) ->
+    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [ConditionIndex]});
+next_xor_(ConditionsType, {false, _}, Rest, {ConditionIndex, []}) ->
+    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, []});
+next_xor_(ConditionsType, {false, _}, Rest, {ConditionIndex, [LastMatchedCondition]}) ->
+    evaluate_xor(ConditionsType, Rest, {ConditionIndex - 1, [LastMatchedCondition]}).
