@@ -29,7 +29,7 @@
 -spec andalso_(Conditions) -> Result when
     Conditions :: [Condition],
     Condition :: {FunctionName, Argument} | fun(() -> Result),
-    FunctionName :: atom(),
+    FunctionName :: function(),
     Argument :: term(),
     Result :: true | {false, Reason},
     Reason :: {SchemaPath, Description, FailedIndex},
@@ -45,7 +45,7 @@ andalso_(Conditions) ->
 -spec orelse_(Conditions) -> Result when
     Conditions :: [Condition],
     Condition :: {FunctionName, Argument} | fun(() -> Result),
-    FunctionName :: atom(),
+    FunctionName :: function(),
     Argument :: term(),
     Result :: true | false.
 orelse_([]) ->
@@ -58,7 +58,7 @@ orelse_([Fun | Rest]) ->
 -spec xor_(Conditions) -> Result when
     Conditions :: [Condition],
     Condition :: {FunctionName, Argument} | fun(() -> Result),
-    FunctionName :: atom(),
+    FunctionName :: function(),
     Argument :: term(),
     Result :: true | {false, Reason},
     Reason ::
