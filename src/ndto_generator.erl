@@ -463,7 +463,7 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
             none,
             [
                 erl_syntax:case_expr(
-                    hd(chain_conditions(FunName, ValidationConditions, 'xor')),
+                    erlang:hd(chain_conditions(FunName, ValidationConditions, 'xor')),
                     [
                         erl_syntax:clause(
                             [erl_syntax:atom('true')],
@@ -583,7 +583,7 @@ is_valid(Prefix, #{any_of := Subschemas} = Schema) when is_list(Subschemas) ->
             none,
             [
                 erl_syntax:case_expr(
-                    hd(chain_conditions(FunName, ValidationConditions, 'orelse', true)),
+                    erlang:hd(chain_conditions(FunName, ValidationConditions, 'orelse', true)),
                     [
                         erl_syntax:clause(
                             [erl_syntax:atom('true')],
@@ -661,7 +661,7 @@ is_valid(Prefix, #{all_of := Subschemas} = Schema) when is_list(Subschemas) ->
             none,
             [
                 erl_syntax:case_expr(
-                    hd(chain_conditions(FunName, ValidationConditions, 'andalso', true)),
+                    erlang:hd(chain_conditions(FunName, ValidationConditions, 'andalso', true)),
                     [
                         erl_syntax:clause(
                             [erl_syntax:atom('true')],
@@ -2615,7 +2615,7 @@ chain_conditions(FunName, ValidationConditions, Operator) ->
 chain_conditions(FunName, ValidationConditions, 'andalso', false) ->
     [
         erl_syntax:case_expr(
-            hd(chain_conditions(FunName, ValidationConditions, 'andalso', true)),
+            erlang:hd(chain_conditions(FunName, ValidationConditions, 'andalso', true)),
             [
                 erl_syntax:clause(
                     [erl_syntax:atom('true')],

@@ -168,7 +168,7 @@ nullable(_Conf) ->
             DTO2 = ndto:generate(test_nullable2, Schema2),
             ok = ndto:load(DTO2),
 
-            <<Char:1/binary, _Rest/binary>> = TypeBin = atom_to_binary(Type),
+            <<Char:1/binary, _Rest/binary>> = TypeBin = erlang:atom_to_binary(Type),
             Article =
                 case Char of
                     Vocal when Vocal =:= <<"a">>; Vocal =:= <<"o">>; Vocal =:= <<"i">> ->
