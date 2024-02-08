@@ -839,7 +839,7 @@ is_valid_array(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
             erl_syntax:case_expr(
                 erl_syntax:application(
                     erl_syntax:atom(ndto_utils),
-                    erl_syntax:atom(find_value),
+                    erl_syntax:atom(find),
                     [
                         erl_syntax:fun_expr([
                             erl_syntax:clause(
@@ -1637,13 +1637,13 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
                 erl_syntax:case_expr(
                     erl_syntax:application(
                         erl_syntax:atom(ndto_utils),
-                        erl_syntax:atom(find_value),
+                        erl_syntax:atom(find),
                         [
                             erl_syntax:fun_expr([
                                 erl_syntax:clause(
                                     [
                                         erl_syntax:tuple([
-                                            erl_syntax:variable('_PropertyName'),
+                                            erl_syntax:variable('PropertyName'),
                                             erl_syntax:variable('PropertyValue')
                                         ])
                                     ],
@@ -1679,8 +1679,18 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
                                                         erl_syntax:tuple([
                                                             erl_syntax:atom('true'),
                                                             erl_syntax:tuple([
-                                                                erl_syntax:variable('Prefix'),
-                                                                erl_syntax:variable('Reason')
+                                                                erl_syntax:tuple([
+                                                                    erl_syntax:variable(
+                                                                        'PropertyName'
+                                                                    ),
+                                                                    erl_syntax:variable(
+                                                                        'PropertyValue'
+                                                                    )
+                                                                ]),
+                                                                erl_syntax:tuple([
+                                                                    erl_syntax:variable('Prefix'),
+                                                                    erl_syntax:variable('Reason')
+                                                                ])
                                                             ])
                                                         ])
                                                     ]
@@ -1709,12 +1719,14 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
                                 erl_syntax:tuple([
                                     erl_syntax:atom('true'),
                                     erl_syntax:tuple([
-                                        erl_syntax:variable('PropertyName'),
-                                        erl_syntax:variable('_PropertyValue')
-                                    ]),
-                                    erl_syntax:tuple([
-                                        erl_syntax:variable('Prefix'),
-                                        erl_syntax:variable('Reason')
+                                        erl_syntax:tuple([
+                                            erl_syntax:variable('PropertyName'),
+                                            erl_syntax:variable('_PropertyValue')
+                                        ]),
+                                        erl_syntax:tuple([
+                                            erl_syntax:variable('Prefix'),
+                                            erl_syntax:variable('Reason')
+                                        ])
                                     ])
                                 ])
                             ],
@@ -2050,7 +2062,7 @@ is_valid_object(
             erl_syntax:case_expr(
                 erl_syntax:application(
                     erl_syntax:atom(ndto_utils),
-                    erl_syntax:atom(find_value),
+                    erl_syntax:atom(find),
                     [
                         erl_syntax:fun_expr([
                             erl_syntax:clause(
@@ -2096,8 +2108,11 @@ is_valid_object(
                                                     erl_syntax:tuple([
                                                         erl_syntax:atom('true'),
                                                         erl_syntax:tuple([
-                                                            erl_syntax:variable('Prefix'),
-                                                            erl_syntax:variable('Reason')
+                                                            erl_syntax:variable('Property'),
+                                                            erl_syntax:tuple([
+                                                                erl_syntax:variable('Prefix'),
+                                                                erl_syntax:variable('Reason')
+                                                            ])
                                                         ])
                                                     ])
                                                 ]
@@ -2156,10 +2171,12 @@ is_valid_object(
                         [
                             erl_syntax:tuple([
                                 erl_syntax:atom('true'),
-                                erl_syntax:variable('PropertyName'),
                                 erl_syntax:tuple([
-                                    erl_syntax:variable('Prefix'),
-                                    erl_syntax:variable('Reason')
+                                    erl_syntax:variable('PropertyName'),
+                                    erl_syntax:tuple([
+                                        erl_syntax:variable('Prefix'),
+                                        erl_syntax:variable('Reason')
+                                    ])
                                 ])
                             ])
                         ],
@@ -2624,7 +2641,7 @@ chain_conditions(_FunName, FunPieces, Operator, true) ->
             erl_syntax:atom(ndto_utils),
             erl_syntax:atom(
                 erlang:list_to_atom(
-                    erlang:atom_to_list(Operator)++"_"
+                    erlang:atom_to_list(Operator) ++ "_"
                 )
             ),
             [

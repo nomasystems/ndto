@@ -20,7 +20,6 @@
     xor_/1,
     mfoldl/3,
     find/2,
-    find_value/2,
     format_properties/1
 ]).
 
@@ -62,9 +61,10 @@ orelse_([Fun | Rest]) ->
     FunctionName :: atom(),
     Argument :: term(),
     Result :: true | {false, Reason},
-    Reason :: 
+    Reason ::
         {SchemaPath, none_matched}
-        | {SchemaPath, {many_matched, {ValidationError, ValidationError}}}.
+        | {SchemaPath, {many_matched, {ValidationError, ValidationError}}},
+    SchemaPath :: atom().
 xor_(Conditions) ->
     FirstConditionIndex = erlang:length(Conditions) - 1,
     xor_(Conditions, {FirstConditionIndex, []}).
@@ -88,28 +88,15 @@ mfoldl(Fun, Acc, [H | T]) ->
 -spec find(Predicate, List) -> Resp when
     Predicate :: function(),
     List :: list(),
-    Resp :: {true, FoundItem} | {false, none},
-    FoundItem :: term().
+    Resp :: {true, Result} | {false, none},
+    Result :: term().
 find(_Predicate, []) ->
     {false, none};
 find(Predicate, [H | T]) ->
     case Predicate(H) of
         false -> find(Predicate, T);
-        true -> {true, H}
-    end.
-
--spec find_value(Predicate, List) -> Resp when
-    Predicate :: function(),
-    List :: list(),
-    Resp :: {true, ListElement, FunResult} | {false, none},
-    ListElement :: term(),
-    FunResult :: term().
-find_value(_Predicate, []) ->
-    {false, none};
-find_value(Predicate, [H | T]) ->
-    case Predicate(H) of
-        false -> find_value(Predicate, T);
-        {true, Result} -> {true, H, Result}
+        true -> {true, H};
+        {true, Result} -> {true, Result}
     end.
 
 -spec format_properties(List) -> Resp when
