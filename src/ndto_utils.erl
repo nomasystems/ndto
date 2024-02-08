@@ -120,11 +120,6 @@ andalso_([{Function, Args} | Rest], Acc) ->
 andalso_([Fun | Rest], Acc) ->
     next_andalso_(Fun(), Rest, Acc).
 
-xor_([{Function, Args} | Rest], Acc) ->
-    next_xor_(Function(Args), Rest, Acc);
-xor_([Fun | Rest], Acc) ->
-    next_xor_(Fun(), Rest, Acc).
-
 next_andalso_(true, [], _ConditionIndex) ->
     true;
 next_andalso_({false, Reason}, [], ConditionIndex) ->
@@ -140,6 +135,11 @@ next_orelse_(_Result, []) ->
     false;
 next_orelse_({false, _}, Rest) ->
     orelse_(Rest).
+
+xor_([{Function, Args} | Rest], Acc) ->
+    next_xor_(Function(Args), Rest, Acc);
+xor_([Fun | Rest], Acc) ->
+    next_xor_(Fun(), Rest, Acc).
 
 next_xor_(true, [], {_ConditionIndex, []}) ->
     true;
