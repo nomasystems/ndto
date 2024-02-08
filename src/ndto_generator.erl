@@ -1428,7 +1428,7 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
     {_PropertyNames, IsValidFuns} = lists:unzip(PropertiesFuns),
     {Fun, IsValidFuns ++ ExtraFuns};
 is_valid_object(Prefix, required, #{required := Required}) ->
-    FunName = <<Prefix/binary, ".required">>,
+    FunName = <<Prefix/binary, "required">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1648,7 +1648,7 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
     {IsValidPatterns, ExtraFuns} = lists:foldl(
         fun({PropertyPattern, PropertySchema}, {IsValidPatternsAcc, ExtraFunsAcc}) ->
             {IsValidFun, ExtraFuns} = is_valid(
-                <<FunName/binary, ".\"", PropertyPattern/binary, "\"">>, PropertySchema
+                <<FunName/binary, ".", PropertyPattern/binary>>, PropertySchema
             ),
             {[{PropertyPattern, IsValidFun} | IsValidPatternsAcc], ExtraFuns ++ ExtraFunsAcc}
         end,

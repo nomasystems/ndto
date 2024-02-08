@@ -289,7 +289,7 @@ pattern_properties(_Conf) ->
 
     ?assertEqual(
         {false,
-            {'$.pattern_properties."[a-z]+".type',
+            {'$.pattern_properties.[a-z]+.type',
                 <<"Property \"foo\" failed validation: Value is not a string">>}},
         test_pattern_properties:is_valid(#{<<"foo">> => 0})
     ),
@@ -313,7 +313,7 @@ additional_properties(_Conf) ->
     ),
     ?assertEqual(
         {false,
-            {'$.pattern_properties.\"[a-z]+\".type',
+            {'$.pattern_properties.[a-z]+.type',
                 <<"Property \"foobar\" failed validation: Value is not a string">>}},
         test_additional_properties1:is_valid(#{
             <<"foo">> => <<"bar">>, <<"baz">> => <<"qux">>, <<"foobar">> => 0
@@ -348,7 +348,7 @@ additional_properties(_Conf) ->
 
     ?assertEqual(
         {false,
-            {'$.pattern_properties.\"[a-z]+\".type',
+            {'$.pattern_properties.[a-z]+.type',
                 <<"Property \"baz\" failed validation: Value is not a string">>}},
         test_additional_properties3:is_valid(#{<<"foo">> => <<"bar">>, <<"baz">> => true})
     ),
@@ -440,6 +440,7 @@ petstore(_Conf) ->
             "oas/3.0/specs/oas_3_0.json"
         )
     ),
+    os:cmd("mkdir generated/"),
     {ok, [{PetstoreDTO, _Schema} | _Rest] = Schemas} = ndto_parser:parse(
         ndto_parser_json_schema,
         SpecPath
@@ -447,6 +448,10 @@ petstore(_Conf) ->
     lists:foreach(
         fun({SchemaName, Schema}) ->
             DTO = ndto:generate(SchemaName, Schema),
+            file:write_file(
+                <<"generated/", (atom_to_binary(SchemaName))/binary, ".erl">>,
+                erl_prettypr:format(DTO)
+            ),
             ok = ndto:load(DTO)
         end,
         Schemas
