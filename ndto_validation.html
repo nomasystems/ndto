@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.30.7">
     <meta name="project" content="ndto v0.3.0">
 
-    <title>ndto_parser_json_schema — ndto v0.3.0</title>
+    <title>ndto_validation — ndto v0.3.0</title>
     <link rel="stylesheet" href="dist/html-erlang-BDSMJ657.css" />
 
 
@@ -21,7 +21,7 @@
 
 
   </head>
-  <body data-type="modules" class="page-behaviour">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
@@ -111,20 +111,16 @@ Pages
 </button>
 
 
-    <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L16" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L14" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">ndto_parser_json_schema</span> <small>behaviour</small>
+  <span translate="no">ndto_validation</span> 
   <small class="app-vsn" translate="no">(ndto v0.3.0)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -141,7 +137,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:ctx/0" translate="no">ctx/0</a>
+        <a href="#t:condition/0" translate="no">condition/0</a>
 
       </div>
 
@@ -149,7 +145,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:opts/0" translate="no">opts/0</a>
+        <a href="#t:condition_args/0" translate="no">condition_args/0</a>
 
       </div>
 
@@ -157,7 +153,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:spec/0" translate="no">spec/0</a>
+        <a href="#t:condition_fun/0" translate="no">condition_fun/0</a>
 
       </div>
 
@@ -166,22 +162,6 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#t:t/0" translate="no">t/0</a>
-
-      </div>
-
-        <div class="summary-synopsis">A parser is a module that implements the <a href="ndto_parser_json_schema.html#content"><code>ndto_parser_json_schema</code></a> behaviour.</div>
-
-    </div>
-
-</div>
-<div class="summary-callbacks summary">
-  <h2>
-    <a href="#callbacks">Callbacks</a>
-  </h2>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#c:parse/2" translate="no">parse/2</a>
 
       </div>
 
@@ -195,7 +175,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#clean_optionals/1" translate="no">clean_optionals(RawValue)</a>
+        <a href="#andalso/1" translate="no">andalso(Conditions)</a>
 
       </div>
 
@@ -203,7 +183,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get/2" translate="no">get(Keys, Spec)</a>
+        <a href="#find/2" translate="no">find(Predicate, List)</a>
 
       </div>
 
@@ -211,17 +191,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#parse/2" translate="no">parse(SpecPath, Opts)</a>
-
-      </div>
-
-        <div class="summary-synopsis">Parses a JSONSchema specification into a list of <code>ndto:schema()</code> values.</div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#parse_spec/1" translate="no">parse_spec(SpecPath)</a>
+        <a href="#format_properties/1" translate="no">format_properties(List)</a>
 
       </div>
 
@@ -229,7 +199,23 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#resolve_ref/2" translate="no">resolve_ref(Ref, CTX)</a>
+        <a href="#mfoldl/3" translate="no">mfoldl(Fun, Acc, List)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#orelse/1" translate="no">orelse(Conditions)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#xor/1" translate="no">xor(Conditions)</a>
 
       </div>
 
@@ -248,16 +234,16 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
       <span class="text">Types</span>
     </h1>
     <div class="types-list">
-<section class="detail" id="t:ctx/0">
+<section class="detail" id="t:condition/0">
 
   <div class="detail-header">
-    <a href="#t:ctx/0" class="detail-link" title="Link to this type">
+    <a href="#t:condition/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">ctx/0</h1>
+    <h1 class="signature" translate="no">condition/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L28" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -269,23 +255,23 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> ctx() :: #{base_path := binary(), base_name := binary(), resolved := [binary()], spec := <a href="#t:spec/0">spec</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> condition() :: {<a href="#t:condition_fun/0">condition_fun</a>(), <a href="#t:condition_args/0">condition_args</a>()}.</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="t:opts/0">
+<section class="detail" id="t:condition_args/0">
 
   <div class="detail-header">
-    <a href="#t:opts/0" class="detail-link" title="Link to this type">
+    <a href="#t:condition_args/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">opts/0</h1>
+    <h1 class="signature" translate="no">condition_args/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L38" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L30" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -297,23 +283,23 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> opts() :: #{name => atom()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> condition_args() :: [term()].</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="t:spec/0">
+<section class="detail" id="t:condition_fun/0">
 
   <div class="detail-header">
-    <a href="#t:spec/0" class="detail-link" title="Link to this type">
+    <a href="#t:condition_fun/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">spec/0</h1>
+    <h1 class="signature" translate="no">condition_fun/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L41" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L29" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -325,7 +311,7 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> spec() :: <a href="https://hexdocs.pm/njson/njson.html#t:t/0">njson:t</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> condition_fun() :: fun((term()) -> <a href="#t:t/0">t</a>()).</pre>
 
       </div>
 
@@ -335,55 +321,13 @@ An <a href="ndto.html"><code>ndto</code></a> interface for parsing JSON Schemas.
 <section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this opaque">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this opaque</span>
+      <span class="sr-only">Link to this type</span>
     </a>
     <h1 class="signature" translate="no">t/0</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L42" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-      <span class="note">(opaque)</span>
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">-opaque</span> t()</pre>
-
-      </div>
-
-A parser is a module that implements the <a href="ndto_parser_json_schema.html#content"><code>ndto_parser_json_schema</code></a> behaviour.
-  </section>
-</section>
-
-    </div>
-  </section>
-
-  <section id="callbacks" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#callbacks">
-        <i class="ri-link-m" aria-hidden="true"></i>
-      </a>
-      <span class="text">Callbacks</span>
-    </h1>
-    <div class="callbacks-list">
-<section class="detail" id="c:parse/2">
-
-  <div class="detail-header">
-    <a href="#c:parse/2" class="detail-link" title="Link to this callback">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature" translate="no">parse/2</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L55" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L27" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -395,14 +339,7 @@ A parser is a module that implements the <a href="ndto_parser_json_schema.html#c
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-callback</span> parse(Spec, CTX) -> Result
-         when
-             Spec :: <a href="#t:spec/0">spec</a>(),
-             CTX :: <a href="#t:ctx/0">ctx</a>(),
-             Result :: {Schema, ExtraSchemas, NewCTX},
-             Schema :: <a href="ndto.html#t:schema/0">ndto:schema</a>(),
-             ExtraSchemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
-             NewCTX :: <a href="#t:ctx/0">ctx</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> t() :: true | {false, term()}.</pre>
 
       </div>
 
@@ -421,16 +358,16 @@ A parser is a module that implements the <a href="ndto_parser_json_schema.html#c
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="clean_optionals/1">
+<section class="detail" id="andalso/1">
 
   <div class="detail-header">
-    <a href="#clean_optionals/1" class="detail-link" title="Link to this function">
+    <a href="#andalso/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">clean_optionals(RawValue)</h1>
+    <h1 class="signature" translate="no">andalso(Conditions)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L48" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -442,23 +379,30 @@ A parser is a module that implements the <a href="ndto_parser_json_schema.html#c
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-spec</span> clean_optionals(RawValue) -> Value when RawValue :: term(), Value :: term().</pre>
+          <pre translate="no"><span class="attribute">-spec</span> 'andalso'(Conditions) -> Result
+             when
+                 Conditions :: [<a href="#t:condition/0">condition</a>()],
+                 Result :: true | {false, Reason},
+                 Reason :: {SchemaPath, Description, FailedIndex},
+                 SchemaPath :: atom(),
+                 Description :: binary(),
+                 FailedIndex :: non_neg_integer().</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="get/2">
+<section class="detail" id="find/2">
 
   <div class="detail-header">
-    <a href="#get/2" class="detail-link" title="Link to this function">
+    <a href="#find/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get(Keys, Spec)</h1>
+    <h1 class="signature" translate="no">find(Predicate, List)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L127" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L97" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -470,23 +414,28 @@ A parser is a module that implements the <a href="ndto_parser_json_schema.html#c
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-spec</span> get(Keys, Spec) -> Result when Keys :: [binary()], Spec :: map(), Result :: term().</pre>
+          <pre translate="no"><span class="attribute">-spec</span> find(Predicate, List) -> Resp
+        when
+            Predicate :: function(),
+            List :: list(),
+            Resp :: {true, Result} | {false, none},
+            Result :: term().</pre>
 
       </div>
 
 
   </section>
 </section>
-<section class="detail" id="parse/2">
+<section class="detail" id="format_properties/1">
 
   <div class="detail-header">
-    <a href="#parse/2" class="detail-link" title="Link to this function">
+    <a href="#format_properties/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">parse(SpecPath, Opts)</h1>
+    <h1 class="signature" translate="no">format_properties(List)</h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L73" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L110" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -498,81 +447,109 @@ A parser is a module that implements the <a href="ndto_parser_json_schema.html#c
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-spec</span> parse(SpecPath, Opts) -> Result
+          <pre translate="no"><span class="attribute">-spec</span> format_properties(List) -> Resp
+                     when List :: [Property, ...], Property :: binary(), Resp :: binary().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="mfoldl/3">
+
+  <div class="detail-header">
+    <a href="#mfoldl/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">mfoldl(Fun, Acc, List)</h1>
+
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L82" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> mfoldl(Fun, Acc, List) -> Resp
+          when
+              Fun :: function(),
+              Acc :: term(),
+              List :: list(),
+              Resp :: {true, term()} | {false, term(), Reason},
+              Reason :: binary().</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="orelse/1">
+
+  <div class="detail-header">
+    <a href="#orelse/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">orelse(Conditions)</h1>
+
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L58" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> 'orelse'(Conditions) -> Result
+            when
+                Conditions :: [<a href="#t:condition/0">condition</a>()],
+                Result :: true | {false, Reason},
+                Reason :: none_matched.</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="xor/1">
+
+  <div class="detail-header">
+    <a href="#xor/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">xor(Conditions)</h1>
+
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L72" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">-spec</span> 'xor'(Conditions) -> Result
          when
-             SpecPath :: <a href="https://www.erlang.org/doc/man/file.html#type-filename_all">file:filename_all</a>(),
-             Opts :: <a href="#t:opts/0">opts</a>(),
-             Result :: {ok, Schemas} | {error, Reason},
-             Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
-             Reason :: term().</pre>
-
-      </div>
-
-Parses a JSONSchema specification into a list of <code>ndto:schema()</code> values.
-  </section>
-</section>
-<section class="detail" id="parse_spec/1">
-
-  <div class="detail-header">
-    <a href="#parse_spec/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">parse_spec(SpecPath)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L137" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">-spec</span> parse_spec(SpecPath) -> Result
-              when
-                  SpecPath :: binary(),
-                  Result :: {ok, Spec} | {error, Reason},
-                  Spec :: <a href="ndto_parser.html#t:spec/0">ndto_parser:spec</a>(),
-                  Reason :: term().</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="resolve_ref/2">
-
-  <div class="detail-header">
-    <a href="#resolve_ref/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">resolve_ref(Ref, CTX)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_parser/ndto_parser_json_schema.erl#L162" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">-spec</span> resolve_ref(Ref, CTX) -> Result
-               when
-                   Ref :: binary(),
-                   CTX :: <a href="#t:ctx/0">ctx</a>(),
-                   Result :: {NewResolved, NewSchema, NewCTX},
-                   NewResolved :: binary(),
-                   NewSchema :: <a href="ndto.html#t:schema/0">ndto:schema</a>(),
-                   NewCTX :: <a href="#t:ctx/0">ctx</a>().</pre>
+             Conditions :: [<a href="#t:condition/0">condition</a>()],
+             Result :: true | {false, Reason},
+             Reason :: none_matched | {many_matched, {ValidationError, ValidationError}},
+             ValidationError :: {SchemaPath, Description},
+             SchemaPath :: atom(),
+             Description :: binary().</pre>
 
       </div>
 
@@ -591,7 +568,7 @@ Parses a JSONSchema specification into a list of <code>ndto:schema()</code> valu
 
               <a href="https://preview.hex.pm/preview/ndto/0.3.0">Hex Preview</a>
 
-                (<a href="https://preview.hex.pm/preview/ndto/0.3.0/show/src/ndto_parser/ndto_parser_json_schema.erl">current file</a>)
+                (<a href="https://preview.hex.pm/preview/ndto/0.3.0/show/src/ndto_validation.erl">current file</a>)
 
             </span>
 
