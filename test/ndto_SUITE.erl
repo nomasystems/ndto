@@ -234,7 +234,7 @@ all_of(_Conf) ->
         ]
     },
     DTO = ndto:generate(test_all_of, Schema),
-    ok = ndto:load(DTO, [report]),
+    ok = ndto:load(DTO),
 
     ?assertEqual(
         {false,
