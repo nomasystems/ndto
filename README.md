@@ -41,8 +41,8 @@ ok = ndto:load(DTO).
 5. Call the `is_valid/1` function from the generated module to validate your data.
 ```erl
 true = string_schema:is_valid(<<"hello world">>).
-false = string_schema:is_valid(<<"hello">>).
-false = string_schema:is_valid(<<"hi world">>).
+{false, _MinLengthError} = string_schema:is_valid(<<"hello">>).
+{false, _PatternError} = string_schema:is_valid(<<"hi world">>).
 ```
 
 ## `ndto` schema language
