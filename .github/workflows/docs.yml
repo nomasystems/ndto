@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: webfactory/ssh-agent@v0.7.0
+      - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -24,7 +24,7 @@ jobs:
           otp-version: ${{ env.OTP-VERSION }}
           rebar3-version: ${{ env.REBAR3-VERSION }}
 
-      - uses: actions/cache@v3.2.6
+      - uses: actions/cache@v4
         id: rebar3-cache
         with:
           path: |
