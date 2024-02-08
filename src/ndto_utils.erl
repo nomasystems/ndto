@@ -15,7 +15,9 @@
 
 %%% EXTERNAL EXPORTS
 -export([
-    chain_conditions/2,
+    andalso_/1,
+    orelse_/1,
+    xor_/1,
     mfoldl/3,
     find/2,
     find_value/2,
@@ -25,20 +27,47 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
--spec chain_conditions(Conditions, Operator) -> Result when
+-spec andalso_(Conditions) -> Result when
     Conditions :: [Condition],
     Condition :: {FunctionName, Argument} | fun(() -> Result),
     FunctionName :: atom(),
     Argument :: term(),
-    Operator :: 'orelse' | 'andalso' | 'xor',
     Result :: true | {false, Reason},
-    Reason :: term().
-chain_conditions(Conditions, 'andalso') ->
-    andalso_(Conditions);
-chain_conditions(Conditions, 'orelse') ->
-    orelse_(Conditions);
-chain_conditions(Conditions, 'xor') ->
-    xor_(Conditions).
+    Reason :: {SchemaPath, Description, FailedIndex},
+    SchemaPath :: atom(),
+    Description :: binary(),
+    FailedIndex :: non_neg_integer().
+andalso_([]) ->
+    true;
+andalso_(Conditions) ->
+    Acc = erlang:length(Conditions) - 1,
+    andalso_(Conditions, Acc).
+
+-spec orelse_(Conditions) -> Result when
+    Conditions :: [Condition],
+    Condition :: {FunctionName, Argument} | fun(() -> Result),
+    FunctionName :: atom(),
+    Argument :: term(),
+    Result :: true | false.
+orelse_([]) ->
+    false;
+orelse_([{Function, Args} | Rest]) ->
+    next_orelse_(Function(Args), Rest);
+orelse_([Fun | Rest]) ->
+    next_orelse_(Fun(), Rest).
+
+-spec xor_(Conditions) -> Result when
+    Conditions :: [Condition],
+    Condition :: {FunctionName, Argument} | fun(() -> Result),
+    FunctionName :: atom(),
+    Argument :: term(),
+    Result :: true | {false, Reason},
+    Reason :: 
+        {SchemaPath, none_matched}
+        | {SchemaPath, {many_matched, {ValidationError, ValidationError}}}.
+xor_(Conditions) ->
+    FirstConditionIndex = erlang:length(Conditions) - 1,
+    xor_(Conditions, {FirstConditionIndex, []}).
 
 -spec mfoldl(Fun, Acc, List) -> Resp when
     Fun :: function(),
@@ -56,30 +85,30 @@ mfoldl(Fun, Acc, [H | T]) ->
             {false, NewAcc, Reason}
     end.
 
--spec find(Fun, List) -> Resp when
-    Fun :: function(),
+-spec find(Predicate, List) -> Resp when
+    Predicate :: function(),
     List :: list(),
     Resp :: {true, FoundItem} | {false, none},
     FoundItem :: term().
-find(_Fun, []) ->
+find(_Predicate, []) ->
     {false, none};
-find(Fun, [H | T]) ->
-    case Fun(H) of
-        false -> find(Fun, T);
+find(Predicate, [H | T]) ->
+    case Predicate(H) of
+        false -> find(Predicate, T);
         true -> {true, H}
     end.
 
--spec find_value(Fun, List) -> Resp when
-    Fun :: function(),
+-spec find_value(Predicate, List) -> Resp when
+    Predicate :: function(),
     List :: list(),
     Resp :: {true, ListElement, FunResult} | {false, none},
     ListElement :: term(),
     FunResult :: term().
-find_value(_Fun, []) ->
+find_value(_Predicate, []) ->
     {false, none};
-find_value(Fun, [H | T]) ->
-    case Fun(H) of
-        false -> find_value(Fun, T);
+find_value(Predicate, [H | T]) ->
+    case Predicate(H) of
+        false -> find_value(Predicate, T);
         {true, Result} -> {true, H, Result}
     end.
 
@@ -99,40 +128,14 @@ format_properties([Head | List]) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-andalso_([]) ->
-    true;
-andalso_(Conditions) ->
-    evaluate_andalso(Conditions).
-
-orelse_([]) ->
-    false;
-orelse_(Conditions) ->
-    evaluate_orelse(Conditions).
-
-xor_(Conditions) ->
-    evaluate_xor(Conditions).
-
-evaluate_andalso(Conditions) ->
-    Acc = erlang:length(Conditions) - 1,
-    evaluate_andalso(Conditions, Acc).
-
-evaluate_andalso([{Function, Args} | Rest], Acc) ->
+andalso_([{Function, Args} | Rest], Acc) ->
     next_andalso_(Function(Args), Rest, Acc);
-evaluate_andalso([Fun | Rest], Acc) ->
+andalso_([Fun | Rest], Acc) ->
     next_andalso_(Fun(), Rest, Acc).
 
-evaluate_orelse([{Function, Args} | Rest]) ->
-    next_orelse_(Function(Args), Rest);
-evaluate_orelse([Fun | Rest]) ->
-    next_orelse_(Fun(), Rest).
-
-evaluate_xor(Conditions) ->
-    FirstConditionIndex = erlang:length(Conditions) - 1,
-    evaluate_xor(Conditions, {FirstConditionIndex, []}).
-
-evaluate_xor([{Function, Args} | Rest], Acc) ->
+xor_([{Function, Args} | Rest], Acc) ->
     next_xor_(Function(Args), Rest, Acc);
-evaluate_xor([Fun | Rest], Acc) ->
+xor_([Fun | Rest], Acc) ->
     next_xor_(Fun(), Rest, Acc).
 
 next_andalso_(true, [], _ConditionIndex) ->
@@ -140,7 +143,7 @@ next_andalso_(true, [], _ConditionIndex) ->
 next_andalso_({false, Reason}, [], ConditionIndex) ->
     {false, {Reason, ConditionIndex}};
 next_andalso_(true, Rest, ConditionIndex) ->
-    evaluate_andalso(Rest, ConditionIndex - 1);
+    andalso_(Rest, ConditionIndex - 1);
 next_andalso_({false, Reason}, _Rest, ConditionIndex) ->
     {false, {Reason, ConditionIndex}}.
 
@@ -149,19 +152,19 @@ next_orelse_(true, _Rest) ->
 next_orelse_(_Result, []) ->
     false;
 next_orelse_({false, _}, Rest) ->
-    evaluate_orelse(Rest).
+    orelse_(Rest).
 
 next_xor_(true, [], {_ConditionIndex, []}) ->
     true;
 next_xor_(_Result, [], {_ConditionIndex, []}) ->
     {false, none_matched};
 next_xor_(true, _Rest, {ConditionIndex, [LastMatchedCondition]}) ->
-    {false, {many_matched, [LastMatchedCondition, ConditionIndex]}};
+    {false, {many_matched, {LastMatchedCondition, ConditionIndex}}};
 next_xor_(_Result, [], {_ConditionIndex, [_LastMatchedCondition]}) ->
     true;
 next_xor_(true, Rest, {ConditionIndex, []}) ->
-    evaluate_xor(Rest, {ConditionIndex - 1, [ConditionIndex]});
+    xor_(Rest, {ConditionIndex - 1, [ConditionIndex]});
 next_xor_({false, _}, Rest, {ConditionIndex, []}) ->
-    evaluate_xor(Rest, {ConditionIndex - 1, []});
+    xor_(Rest, {ConditionIndex - 1, []});
 next_xor_({false, _}, Rest, {ConditionIndex, [LastMatchedCondition]}) ->
-    evaluate_xor(Rest, {ConditionIndex - 1, [LastMatchedCondition]}).
+    xor_(Rest, {ConditionIndex - 1, [LastMatchedCondition]}).

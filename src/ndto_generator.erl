@@ -462,30 +462,6 @@ is_valid(Prefix, #{one_of := Subschemas} = Schema) when is_list(Subschemas) ->
             [erl_syntax:variable('Val')],
             none,
             chain_conditions(FunName, BodyFunPieces, 'xor')
-            % [
-            %     erl_syntax:case_expr(
-            %         hd(chain_conditions(FunName, BodyFunPieces, 'xor', true)),
-            %         [
-            %             erl_syntax:clause(
-            %                 [erl_syntax:atom(true)],
-            %                 none,
-            %                 [erl_syntax:atom(true)]
-            %             ),
-            %             erl_syntax:clause(
-            %                 [erl_syntax:atom(false)],
-            %                 none,
-            %                 [erl_syntax:tuple([
-            %                     erl_syntax:atom(binary_to_atom(FunName)),
-            %                     erl_syntax:binary([
-            %                         erl_syntax:binary_field(
-            %                             erl_syntax:string("Value is not matching exactly one condition. None matched.")
-            %                         )
-            %                     ])
-            %                 ])]
-            %             )
-            %         ]
-            %     )
-            % ]
         ),
     Clauses = clauses([OptionalClause, NullClause, TrueClause]),
     Fun = erl_syntax:function(
@@ -2603,7 +2579,7 @@ chain_conditions(FunName, FunPieces, 'xor', false) ->
                             erl_syntax:atom('false'),
                             erl_syntax:tuple([
                                 erl_syntax:atom('many_matched'),
-                                erl_syntax:list([
+                                erl_syntax:tuple([
                                     erl_syntax:variable('First'),
                                     erl_syntax:variable('Second')
                                 ])
@@ -2646,10 +2622,13 @@ chain_conditions(_FunName, FunPieces, Operator, true) ->
     [
         erl_syntax:application(
             erl_syntax:atom(ndto_utils),
-            erl_syntax:atom(chain_conditions),
+            erl_syntax:atom(
+                erlang:list_to_atom(
+                    erlang:atom_to_list(Operator)++"_"
+                )
+            ),
             [
-                erl_syntax:list(FunPieces),
-                erl_syntax:atom(Operator)
+                erl_syntax:list(FunPieces)
             ]
         )
     ].
