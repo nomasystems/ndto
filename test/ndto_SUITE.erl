@@ -440,7 +440,6 @@ petstore(_Conf) ->
             "oas/3.0/specs/oas_3_0.json"
         )
     ),
-    os:cmd("mkdir generated/"),
     {ok, [{PetstoreDTO, _Schema} | _Rest] = Schemas} = ndto_parser:parse(
         ndto_parser_json_schema,
         SpecPath
@@ -448,10 +447,6 @@ petstore(_Conf) ->
     lists:foreach(
         fun({SchemaName, Schema}) ->
             DTO = ndto:generate(SchemaName, Schema),
-            file:write_file(
-                <<"generated/", (atom_to_binary(SchemaName))/binary, ".erl">>,
-                erl_prettypr:format(DTO)
-            ),
             ok = ndto:load(DTO)
         end,
         Schemas
