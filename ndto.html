@@ -4,20 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.30.7">
+    <meta name="generator" content="ExDoc v0.31.2">
     <meta name="project" content="ndto v0.3.0">
 
+
     <title>ndto — ndto v0.3.0</title>
-    <link rel="stylesheet" href="dist/html-erlang-BDSMJ657.css" />
+    <link rel="stylesheet" href="dist/html-erlang-DUKXLSAT.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-EPF2X7PV.js"></script>
+    <script src="dist/handlebars.templates-A7S2WMC7.js"></script>
     <script src="dist/sidebar_items-A8389A23.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-J2ASZTQE.js"></script>
+    <script async src="dist/html-JRPQ5PR6.js"></script>
 
 
   </head>
@@ -38,37 +39,24 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<nav id="sidebar" class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <label class="search-label">
-      <span class="sr-only">Search documentation of ndto</span>
-      <input name="q" type="text" class="search-input" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    </label>
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-      <i class="ri-close-line ri-lg" title="Cancel search"></i>
-    </button>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 ndto
-      </a>
-      <div class="sidebar-projectVersion" translate="no">
-        v0.3.0
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.3.0
+        </div>
       </div>
     </div>
     <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
@@ -103,13 +91,31 @@ Pages
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of ndto</span>
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="icon-action display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
-
 
     <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -123,7 +129,7 @@ Pages
 
 
   <section id="moduledoc">
-<a href="ndto.html#content"><code>ndto</code></a>'s main module.
+<code>ndto</code>'s main module.
   </section>
 
 
@@ -435,11 +441,11 @@ Pages
     #{type := array,
       items => <a href="#t:schema/0">schema</a>() | [<a href="#t:schema/0">schema</a>()],
       additional_items => <a href="#t:schema/0">schema</a>(),
-      min_items => non_neg_integer(),
-      max_items => non_neg_integer(),
-      unique_items => boolean(),
-      optional => boolean(),
-      nullable => boolean()}.</pre>
+      min_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
+      max_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
+      unique_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -467,7 +473,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: #{type := boolean, optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: #{type := boolean, optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -495,7 +501,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: #{'not' := <a href="#t:schema/0">schema</a>(), optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: #{'not' := <a href="#t:schema/0">schema</a>(), optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -551,7 +557,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: #{enum := [<a href="#t:value/0">value</a>()], optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: #{enum := [<a href="#t:value/0">value</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -581,12 +587,12 @@ Pages
 
           <pre translate="no"><span class="attribute">-type</span> float_schema() ::
     #{type := float,
-      minimum => float(),
-      exclusive_minimum => boolean(),
-      maximum => float(),
-      exclusive_maximum => boolean(),
-      optional => boolean(),
-      nullable => boolean()}.</pre>
+      minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>(),
+      exclusive_minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>(),
+      exclusive_maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -644,13 +650,13 @@ Pages
 
           <pre translate="no"><span class="attribute">-type</span> integer_schema() ::
     #{type := integer,
-      minimum => integer(),
-      exclusive_minimum => boolean(),
-      maximum => integer(),
-      exclusive_maximum => boolean(),
-      multiple_of => integer(),
-      optional => boolean(),
-      nullable => boolean()}.</pre>
+      minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
+      exclusive_minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
+      exclusive_maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      multiple_of => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
+      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -678,7 +684,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: #{all_of := [<a href="#t:schema/0">schema</a>()], optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: #{all_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -706,7 +712,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> name() :: atom().</pre>
+          <pre translate="no"><span class="attribute">-type</span> name() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-atom">atom</a>().</pre>
 
       </div>
 
@@ -762,7 +768,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> object() :: #{binary() => <a href="#t:value/0">value</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> object() :: #{<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() => <a href="#t:value/0">value</a>()}.</pre>
 
       </div>
 
@@ -792,14 +798,14 @@ Pages
 
           <pre translate="no"><span class="attribute">-type</span> object_schema() ::
     #{type := object,
-      properties => #{binary() => <a href="#t:schema/0">schema</a>()},
-      required => [binary()],
-      min_properties => non_neg_integer(),
-      max_properties => non_neg_integer(),
+      properties => #{<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() => <a href="#t:schema/0">schema</a>()},
+      required => [<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>()],
+      min_properties => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
+      max_properties => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
       pattern_properties => #{<a href="#t:pattern/0">pattern</a>() => <a href="#t:schema/0">schema</a>()},
       additional_properties => <a href="#t:schema/0">schema</a>(),
-      optional => boolean(),
-      nullable => boolean()}.</pre>
+      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -827,7 +833,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> pattern() :: binary().</pre>
+          <pre translate="no"><span class="attribute">-type</span> pattern() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>().</pre>
 
       </div>
 
@@ -855,7 +861,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: #{ref := binary(), optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: #{ref := <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>(), optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -927,12 +933,12 @@ Pages
 
           <pre translate="no"><span class="attribute">-type</span> string_schema() ::
     #{type := string,
-      min_length => non_neg_integer(),
-      max_length => non_neg_integer(),
+      min_length => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
+      max_length => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
       format => <a href="#t:format/0">format</a>(),
       pattern => <a href="#t:pattern/0">pattern</a>(),
-      optional => boolean(),
-      nullable => boolean()}.</pre>
+      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
+      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -961,7 +967,7 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> symmetric_difference_schema() ::
-    #{one_of := [<a href="#t:schema/0">schema</a>()], optional => boolean(), nullable => boolean()}.</pre>
+    #{one_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -1017,7 +1023,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> union_schema() :: #{any_of := [<a href="#t:schema/0">schema</a>()], optional => boolean(), nullable => boolean()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> union_schema() :: #{any_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
 
       </div>
 
@@ -1073,7 +1079,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> value() :: <a href="#t:null/0">null</a>() | boolean() | integer() | float() | binary() | <a href="#t:array/0">array</a>() | <a href="#t:object/0">object</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> value() :: <a href="#t:null/0">null</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() | <a href="#t:array/0">array</a>() | <a href="#t:object/0">object</a>().</pre>
 
       </div>
 
@@ -1145,8 +1151,8 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
         when
             DTO :: <a href="#t:t/0">t</a>(),
             Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
-            Errors :: [term()],
-            Warnings :: [term()].</pre>
+            Errors :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()],
+            Warnings :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()].</pre>
 
       </div>
 
@@ -1179,8 +1185,8 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
             DTO :: <a href="#t:t/0">t</a>(),
             Options :: [<a href="https://www.erlang.org/doc/man/compile.html#type-option">compile:option</a>()],
             Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
-            Errors :: [term()],
-            Warnings :: [term()].</pre>
+            Errors :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()],
+            Warnings :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()].</pre>
 
       </div>
 
@@ -1232,8 +1238,6 @@ Writes a DTO module to a file
 
               <a href="https://preview.hex.pm/preview/ndto/0.3.0">Hex Preview</a>
 
-                (<a href="https://preview.hex.pm/preview/ndto/0.3.0/show/src/ndto.erl">current file</a>)
-
             </span>
 
           <span class="line">
@@ -1246,11 +1250,12 @@ Writes a DTO module to a file
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.7) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.2) for the
 
             <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
 
         </p>
+
       </footer>
     </div>
   </div>

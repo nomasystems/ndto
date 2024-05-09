@@ -4,20 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.30.7">
+    <meta name="generator" content="ExDoc v0.31.2">
     <meta name="project" content="ndto v0.3.0">
 
+
     <title>Overview — ndto v0.3.0</title>
-    <link rel="stylesheet" href="dist/html-erlang-BDSMJ657.css" />
+    <link rel="stylesheet" href="dist/html-erlang-DUKXLSAT.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-EPF2X7PV.js"></script>
+    <script src="dist/handlebars.templates-A7S2WMC7.js"></script>
     <script src="dist/sidebar_items-A8389A23.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-J2ASZTQE.js"></script>
+    <script async src="dist/html-JRPQ5PR6.js"></script>
 
 
   </head>
@@ -38,37 +39,24 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<nav id="sidebar" class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <label class="search-label">
-      <span class="sr-only">Search documentation of ndto</span>
-      <input name="q" type="text" class="search-input" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    </label>
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-      <i class="ri-close-line ri-lg" title="Cancel search"></i>
-    </button>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 ndto
-      </a>
-      <div class="sidebar-projectVersion" translate="no">
-        v0.3.0
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.3.0
+        </div>
       </div>
     </div>
     <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
@@ -103,13 +91,31 @@ Pages
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of ndto</span>
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="icon-action display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
-
 
     <a href="https://github.com/nomasystems/ndto/blob/0.3.0/README.md#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -121,54 +127,54 @@ Pages
 </h1>
 
 <p><a href="https://github.com/nomasystems/ndto/actions/workflows/ci.yml"><img src="https://github.com/nomasystems/ndto/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
-<a href="https://nomasystems.github.io/ndto"><img src="https://github.com/nomasystems/ndto/actions/workflows/docs.yml/badge.svg" alt="Docs"/></a></p><p><a href="ndto.html"><code class="inline">ndto</code></a> is an Erlang library for generating DTO (Data Transfer Object) validation modules from schemas.</p><h2 id="motivation" class="section-heading">
+<a href="https://nomasystems.github.io/ndto"><img src="https://github.com/nomasystems/ndto/actions/workflows/docs.yml/badge.svg" alt="Docs"/></a></p><p><code class="inline">ndto</code> is an Erlang library for generating DTO (Data Transfer Object) validation modules from schemas.</p><h2 id="motivation" class="section-heading">
   <a href="#motivation" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Motivation</span>
 </h2>
-<p>Validating incoming data is a critical step to ensure the integrity, consistency, and security of your application's data flow. However, writing custom validation logic for each DTO can quickly become a time-consuming and error-prone task.</p><p>With <a href="ndto.html"><code class="inline">ndto</code></a>, you can define validation schemas that describe the structure and constraints of your data. These schemas are then used to automatically generate validation modules, reducing development time and avoiding human-induced errors in the validation step.</p><h2 id="quickstart" class="section-heading">
+<p>Validating incoming data is a critical step to ensure the integrity, consistency, and security of your application's data flow. However, writing custom validation logic for each DTO can quickly become a time-consuming and error-prone task.</p><p>With <code class="inline">ndto</code>, you can define validation schemas that describe the structure and constraints of your data. These schemas are then used to automatically generate validation modules, reducing development time and avoiding human-induced errors in the validation step.</p><h2 id="quickstart" class="section-heading">
   <a href="#quickstart" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Quickstart</span>
 </h2>
-<ol><li><p>Add <a href="ndto.html"><code class="inline">ndto</code></a> as a dependency in your <code class="inline">rebar.config</code> file:</p><pre><code class="makeup erl" translate="no"><span class="p" data-group-id="8017379704-1">{</span><span class="ss">deps</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8017379704-2">[</span><span class="w">
-    </span><span class="p" data-group-id="8017379704-3">{</span><span class="ss">ndto</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8017379704-4">{</span><span class="ss">git</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://github.com/nomasystems/ndto.git&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8017379704-5">{</span><span class="ss">branch</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;main&quot;</span><span class="p" data-group-id="8017379704-5">}</span><span class="p" data-group-id="8017379704-4">}</span><span class="p" data-group-id="8017379704-3">}</span><span class="w">
-</span><span class="p" data-group-id="8017379704-2">]</span><span class="p" data-group-id="8017379704-1">}</span><span class="p">.</span></code></pre></li><li><p>Define an <a href="ndto.html"><code class="inline">ndto</code></a> schema.</p><pre><code class="makeup erl" translate="no"><span class="n">Schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7158725118-1">#{</span><span class="w">
-    </span><span class="ss">type</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">string</span><span class="p">,</span><span class="w">
-    </span><span class="ss">min_length</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
-    </span><span class="ss">pattern</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;&lt;</span><span class="s">&quot;^hello&quot;</span><span class="p">&gt;&gt;</span><span class="w">
-</span><span class="p" data-group-id="7158725118-1">}</span><span class="p">.</span></code></pre></li><li><p>Generate a module using the <a href="ndto.html#generate/2"><code class="inline">ndto:generate/2</code></a> function.</p><pre><code class="makeup erl" translate="no"><span class="n">DTO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">ndto</span><span class="p">:</span><span class="nf">generate</span><span class="p" data-group-id="3015806249-1">(</span><span class="ss">string_schema</span><span class="p">,</span><span class="w"> </span><span class="n">Schema</span><span class="p" data-group-id="3015806249-1">)</span><span class="p">.</span></code></pre></li><li><p>Load the generated module on the fly.</p><pre><code class="makeup erl" translate="no"><span class="ss">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">ndto</span><span class="p">:</span><span class="nf">load</span><span class="p" data-group-id="7126126480-1">(</span><span class="n">DTO</span><span class="p" data-group-id="7126126480-1">)</span><span class="p">.</span></code></pre></li><li><p>Call the <code class="inline">is_valid/1</code> function from the generated module to validate your data.</p><pre><code class="makeup erl" translate="no"><span class="ss">true</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="3715822507-1">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hello world&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="3715822507-1">)</span><span class="p">.</span><span class="w">
-</span><span class="p" data-group-id="3715822507-2">{</span><span class="ss">false</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">MinLengthError</span><span class="p" data-group-id="3715822507-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="3715822507-3">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hello&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="3715822507-3">)</span><span class="p">.</span><span class="w">
-</span><span class="p" data-group-id="3715822507-4">{</span><span class="ss">false</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">PatternError</span><span class="p" data-group-id="3715822507-4">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="3715822507-5">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hi world&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="3715822507-5">)</span><span class="p">.</span></code></pre></li></ol><h2 id="ndto-schema-language" class="section-heading">
+<ol><li><p>Add <code class="inline">ndto</code> as a dependency in your <code class="inline">rebar.config</code> file:</p><pre><code class="makeup erl" translate="no"><span class="p" data-group-id="6331528909-1">{</span><span class="ss">deps</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6331528909-2">[</span><span class="w">
+ </span><span class="p" data-group-id="6331528909-3">{</span><span class="ss">ndto</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6331528909-4">{</span><span class="ss">git</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://github.com/nomasystems/ndto.git&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6331528909-5">{</span><span class="ss">branch</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;main&quot;</span><span class="p" data-group-id="6331528909-5">}</span><span class="p" data-group-id="6331528909-4">}</span><span class="p" data-group-id="6331528909-3">}</span><span class="w">
+</span><span class="p" data-group-id="6331528909-2">]</span><span class="p" data-group-id="6331528909-1">}</span><span class="p">.</span></code></pre></li><li><p>Define an <code class="inline">ndto</code> schema.</p><pre><code class="makeup erl" translate="no"><span class="n">Schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9985691498-1">#{</span><span class="w">
+ </span><span class="ss">type</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">string</span><span class="p">,</span><span class="w">
+ </span><span class="ss">min_length</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+ </span><span class="ss">pattern</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;&lt;</span><span class="s">&quot;^hello&quot;</span><span class="p">&gt;&gt;</span><span class="w">
+</span><span class="p" data-group-id="9985691498-1">}</span><span class="p">.</span></code></pre></li><li><p>Generate a module using the <a href="ndto.html#generate/2"><code class="inline">ndto:generate/2</code></a> function.</p><pre><code class="makeup erl" translate="no"><span class="n">DTO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">ndto</span><span class="p">:</span><span class="nf">generate</span><span class="p" data-group-id="2538132164-1">(</span><span class="ss">string_schema</span><span class="p">,</span><span class="w"> </span><span class="n">Schema</span><span class="p" data-group-id="2538132164-1">)</span><span class="p">.</span></code></pre></li><li><p>Load the generated module on the fly.</p><pre><code class="makeup erl" translate="no"><span class="ss">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">ndto</span><span class="p">:</span><span class="nf">load</span><span class="p" data-group-id="1644982829-1">(</span><span class="n">DTO</span><span class="p" data-group-id="1644982829-1">)</span><span class="p">.</span></code></pre></li><li><p>Call the <code class="inline">is_valid/1</code> function from the generated module to validate your data.</p><pre><code class="makeup erl" translate="no"><span class="ss">true</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="2767106205-1">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hello world&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="2767106205-1">)</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="2767106205-2">{</span><span class="ss">false</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">MinLengthError</span><span class="p" data-group-id="2767106205-2">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="2767106205-3">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hello&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="2767106205-3">)</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="2767106205-4">{</span><span class="ss">false</span><span class="p">,</span><span class="w"> </span><span class="p">_</span><span class="n">PatternError</span><span class="p" data-group-id="2767106205-4">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">string_schema</span><span class="p">:</span><span class="nf">is_valid</span><span class="p" data-group-id="2767106205-5">(</span><span class="p">&lt;&lt;</span><span class="s">&quot;hi world&quot;</span><span class="p">&gt;&gt;</span><span class="p" data-group-id="2767106205-5">)</span><span class="p">.</span></code></pre></li></ol><h2 id="ndto-schema-language" class="section-heading">
   <a href="#ndto-schema-language" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
-  <span class="text"><a href="ndto.html"><code class="inline">ndto</code></a> schema language</span>
+  <span class="text"><code class="inline">ndto</code> schema language</span>
 </h2>
 <p>Schemas are built according to the <code class="inline">ndto:schema()</code> type.</p><pre><code class="makeup erl" translate="no"><span class="c1">%%% ndto.erl</span><span class="w">
-</span><span class="p">-</span><span class="na">type</span><span class="w"> </span><span class="nf">schema</span><span class="p" data-group-id="6000194892-1">(</span><span class="p" data-group-id="6000194892-1">)</span><span class="w"> </span><span class="p">:</span><span class="p">:</span><span class="w">
-    </span><span class="nf">empty_schema</span><span class="p" data-group-id="6000194892-2">(</span><span class="p" data-group-id="6000194892-2">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">universal_schema</span><span class="p" data-group-id="6000194892-3">(</span><span class="p" data-group-id="6000194892-3">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">ref_schema</span><span class="p" data-group-id="6000194892-4">(</span><span class="p" data-group-id="6000194892-4">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">enum_schema</span><span class="p" data-group-id="6000194892-5">(</span><span class="p" data-group-id="6000194892-5">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">boolean_schema</span><span class="p" data-group-id="6000194892-6">(</span><span class="p" data-group-id="6000194892-6">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">integer_schema</span><span class="p" data-group-id="6000194892-7">(</span><span class="p" data-group-id="6000194892-7">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">float_schema</span><span class="p" data-group-id="6000194892-8">(</span><span class="p" data-group-id="6000194892-8">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">string_schema</span><span class="p" data-group-id="6000194892-9">(</span><span class="p" data-group-id="6000194892-9">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">array_schema</span><span class="p" data-group-id="6000194892-10">(</span><span class="p" data-group-id="6000194892-10">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">object_schema</span><span class="p" data-group-id="6000194892-11">(</span><span class="p" data-group-id="6000194892-11">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">union_schema</span><span class="p" data-group-id="6000194892-12">(</span><span class="p" data-group-id="6000194892-12">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">intersection_schema</span><span class="p" data-group-id="6000194892-13">(</span><span class="p" data-group-id="6000194892-13">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">complement_schema</span><span class="p" data-group-id="6000194892-14">(</span><span class="p" data-group-id="6000194892-14">)</span><span class="w">
-    </span><span class="p">|</span><span class="w"> </span><span class="nf">symmetric_difference_schema</span><span class="p" data-group-id="6000194892-15">(</span><span class="p" data-group-id="6000194892-15">)</span><span class="p">.</span></code></pre><p>Check the <a href="https://nomasystems.github.io/ndto/ndto.html#types">docs</a> for an up-to-date version of the type specifications.</p><h2 id="contributing" class="section-heading">
+</span><span class="p">-</span><span class="na">type</span><span class="w"> </span><span class="nf">schema</span><span class="p" data-group-id="1030626051-1">(</span><span class="p" data-group-id="1030626051-1">)</span><span class="w"> </span><span class="p">:</span><span class="p">:</span><span class="w">
+    </span><span class="nf">empty_schema</span><span class="p" data-group-id="1030626051-2">(</span><span class="p" data-group-id="1030626051-2">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">universal_schema</span><span class="p" data-group-id="1030626051-3">(</span><span class="p" data-group-id="1030626051-3">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">ref_schema</span><span class="p" data-group-id="1030626051-4">(</span><span class="p" data-group-id="1030626051-4">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">enum_schema</span><span class="p" data-group-id="1030626051-5">(</span><span class="p" data-group-id="1030626051-5">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">boolean_schema</span><span class="p" data-group-id="1030626051-6">(</span><span class="p" data-group-id="1030626051-6">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">integer_schema</span><span class="p" data-group-id="1030626051-7">(</span><span class="p" data-group-id="1030626051-7">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">float_schema</span><span class="p" data-group-id="1030626051-8">(</span><span class="p" data-group-id="1030626051-8">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">string_schema</span><span class="p" data-group-id="1030626051-9">(</span><span class="p" data-group-id="1030626051-9">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">array_schema</span><span class="p" data-group-id="1030626051-10">(</span><span class="p" data-group-id="1030626051-10">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">object_schema</span><span class="p" data-group-id="1030626051-11">(</span><span class="p" data-group-id="1030626051-11">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">union_schema</span><span class="p" data-group-id="1030626051-12">(</span><span class="p" data-group-id="1030626051-12">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">intersection_schema</span><span class="p" data-group-id="1030626051-13">(</span><span class="p" data-group-id="1030626051-13">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">complement_schema</span><span class="p" data-group-id="1030626051-14">(</span><span class="p" data-group-id="1030626051-14">)</span><span class="w">
+    </span><span class="p">|</span><span class="w"> </span><span class="nf">symmetric_difference_schema</span><span class="p" data-group-id="1030626051-15">(</span><span class="p" data-group-id="1030626051-15">)</span><span class="p">.</span></code></pre><p>Check the <a href="https://nomasystems.github.io/ndto/ndto.html#types">docs</a> for an up-to-date version of the type specifications.</p><h2 id="contributing" class="section-heading">
   <a href="#contributing" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Contributing</span>
 </h2>
-<p>We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about <a href="ndto.html"><code class="inline">ndto</code></a> in the open-source community. Don't forget to check out our <a href="CONTRIBUTING.md">contribution guidelines</a> to ensure smooth collaboration! :rocket:</p><h2 id="support" class="section-heading">
+<p>We :heart: contributions! Please feel free to submit issues, create pull requests or just spread the word about <code class="inline">ndto</code> in the open-source community. Don't forget to check out our <a href="contributing.html">contribution guidelines</a> to ensure smooth collaboration! :rocket:</p><h2 id="support" class="section-heading">
   <a href="#support" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
@@ -180,7 +186,7 @@ Pages
   </a>
   <span class="text">License</span>
 </h2>
-<p><a href="ndto.html"><code class="inline">ndto</code></a> is released under the Apache 2.0 License. For more information, please see the <a href="LICENSE">LICENSE</a> file.</p><blockquote><p>This project uses OpenAPI specification (OAS) schemas and examples, which are licensed under the Apache 2.0 license. See the associated <a href="priv/oas/LICENSE">LICENSE</a> file for more information.</p></blockquote>
+<p><code class="inline">ndto</code> is released under the Apache 2.0 License. For more information, please see the <a href="license.html">LICENSE</a> file.</p><blockquote><p>This project uses OpenAPI specification (OAS) schemas and examples, which are licensed under the Apache 2.0 license. See the associated <a href="license.html">LICENSE</a> file for more information.</p></blockquote>
 <div class="bottom-actions">
   <div class="bottom-actions-item">
 
@@ -229,11 +235,12 @@ Contributing
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.7) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.2) for the
 
             <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
 
         </p>
+
       </footer>
     </div>
   </div>

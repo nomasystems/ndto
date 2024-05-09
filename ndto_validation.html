@@ -4,20 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.30.7">
+    <meta name="generator" content="ExDoc v0.31.2">
     <meta name="project" content="ndto v0.3.0">
 
+
     <title>ndto_validation — ndto v0.3.0</title>
-    <link rel="stylesheet" href="dist/html-erlang-BDSMJ657.css" />
+    <link rel="stylesheet" href="dist/html-erlang-DUKXLSAT.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-EPF2X7PV.js"></script>
+    <script src="dist/handlebars.templates-A7S2WMC7.js"></script>
     <script src="dist/sidebar_items-A8389A23.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/html-J2ASZTQE.js"></script>
+    <script async src="dist/html-JRPQ5PR6.js"></script>
 
 
   </head>
@@ -38,37 +39,24 @@
 
 <div class="main">
 
-<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
 
-<nav id="sidebar" class="sidebar">
-  <form class="sidebar-search" action="search.html">
-    <label class="search-label">
-      <span class="sr-only">Search documentation of ndto</span>
-      <input name="q" type="text" class="search-input" placeholder="Search..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-    </label>
-    <button type="submit" class="search-button" aria-label="Submit Search">
-      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
-    </button>
-    <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-      <i class="ri-close-line ri-lg" title="Cancel search"></i>
-    </button>
-  </form>
+<div class="background-layer"></div>
 
-  <div class="autocomplete">
-    <div class="autocomplete-results">
-    </div>
-  </div>
+<nav id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
 
-    <div class="sidebar-projectDetails">
-      <a href="readme.html" class="sidebar-projectName" translate="no">
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
 ndto
-      </a>
-      <div class="sidebar-projectVersion" translate="no">
-        v0.3.0
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.3.0
+        </div>
       </div>
     </div>
     <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
@@ -103,13 +91,31 @@ Pages
   <output role="status" id="toast"></output>
   <div class="content-outer">
     <div id="content" class="content-inner">
+      <div class="top-search">
+        <div class="search-settings">
+          <form class="search-bar" action="search.html">
+            <label class="search-label">
+              <span class="sr-only">Search documentation of ndto</span>
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </label>
+            <button type="submit" class="search-button" aria-label="Submit Search">
+              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+            </button>
+            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+              <i class="ri-close-line ri-lg" title="Cancel search"></i>
+            </button>
+          </form>
+          <div class="autocomplete">
+          </div>
+          <button class="icon-settings display-settings">
+            <i class="ri-settings-3-line"></i>
+            <span class="sr-only">Settings</span>
+          </button>
+        </div>
+
+      </div>
 
 <h1>
-<button class="icon-action display-settings">
-  <i class="ri-settings-3-line"></i>
-  <span class="sr-only">Settings</span>
-</button>
-
 
     <a href="https://github.com/nomasystems/ndto/blob/0.3.0/src/ndto_validation.erl#L14" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -283,7 +289,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> condition_args() :: [term()].</pre>
+          <pre translate="no"><span class="attribute">-type</span> condition_args() :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()].</pre>
 
       </div>
 
@@ -311,7 +317,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> condition_fun() :: fun((term()) -> <a href="#t:t/0">t</a>()).</pre>
+          <pre translate="no"><span class="attribute">-type</span> condition_fun() :: fun((<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()) -> <a href="#t:t/0">t</a>()).</pre>
 
       </div>
 
@@ -339,7 +345,7 @@ Pages
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> t() :: true | {false, term()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> t() :: true | {false, <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()}.</pre>
 
       </div>
 
@@ -384,9 +390,9 @@ Pages
                  Conditions :: [<a href="#t:condition/0">condition</a>()],
                  Result :: true | {false, Reason},
                  Reason :: {SchemaPath, Description, FailedIndex},
-                 SchemaPath :: atom(),
-                 Description :: binary(),
-                 FailedIndex :: non_neg_integer().</pre>
+                 SchemaPath :: <a href="https://www.erlang.org/doc/man/erlang.html#type-atom">atom</a>(),
+                 Description :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>(),
+                 FailedIndex :: <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>().</pre>
 
       </div>
 
@@ -416,10 +422,10 @@ Pages
 
           <pre translate="no"><span class="attribute">-spec</span> find(Predicate, List) -> Resp
         when
-            Predicate :: function(),
-            List :: list(),
+            Predicate :: <a href="https://www.erlang.org/doc/man/erlang.html#type-function">function</a>(),
+            List :: <a href="https://www.erlang.org/doc/man/erlang.html#type-list">list</a>(),
             Resp :: {true, Result} | {false, none},
-            Result :: term().</pre>
+            Result :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
 
       </div>
 
@@ -448,7 +454,7 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> format_properties(List) -> Resp
-                     when List :: [Property, ...], Property :: binary(), Resp :: binary().</pre>
+                     when List :: [Property, ...], Property :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>(), Resp :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>().</pre>
 
       </div>
 
@@ -478,11 +484,11 @@ Pages
 
           <pre translate="no"><span class="attribute">-spec</span> mfoldl(Fun, Acc, List) -> Resp
           when
-              Fun :: function(),
-              Acc :: term(),
-              List :: list(),
-              Resp :: {true, term()} | {false, term(), Reason},
-              Reason :: binary().</pre>
+              Fun :: <a href="https://www.erlang.org/doc/man/erlang.html#type-function">function</a>(),
+              Acc :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>(),
+              List :: <a href="https://www.erlang.org/doc/man/erlang.html#type-list">list</a>(),
+              Resp :: {true, <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()} | {false, <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>(), Reason},
+              Reason :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>().</pre>
 
       </div>
 
@@ -548,8 +554,8 @@ Pages
              Result :: true | {false, Reason},
              Reason :: none_matched | {many_matched, {ValidationError, ValidationError}},
              ValidationError :: {SchemaPath, Description},
-             SchemaPath :: atom(),
-             Description :: binary().</pre>
+             SchemaPath :: <a href="https://www.erlang.org/doc/man/erlang.html#type-atom">atom</a>(),
+             Description :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>().</pre>
 
       </div>
 
@@ -568,8 +574,6 @@ Pages
 
               <a href="https://preview.hex.pm/preview/ndto/0.3.0">Hex Preview</a>
 
-                (<a href="https://preview.hex.pm/preview/ndto/0.3.0/show/src/ndto_validation.erl">current file</a>)
-
             </span>
 
           <span class="line">
@@ -582,11 +586,12 @@ Pages
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.30.7) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.2) for the
 
             <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
 
         </p>
+
       </footer>
     </div>
   </div>
