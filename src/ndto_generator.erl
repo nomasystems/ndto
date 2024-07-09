@@ -2706,8 +2706,12 @@ literal(Val) when is_map(Val) ->
 
 null_clause(#{nullable := true}) ->
     erl_syntax:clause(
-        [erl_syntax:variable('null')],
-        none,
+        [erl_syntax:variable('Val')],
+        erl_syntax:infix_expr(
+            erl_syntax:variable('Val'),
+            erl_syntax:operator('=:='),
+            erl_syntax:atom(null)
+        ),
         [erl_syntax:atom(true)]
     );
 null_clause(_Schema) ->
