@@ -161,6 +161,15 @@ nullable(_Conf) ->
             ok = ndto:load(DTO1),
 
             ?assertEqual(true, test_nullable1:is_valid(null)),
+            case Type of
+                string ->
+                    ?assertEqual(
+                        {false, {'$.type', <<"Value is not a string">>}},
+                        test_nullable1:is_valid(5)
+                    );
+                _Other ->
+                    ok
+            end,
 
             Schema2 = #{
                 type => Type
