@@ -4,46 +4,28 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.2">
+    <meta name="generator" content="ExDoc v0.37.3">
     <meta name="project" content="ndto v0.3.1">
 
 
     <title>ndto — ndto v0.3.1</title>
-    <link rel="stylesheet" href="dist/html-erlang-DUKXLSAT.css" />
 
+    <link rel="stylesheet" href="dist/html-erlang-FDBURIED.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-A7S2WMC7.js"></script>
-    <script src="dist/sidebar_items-A8389A23.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-JRPQ5PR6.js"></script>
-
+    <script defer src="dist/sidebar_items-A8389A23.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-ALU6OERS.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
-
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -59,79 +41,58 @@ ndto
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Pages
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of ndto</span>
-              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of ndto</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">ndto</span> 
+      <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
 
-    <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+    </h1>
 
-  <span translate="no">ndto</span> 
-  <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-</h1>
+  </div>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 <code>ndto</code>'s main module.
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -147,7 +108,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:array/0" translate="no">array/0</a>
+        <a href="#t:array/0" data-no-tooltip="" translate="no">array/0</a>
 
       </div>
 
@@ -155,7 +116,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:array_schema/0" translate="no">array_schema/0</a>
+        <a href="#t:array_schema/0" data-no-tooltip="" translate="no">array_schema/0</a>
 
       </div>
 
@@ -163,7 +124,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:boolean_schema/0" translate="no">boolean_schema/0</a>
+        <a href="#t:boolean_schema/0" data-no-tooltip="" translate="no">boolean_schema/0</a>
 
       </div>
 
@@ -171,7 +132,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:complement_schema/0" translate="no">complement_schema/0</a>
+        <a href="#t:complement_schema/0" data-no-tooltip="" translate="no">complement_schema/0</a>
 
       </div>
 
@@ -179,7 +140,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:empty_schema/0" translate="no">empty_schema/0</a>
+        <a href="#t:empty_schema/0" data-no-tooltip="" translate="no">empty_schema/0</a>
 
       </div>
 
@@ -187,7 +148,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:enum_schema/0" translate="no">enum_schema/0</a>
+        <a href="#t:enum_schema/0" data-no-tooltip="" translate="no">enum_schema/0</a>
 
       </div>
 
@@ -195,7 +156,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:float_schema/0" translate="no">float_schema/0</a>
+        <a href="#t:float_schema/0" data-no-tooltip="" translate="no">float_schema/0</a>
 
       </div>
 
@@ -203,7 +164,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:format/0" translate="no">format/0</a>
+        <a href="#t:format/0" data-no-tooltip="" translate="no">format/0</a>
 
       </div>
 
@@ -211,7 +172,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:integer_schema/0" translate="no">integer_schema/0</a>
+        <a href="#t:integer_schema/0" data-no-tooltip="" translate="no">integer_schema/0</a>
 
       </div>
 
@@ -219,7 +180,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:intersection_schema/0" translate="no">intersection_schema/0</a>
+        <a href="#t:intersection_schema/0" data-no-tooltip="" translate="no">intersection_schema/0</a>
 
       </div>
 
@@ -227,7 +188,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:name/0" translate="no">name/0</a>
+        <a href="#t:name/0" data-no-tooltip="" translate="no">name/0</a>
 
       </div>
 
@@ -235,7 +196,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:null/0" translate="no">null/0</a>
+        <a href="#t:null/0" data-no-tooltip="" translate="no">null/0</a>
 
       </div>
 
@@ -243,7 +204,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:object/0" translate="no">object/0</a>
+        <a href="#t:object/0" data-no-tooltip="" translate="no">object/0</a>
 
       </div>
 
@@ -251,7 +212,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:object_schema/0" translate="no">object_schema/0</a>
+        <a href="#t:object_schema/0" data-no-tooltip="" translate="no">object_schema/0</a>
 
       </div>
 
@@ -259,7 +220,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:pattern/0" translate="no">pattern/0</a>
+        <a href="#t:pattern/0" data-no-tooltip="" translate="no">pattern/0</a>
 
       </div>
 
@@ -267,7 +228,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:ref_schema/0" translate="no">ref_schema/0</a>
+        <a href="#t:ref_schema/0" data-no-tooltip="" translate="no">ref_schema/0</a>
 
       </div>
 
@@ -275,7 +236,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:schema/0" translate="no">schema/0</a>
+        <a href="#t:schema/0" data-no-tooltip="" translate="no">schema/0</a>
 
       </div>
 
@@ -283,7 +244,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:string_schema/0" translate="no">string_schema/0</a>
+        <a href="#t:string_schema/0" data-no-tooltip="" translate="no">string_schema/0</a>
 
       </div>
 
@@ -291,7 +252,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:symmetric_difference_schema/0" translate="no">symmetric_difference_schema/0</a>
+        <a href="#t:symmetric_difference_schema/0" data-no-tooltip="" translate="no">symmetric_difference_schema/0</a>
 
       </div>
 
@@ -299,7 +260,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t/0</a>
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t/0</a>
 
       </div>
 
@@ -307,7 +268,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:union_schema/0" translate="no">union_schema/0</a>
+        <a href="#t:union_schema/0" data-no-tooltip="" translate="no">union_schema/0</a>
 
       </div>
 
@@ -315,7 +276,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:universal_schema/0" translate="no">universal_schema/0</a>
+        <a href="#t:universal_schema/0" data-no-tooltip="" translate="no">universal_schema/0</a>
 
       </div>
 
@@ -323,7 +284,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:value/0" translate="no">value/0</a>
+        <a href="#t:value/0" data-no-tooltip="" translate="no">value/0</a>
 
       </div>
 
@@ -337,7 +298,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#generate/2" translate="no">generate(Name, Schema)</a>
+        <a href="#generate/2" data-no-tooltip="" translate="no">generate(Name, Schema)</a>
 
       </div>
 
@@ -347,7 +308,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#load/1" translate="no">load(DTO)</a>
+        <a href="#load/1" data-no-tooltip="" translate="no">load(DTO)</a>
 
       </div>
 
@@ -357,7 +318,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#load/2" translate="no">load(DTO, Options)</a>
+        <a href="#load/2" data-no-tooltip="" translate="no">load(DTO, Options)</a>
 
       </div>
 
@@ -367,7 +328,7 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#write/2" translate="no">write(DTO, Filename)</a>
+        <a href="#write/2" data-no-tooltip="" translate="no">write(DTO, Filename)</a>
 
       </div>
 
@@ -391,18 +352,18 @@ Pages
 <section class="detail" id="t:array/0">
 
   <div class="detail-header">
-    <a href="#t:array/0" class="detail-link" title="Link to this type">
+    <a href="#t:array/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">array/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L140" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">array/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L140" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -419,18 +380,18 @@ Pages
 <section class="detail" id="t:array_schema/0">
 
   <div class="detail-header">
-    <a href="#t:array_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:array_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">array_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L90" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">array_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L90" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -438,14 +399,14 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> array_schema() ::
-    #{type := array,
-      items => <a href="#t:schema/0">schema</a>() | [<a href="#t:schema/0">schema</a>()],
-      additional_items => <a href="#t:schema/0">schema</a>(),
-      min_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      max_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      unique_items => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{type := array,
+            items => <a href="#t:schema/0">schema</a>() | [<a href="#t:schema/0">schema</a>()],
+            additional_items => <a href="#t:schema/0">schema</a>(),
+            min_items => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            max_items => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            unique_items => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -455,25 +416,25 @@ Pages
 <section class="detail" id="t:boolean_schema/0">
 
   <div class="detail-header">
-    <a href="#t:boolean_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:boolean_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">boolean_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L57" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">boolean_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L57" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: #{type := boolean, optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> boolean_schema() :: #{type := boolean, optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -483,25 +444,25 @@ Pages
 <section class="detail" id="t:complement_schema/0">
 
   <div class="detail-header">
-    <a href="#t:complement_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:complement_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">complement_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L121" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">complement_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L121" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: #{'not' := <a href="#t:schema/0">schema</a>(), optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> complement_schema() :: #{'not' := <a href="#t:schema/0">schema</a>(), optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -511,18 +472,18 @@ Pages
 <section class="detail" id="t:empty_schema/0">
 
   <div class="detail-header">
-    <a href="#t:empty_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:empty_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">empty_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L45" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">empty_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L45" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -539,25 +500,25 @@ Pages
 <section class="detail" id="t:enum_schema/0">
 
   <div class="detail-header">
-    <a href="#t:enum_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:enum_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">enum_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">enum_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L52" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: #{enum := [<a href="#t:value/0">value</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> enum_schema() :: #{enum := [<a href="#t:value/0">value</a>()], optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -567,18 +528,18 @@ Pages
 <section class="detail" id="t:float_schema/0">
 
   <div class="detail-header">
-    <a href="#t:float_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:float_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">float_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L72" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">float_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L72" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -586,13 +547,13 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> float_schema() ::
-    #{type := float,
-      minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>(),
-      exclusive_minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>(),
-      exclusive_maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{type := float,
+            minimum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:float/0">float</a>(),
+            exclusive_minimum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            maximum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:float/0">float</a>(),
+            exclusive_maximum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -602,18 +563,18 @@ Pages
 <section class="detail" id="t:format/0">
 
   <div class="detail-header">
-    <a href="#t:format/0" class="detail-link" title="Link to this type">
+    <a href="#t:format/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">format/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L143" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">format/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L143" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -630,18 +591,18 @@ Pages
 <section class="detail" id="t:integer_schema/0">
 
   <div class="detail-header">
-    <a href="#t:integer_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:integer_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">integer_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L62" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">integer_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L62" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -649,14 +610,14 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> integer_schema() ::
-    #{type := integer,
-      minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
-      exclusive_minimum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
-      exclusive_maximum => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      multiple_of => <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>(),
-      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{type := integer,
+            minimum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:integer/0">integer</a>(),
+            exclusive_minimum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            maximum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:integer/0">integer</a>(),
+            exclusive_maximum => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            multiple_of => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:integer/0">integer</a>(),
+            optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -666,25 +627,25 @@ Pages
 <section class="detail" id="t:intersection_schema/0">
 
   <div class="detail-header">
-    <a href="#t:intersection_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:intersection_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">intersection_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L116" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">intersection_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L116" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: #{all_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> intersection_schema() :: #{all_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -694,25 +655,25 @@ Pages
 <section class="detail" id="t:name/0">
 
   <div class="detail-header">
-    <a href="#t:name/0" class="detail-link" title="Link to this type">
+    <a href="#t:name/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">name/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L27" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">name/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L27" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> name() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-atom">atom</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> name() :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:atom/0">atom</a>().</pre>
 
       </div>
 
@@ -722,18 +683,18 @@ Pages
 <section class="detail" id="t:null/0">
 
   <div class="detail-header">
-    <a href="#t:null/0" class="detail-link" title="Link to this type">
+    <a href="#t:null/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">null/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L141" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">null/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L141" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -750,25 +711,25 @@ Pages
 <section class="detail" id="t:object/0">
 
   <div class="detail-header">
-    <a href="#t:object/0" class="detail-link" title="Link to this type">
+    <a href="#t:object/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">object/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L142" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">object/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L142" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> object() :: #{<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() => <a href="#t:value/0">value</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> object() :: #{<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>() => <a href="#t:value/0">value</a>()}.</pre>
 
       </div>
 
@@ -778,18 +739,18 @@ Pages
 <section class="detail" id="t:object_schema/0">
 
   <div class="detail-header">
-    <a href="#t:object_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:object_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">object_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L100" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">object_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L100" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -797,15 +758,15 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> object_schema() ::
-    #{type := object,
-      properties => #{<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() => <a href="#t:schema/0">schema</a>()},
-      required => [<a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>()],
-      min_properties => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      max_properties => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      pattern_properties => #{<a href="#t:pattern/0">pattern</a>() => <a href="#t:schema/0">schema</a>()},
-      additional_properties => <a href="#t:schema/0">schema</a>(),
-      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{type := object,
+            properties => #{<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>() => <a href="#t:schema/0">schema</a>()},
+            required => [<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>()],
+            min_properties => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            max_properties => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            pattern_properties => #{<a href="#t:pattern/0">pattern</a>() => <a href="#t:schema/0">schema</a>()},
+            additional_properties => <a href="#t:schema/0">schema</a>(),
+            optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -815,25 +776,25 @@ Pages
 <section class="detail" id="t:pattern/0">
 
   <div class="detail-header">
-    <a href="#t:pattern/0" class="detail-link" title="Link to this type">
+    <a href="#t:pattern/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">pattern/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L145" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pattern/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L145" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> pattern() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> pattern() :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>().</pre>
 
       </div>
 
@@ -843,25 +804,25 @@ Pages
 <section class="detail" id="t:ref_schema/0">
 
   <div class="detail-header">
-    <a href="#t:ref_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:ref_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">ref_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L47" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ref_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L47" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: #{ref := <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>(), optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> ref_schema() :: #{ref := <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>(), optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -871,18 +832,18 @@ Pages
 <section class="detail" id="t:schema/0">
 
   <div class="detail-header">
-    <a href="#t:schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L28" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L28" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -890,20 +851,20 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> schema() ::
-    <a href="#t:empty_schema/0">empty_schema</a>() |
-    <a href="#t:universal_schema/0">universal_schema</a>() |
-    <a href="#t:ref_schema/0">ref_schema</a>() |
-    <a href="#t:enum_schema/0">enum_schema</a>() |
-    <a href="#t:boolean_schema/0">boolean_schema</a>() |
-    <a href="#t:integer_schema/0">integer_schema</a>() |
-    <a href="#t:float_schema/0">float_schema</a>() |
-    <a href="#t:string_schema/0">string_schema</a>() |
-    <a href="#t:array_schema/0">array_schema</a>() |
-    <a href="#t:object_schema/0">object_schema</a>() |
-    <a href="#t:union_schema/0">union_schema</a>() |
-    <a href="#t:intersection_schema/0">intersection_schema</a>() |
-    <a href="#t:complement_schema/0">complement_schema</a>() |
-    <a href="#t:symmetric_difference_schema/0">symmetric_difference_schema</a>().</pre>
+          <a href="#t:empty_schema/0">empty_schema</a>() |
+          <a href="#t:universal_schema/0">universal_schema</a>() |
+          <a href="#t:ref_schema/0">ref_schema</a>() |
+          <a href="#t:enum_schema/0">enum_schema</a>() |
+          <a href="#t:boolean_schema/0">boolean_schema</a>() |
+          <a href="#t:integer_schema/0">integer_schema</a>() |
+          <a href="#t:float_schema/0">float_schema</a>() |
+          <a href="#t:string_schema/0">string_schema</a>() |
+          <a href="#t:array_schema/0">array_schema</a>() |
+          <a href="#t:object_schema/0">object_schema</a>() |
+          <a href="#t:union_schema/0">union_schema</a>() |
+          <a href="#t:intersection_schema/0">intersection_schema</a>() |
+          <a href="#t:complement_schema/0">complement_schema</a>() |
+          <a href="#t:symmetric_difference_schema/0">symmetric_difference_schema</a>().</pre>
 
       </div>
 
@@ -913,18 +874,18 @@ Pages
 <section class="detail" id="t:string_schema/0">
 
   <div class="detail-header">
-    <a href="#t:string_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:string_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">string_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L81" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">string_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L81" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -932,13 +893,13 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> string_schema() ::
-    #{type := string,
-      min_length => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      max_length => <a href="https://www.erlang.org/doc/man/erlang.html#type-non_neg_integer">non_neg_integer</a>(),
-      format => <a href="#t:format/0">format</a>(),
-      pattern => <a href="#t:pattern/0">pattern</a>(),
-      optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(),
-      nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{type := string,
+            min_length => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            max_length => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:non_neg_integer/0">non_neg_integer</a>(),
+            format => <a href="#t:format/0">format</a>(),
+            pattern => <a href="#t:pattern/0">pattern</a>(),
+            optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(),
+            nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -948,18 +909,18 @@ Pages
 <section class="detail" id="t:symmetric_difference_schema/0">
 
   <div class="detail-header">
-    <a href="#t:symmetric_difference_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:symmetric_difference_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">symmetric_difference_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L126" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">symmetric_difference_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L126" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -967,7 +928,7 @@ Pages
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-type</span> symmetric_difference_schema() ::
-    #{one_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          #{one_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -977,18 +938,18 @@ Pages
 <section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">t/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L43" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L43" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1005,25 +966,25 @@ Pages
 <section class="detail" id="t:union_schema/0">
 
   <div class="detail-header">
-    <a href="#t:union_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:union_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">union_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L111" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">union_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L111" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> union_schema() :: #{any_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>()}.</pre>
+          <pre translate="no"><span class="attribute">-type</span> union_schema() :: #{any_of := [<a href="#t:schema/0">schema</a>()], optional => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>(), nullable => <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>()}.</pre>
 
       </div>
 
@@ -1033,18 +994,18 @@ Pages
 <section class="detail" id="t:universal_schema/0">
 
   <div class="detail-header">
-    <a href="#t:universal_schema/0" class="detail-link" title="Link to this type">
+    <a href="#t:universal_schema/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">universal_schema/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L46" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">universal_schema/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L46" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1061,25 +1022,25 @@ Pages
 <section class="detail" id="t:value/0">
 
   <div class="detail-header">
-    <a href="#t:value/0" class="detail-link" title="Link to this type">
+    <a href="#t:value/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">value/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L132" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">value/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L132" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> value() :: <a href="#t:null/0">null</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-boolean">boolean</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-integer">integer</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-float">float</a>() | <a href="https://www.erlang.org/doc/man/erlang.html#type-binary">binary</a>() | <a href="#t:array/0">array</a>() | <a href="#t:object/0">object</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> value() :: <a href="#t:null/0">null</a>() | <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:boolean/0">boolean</a>() | <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:integer/0">integer</a>() | <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:float/0">float</a>() | <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:binary/0">binary</a>() | <a href="#t:array/0">array</a>() | <a href="#t:object/0">object</a>().</pre>
 
       </div>
 
@@ -1101,18 +1062,18 @@ Pages
 <section class="detail" id="generate/2">
 
   <div class="detail-header">
-    <a href="#generate/2" class="detail-link" title="Link to this function">
+    <a href="#generate/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">generate(Name, Schema)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L179" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">generate(Name, Schema)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L179" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1129,18 +1090,18 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
 <section class="detail" id="load/1">
 
   <div class="detail-header">
-    <a href="#load/1" class="detail-link" title="Link to this function">
+    <a href="#load/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">load(DTO)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L188" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">load(DTO)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L188" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1148,11 +1109,11 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> load(DTO) -> Result
-        when
-            DTO :: <a href="#t:t/0">t</a>(),
-            Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
-            Errors :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()],
-            Warnings :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()].</pre>
+              when
+                  DTO :: <a href="#t:t/0">t</a>(),
+                  Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
+                  Errors :: [<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>()],
+                  Warnings :: [<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>()].</pre>
 
       </div>
 
@@ -1162,18 +1123,18 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
 <section class="detail" id="load/2">
 
   <div class="detail-header">
-    <a href="#load/2" class="detail-link" title="Link to this function">
+    <a href="#load/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">load(DTO, Options)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L198" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">load(DTO, Options)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L198" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1181,12 +1142,12 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> load(DTO, Options) -> Result
-        when
-            DTO :: <a href="#t:t/0">t</a>(),
-            Options :: [<a href="https://www.erlang.org/doc/man/compile.html#type-option">compile:option</a>()],
-            Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
-            Errors :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()],
-            Warnings :: [<a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>()].</pre>
+              when
+                  DTO :: <a href="#t:t/0">t</a>(),
+                  Options :: [<a href="https://www.erlang.org/doc/apps/compiler/compile.html#t:option/0">compile:option</a>()],
+                  Result :: ok | {ok, Warnings} | error | {error, {Errors, Warnings}},
+                  Errors :: [<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>()],
+                  Warnings :: [<a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>()].</pre>
 
       </div>
 
@@ -1196,18 +1157,18 @@ Loads a DTO module into the Erlang Runtime System
 <section class="detail" id="write/2">
 
   <div class="detail-header">
-    <a href="#write/2" class="detail-link" title="Link to this function">
+    <a href="#write/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">write(DTO, Filename)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L227" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">write(DTO, Filename)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L227" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -1215,11 +1176,11 @@ Loads a DTO module into the Erlang Runtime System
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> write(DTO, Filename) -> Result
-         when
-             DTO :: <a href="#t:t/0">t</a>(),
-             Filename :: <a href="https://www.erlang.org/doc/man/file.html#type-filename">file:filename</a>(),
-             Result :: ok | {error, Reason},
-             Reason :: invalid | <a href="https://www.erlang.org/doc/man/file.html#type-posix">file:posix</a>() | badarg | terminated | system_limit.</pre>
+               when
+                   DTO :: <a href="#t:t/0">t</a>(),
+                   Filename :: <a href="https://www.erlang.org/doc/apps/kernel/file.html#t:filename/0">file:filename</a>(),
+                   Result :: ok | {error, Reason},
+                   Reason :: invalid | <a href="https://www.erlang.org/doc/apps/kernel/file.html#t:posix/0">file:posix</a>() | badarg | terminated | system_limit.</pre>
 
       </div>
 
@@ -1230,38 +1191,36 @@ Writes a DTO module to a file
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
-
-            <span class="line">
-              <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
-
-              <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
-
-            </span>
+    <footer class="footer">
+      <p>
 
           <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+            <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
 
           </span>
-        </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.2) for the
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-            <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+        </span>
+      </p>
 
-        </p>
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.3) for the
 
-      </footer>
-    </div>
+          <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>

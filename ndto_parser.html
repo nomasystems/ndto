@@ -4,46 +4,28 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.31.2">
+    <meta name="generator" content="ExDoc v0.37.3">
     <meta name="project" content="ndto v0.3.1">
 
 
     <title>ndto_parser — ndto v0.3.1</title>
-    <link rel="stylesheet" href="dist/html-erlang-DUKXLSAT.css" />
 
+    <link rel="stylesheet" href="dist/html-erlang-FDBURIED.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-A7S2WMC7.js"></script>
-    <script src="dist/sidebar_items-A8389A23.js"></script>
-
-      <script src="docs_config.js"></script>
-
-    <script async src="dist/html-JRPQ5PR6.js"></script>
-
+    <script defer src="dist/sidebar_items-A8389A23.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-ALU6OERS.js"></script>
 
   </head>
-  <body data-type="modules" class="page-behaviour">
-    <script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
-
-<div class="main">
+<div class="body-wrapper">
 
 <button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
   <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
 </button>
-
-<div class="background-layer"></div>
 
 <nav id="sidebar" class="sidebar">
 
@@ -59,79 +41,58 @@ ndto
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Pages
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
-  <div class="content-outer">
-    <div id="content" class="content-inner">
-      <div class="top-search">
-        <div class="search-settings">
-          <form class="search-bar" action="search.html">
-            <label class="search-label">
-              <span class="sr-only">Search documentation of ndto</span>
-              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-            </label>
-            <button type="submit" class="search-button" aria-label="Submit Search">
-              <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-            </button>
-            <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-              <i class="ri-close-line ri-lg" title="Cancel search"></i>
-            </button>
-          </form>
-          <div class="autocomplete">
-          </div>
-          <button class="icon-settings display-settings">
-            <i class="ri-settings-3-line"></i>
-            <span class="sr-only">Settings</span>
+<output role="status" id="toast"></output>
+
+<main class="content page-behaviour" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of ndto</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
           </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
         </div>
-
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
       </div>
+    </div>
 
-<h1>
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">ndto_parser</span> <small>behaviour</small>
+      <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
 
-    <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L16" title="View Source" class="icon-action" rel="help">
-      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-      <span class="sr-only">View Source</span>
-    </a>
+    </h1>
 
-  <span translate="no">ndto_parser</span> <small>behaviour</small>
-  <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
+      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L16" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
 
-</h1>
+  </div>
 
 
-  <section id="moduledoc">
+    <section id="moduledoc">
 An <code>ndto</code> interface and behaviour for schema parsers.
-  </section>
+    </section>
 
+</div>
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -147,7 +108,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:ctx/0" translate="no">ctx/0</a>
+        <a href="#t:ctx/0" data-no-tooltip="" translate="no">ctx/0</a>
 
       </div>
 
@@ -155,7 +116,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:spec/0" translate="no">spec/0</a>
+        <a href="#t:spec/0" data-no-tooltip="" translate="no">spec/0</a>
 
       </div>
 
@@ -163,7 +124,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t/0</a>
+        <a href="#t:t/0" data-no-tooltip="" translate="no">t/0</a>
 
       </div>
 
@@ -179,7 +140,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#c:parse/2" translate="no">parse/2</a>
+        <a href="#c:parse/2" data-no-tooltip="" translate="no">parse/2</a>
 
       </div>
 
@@ -195,7 +156,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#parse/2" translate="no">parse(Parser, SpecPath)</a>
+        <a href="#parse/2" data-no-tooltip="" translate="no">parse(Parser, SpecPath)</a>
 
       </div>
 
@@ -205,7 +166,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#parse/3" translate="no">parse(Parser, SpecPath, Opts)</a>
+        <a href="#parse/3" data-no-tooltip="" translate="no">parse(Parser, SpecPath, Opts)</a>
 
       </div>
 
@@ -229,25 +190,25 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 <section class="detail" id="t:ctx/0">
 
   <div class="detail-header">
-    <a href="#t:ctx/0" class="detail-link" title="Link to this type">
+    <a href="#t:ctx/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">ctx/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L25" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ctx/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L25" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> ctx() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> ctx() :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>().</pre>
 
       </div>
 
@@ -257,25 +218,25 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 <section class="detail" id="t:spec/0">
 
   <div class="detail-header">
-    <a href="#t:spec/0" class="detail-link" title="Link to this type">
+    <a href="#t:spec/0" class="detail-link" data-no-tooltip="" aria-label="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">spec/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L26" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">spec/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L26" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> spec() :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
+          <pre translate="no"><span class="attribute">-type</span> spec() :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>().</pre>
 
       </div>
 
@@ -285,18 +246,18 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 <section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this opaque">
+    <a href="#t:t/0" class="detail-link" data-no-tooltip="" aria-label="Link to this opaque">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this opaque</span>
     </a>
-    <h1 class="signature" translate="no">t/0</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L27" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">t/0</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L27" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -325,18 +286,18 @@ A parser is a module that implements the <code>ndto_parser</code> behaviour.
 <section class="detail" id="c:parse/2">
 
   <div class="detail-header">
-    <a href="#c:parse/2" class="detail-link" title="Link to this callback">
+    <a href="#c:parse/2" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
     </a>
-    <h1 class="signature" translate="no">parse/2</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L40" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">parse/2</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L40" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -344,12 +305,12 @@ A parser is a module that implements the <code>ndto_parser</code> behaviour.
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-callback</span> parse(SpecPath, Opts) -> Result
-         when
-             SpecPath :: <a href="https://www.erlang.org/doc/man/file.html#type-filename_all">file:filename_all</a>(),
-             Opts :: <a href="https://www.erlang.org/doc/man/erlang.html#type-map">map</a>(),
-             Result :: {ok, Schemas} | {error, Reason},
-             Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
-             Reason :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
+                   when
+                       SpecPath :: <a href="https://www.erlang.org/doc/apps/kernel/file.html#t:filename_all/0">file:filename_all</a>(),
+                       Opts :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:map/0">map</a>(),
+                       Result :: {ok, Schemas} | {error, Reason},
+                       Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
+                       Reason :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>().</pre>
 
       </div>
 
@@ -371,18 +332,18 @@ Parses a specification into a list of ndto:schema() values.
 <section class="detail" id="parse/2">
 
   <div class="detail-header">
-    <a href="#parse/2" class="detail-link" title="Link to this function">
+    <a href="#parse/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">parse(Parser, SpecPath)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L58" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">parse(Parser, SpecPath)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L58" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -390,12 +351,12 @@ Parses a specification into a list of ndto:schema() values.
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> parse(Parser, SpecPath) -> Result
-         when
-             Parser :: <a href="#t:t/0">t</a>(),
-             SpecPath :: <a href="https://www.erlang.org/doc/man/file.html#type-filename_all">file:filename_all</a>(),
-             Result :: {ok, Schemas} | {error, Reason},
-             Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
-             Reason :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
+               when
+                   Parser :: <a href="#t:t/0">t</a>(),
+                   SpecPath :: <a href="https://www.erlang.org/doc/apps/kernel/file.html#t:filename_all/0">file:filename_all</a>(),
+                   Result :: {ok, Schemas} | {error, Reason},
+                   Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
+                   Reason :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>().</pre>
 
       </div>
 
@@ -405,18 +366,18 @@ Parses a specification into a list of ndto:schema() values.
 <section class="detail" id="parse/3">
 
   <div class="detail-header">
-    <a href="#parse/3" class="detail-link" title="Link to this function">
+    <a href="#parse/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">parse(Parser, SpecPath, Opts)</h1>
-
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L69" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">parse(Parser, SpecPath, Opts)</h1>
 
 
+        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L69" class="icon-action" rel="help" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -424,13 +385,13 @@ Parses a specification into a list of ndto:schema() values.
       <div class="specs">
 
           <pre translate="no"><span class="attribute">-spec</span> parse(Parser, SpecPath, Opts) -> Result
-         when
-             Parser :: <a href="#t:t/0">t</a>(),
-             SpecPath :: <a href="https://www.erlang.org/doc/man/file.html#type-filename_all">file:filename_all</a>(),
-             Opts :: <a href="https://www.erlang.org/doc/man/erlang.html#type-map">map</a>(),
-             Result :: {ok, Schemas} | {error, Reason},
-             Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
-             Reason :: <a href="https://www.erlang.org/doc/man/erlang.html#type-term">term</a>().</pre>
+               when
+                   Parser :: <a href="#t:t/0">t</a>(),
+                   SpecPath :: <a href="https://www.erlang.org/doc/apps/kernel/file.html#t:filename_all/0">file:filename_all</a>(),
+                   Opts :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:map/0">map</a>(),
+                   Result :: {ok, Schemas} | {error, Reason},
+                   Schemas :: [{<a href="ndto.html#t:name/0">ndto:name</a>(), <a href="ndto.html#t:schema/0">ndto:schema</a>()}],
+                   Reason :: <a href="https://www.erlang.org/doc/apps/erts/erlang.html#t:term/0">term</a>().</pre>
 
       </div>
 
@@ -441,38 +402,36 @@ Parses a schema specification into a <code>ndto:schema()</code> using the given 
     </div>
   </section>
 
-      <footer class="footer">
-        <p>
-
-            <span class="line">
-              <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
-
-              <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
-
-            </span>
+    <footer class="footer">
+      <p>
 
           <span class="line">
-            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-              Search HexDocs
-            </button>
+            <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
 
           </span>
-        </p>
 
-        <p class="built-using">
-          Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.31.2) for the
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
 
-            <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+        </span>
+      </p>
 
-        </p>
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.3) for the
 
-      </footer>
-    </div>
+          <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+
+      </p>
+
+    </footer>
   </div>
 </main>
 </div>
-
 
   </body>
 </html>
