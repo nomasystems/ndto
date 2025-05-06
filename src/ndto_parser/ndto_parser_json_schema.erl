@@ -209,5 +209,7 @@ resolve_ref(Ref, CTX) ->
     Reason :: term().
 parser(#{<<"$schema">> := <<"http://json-schema.org/draft-04/schema#">>}) ->
     {ok, ndto_parser_json_schema_draft_04};
+parser(#{<<"$schema">> := <<"https://json-schema.org/draft/2020-12/schema">>}) ->
+    {ok, ndto_parser_json_schema_draft_2020_12};
 parser(_Schema) ->
     {error, unsupported_draft}.
