@@ -110,11 +110,31 @@ is_valid(Prefix, #{ref := Ref} = Schema) ->
             [erl_syntax:variable('Val')],
             none,
             [
-                erl_syntax:application(
-                    erl_syntax:atom(DTO),
-                    erl_syntax:atom(is_valid),
+                erl_syntax:case_expr(
+                    erl_syntax:application(
+                        erl_syntax:atom(DTO),
+                        erl_syntax:atom(is_valid),
+                        [erl_syntax:variable('Val')]
+                    ),
                     [
-                        erl_syntax:variable('Val')
+                        erl_syntax:clause(
+                            [erl_syntax:atom(true)],
+                            none,
+                            [erl_syntax:atom(true)]
+                        ),
+                        erl_syntax:clause(
+                            [erl_syntax:variable('Other')],
+                            none,
+                            [
+                                logger_call(
+                                    "Property validation failed for ~p",
+                                    erl_syntax:list([
+                                        erl_syntax:atom(DTO)
+                                    ])
+                                ),
+                                erl_syntax:variable('Other')
+                            ]
+                        )
                     ]
                 )
             ]
@@ -1180,6 +1200,9 @@ is_valid_array(Prefix, max_items, #{max_items := MaxItems}) ->
     {Fun, []};
 is_valid_array(Prefix, unique_items, #{unique_items := true}) ->
     FunName = <<Prefix/binary, ".unique_items">>,
+    ErrorMessage = unicode:characters_to_list(
+        io_lib:format("Array has non unique items", [])
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1210,12 +1233,8 @@ is_valid_array(Prefix, unique_items, #{unique_items := true}) ->
                         [erl_syntax:variable('_')],
                         none,
                         [
-                            false_return(
-                                FunName,
-                                unicode:characters_to_list(
-                                    io_lib:format("Array has non unique items", [])
-                                )
-                            )
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
                         ]
                     )
                 ]
@@ -1325,6 +1344,9 @@ is_valid_number(_Type, Prefix, maximum, Maximum, Schema) ->
     );
 is_valid_number(integer, Prefix, multiple_of, MultipleOf, _Schema) ->
     FunName = <<Prefix/binary, ".multiple_of">>,
+    ErrorMessage = unicode:characters_to_list(
+        io_lib:format("Value is not multiple of ~p", [MultipleOf])
+    ),
     TrueClause =
         erl_syntax:clause(
             [erl_syntax:variable('Val')],
@@ -1346,12 +1368,8 @@ is_valid_number(integer, Prefix, multiple_of, MultipleOf, _Schema) ->
                             [erl_syntax:variable('_')],
                             none,
                             [
-                                false_return(
-                                    FunName,
-                                    unicode:characters_to_list(
-                                        io_lib:format("Value is not multiple of ~p", [MultipleOf])
-                                    )
-                                )
+                                log_fun_error(FunName, ErrorMessage),
+                                false_return(FunName, ErrorMessage)
                             ]
                         )
                     ]
@@ -1421,6 +1439,7 @@ is_valid_object(Prefix, properties, #{properties := Properties}) ->
         none,
         FunBody
     ),
+
     Fun = erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
@@ -1491,6 +1510,10 @@ is_valid_object(Prefix, required, #{required := Required}) ->
                         ],
                         none,
                         [
+                            logger_call(
+                                "Missing required property ~p",
+                                erl_syntax:list([erl_syntax:variable('MissingProperty')])
+                            ),
                             erl_syntax:tuple([
                                 erl_syntax:atom('false'),
                                 erl_syntax:tuple([
@@ -1535,6 +1558,13 @@ is_valid_object(Prefix, required, #{required := Required}) ->
     {Fun, []};
 is_valid_object(Prefix, min_properties, #{min_properties := MinProperties}) ->
     FunName = <<Prefix/binary, "min_properties">>,
+    ErrorMessage = unicode:characters_to_list(
+        io_lib:format(
+            "Object has less properties than required minimum (~p)", [
+                MinProperties
+            ]
+        )
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1567,16 +1597,8 @@ is_valid_object(Prefix, min_properties, #{min_properties := MinProperties}) ->
                         [erl_syntax:variable('_')],
                         none,
                         [
-                            false_return(
-                                FunName,
-                                unicode:characters_to_list(
-                                    io_lib:format(
-                                        "Object has less properties than required minimum (~p)", [
-                                            MinProperties
-                                        ]
-                                    )
-                                )
-                            )
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
                         ]
                     )
                 ]
@@ -1590,6 +1612,12 @@ is_valid_object(Prefix, min_properties, #{min_properties := MinProperties}) ->
     {Fun, []};
 is_valid_object(Prefix, max_properties, #{max_properties := MaxProperties}) ->
     FunName = <<Prefix/binary, "max_properties">>,
+    ErrorMessage =
+        unicode:characters_to_list(
+            io_lib:format("Object has more properties than allowed maximum (~p)", [
+                MaxProperties
+            ])
+        ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -1622,16 +1650,8 @@ is_valid_object(Prefix, max_properties, #{max_properties := MaxProperties}) ->
                         [erl_syntax:variable('_')],
                         none,
                         [
-                            false_return(
-                                FunName,
-                                unicode:characters_to_list(
-                                    io_lib:format(
-                                        "Object has more properties than allowed maximum (~p)", [
-                                            MaxProperties
-                                        ]
-                                    )
-                                )
-                            )
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
                         ]
                     )
                 ]
@@ -1816,6 +1836,13 @@ is_valid_object(Prefix, pattern_properties, #{pattern_properties := PatternPrope
                             ],
                             none,
                             [
+                                logger_call(
+                                    "Property \"~ts\" failed validation: ~ts",
+                                    erl_syntax:list([
+                                        erl_syntax:variable('PropertyName'),
+                                        erl_syntax:variable('Reason')
+                                    ])
+                                ),
                                 erl_syntax:tuple([
                                     erl_syntax:atom('false'),
                                     erl_syntax:tuple([
@@ -2315,6 +2342,11 @@ is_valid_object(_Prefix, additional_properties, _Schema) ->
     Result :: undefined | erl_syntax:syntaxTree().
 is_valid_string(Prefix, min_length, MinLength) ->
     FunName = <<Prefix/binary, ".min_length">>,
+    ErrorMessage = unicode:characters_to_list(
+        io_lib:format("Value is lower than minimum allowed (~p)", [
+            MinLength
+        ])
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2339,13 +2371,10 @@ is_valid_string(Prefix, min_length, MinLength) ->
                         [erl_syntax:variable('_')],
                         none,
                         [
+                            log_fun_error(FunName, ErrorMessage),
                             false_return(
                                 FunName,
-                                unicode:characters_to_list(
-                                    io_lib:format("Value is lower than minimum allowed (~p)", [
-                                        MinLength
-                                    ])
-                                )
+                                ErrorMessage
                             )
                         ]
                     )
@@ -2359,6 +2388,11 @@ is_valid_string(Prefix, min_length, MinLength) ->
     );
 is_valid_string(Prefix, max_length, MaxLength) ->
     FunName = <<Prefix/binary, ".max_length">>,
+    ErrorMessage = unicode:characters_to_list(
+        io_lib:format("Value is greater than maximum allowed (~p)", [
+            MaxLength
+        ])
+    ),
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2383,13 +2417,10 @@ is_valid_string(Prefix, max_length, MaxLength) ->
                         [erl_syntax:variable('_')],
                         none,
                         [
+                            log_fun_error(FunName, ErrorMessage),
                             false_return(
                                 FunName,
-                                unicode:characters_to_list(
-                                    io_lib:format("Value is greater than maximum allowed (~p)", [
-                                        MaxLength
-                                    ])
-                                )
+                                ErrorMessage
                             )
                         ]
                     )
@@ -2403,6 +2434,7 @@ is_valid_string(Prefix, max_length, MaxLength) ->
     );
 is_valid_string(Prefix, pattern, Pattern) ->
     FunName = <<Prefix/binary, ".pattern">>,
+    ErrorMessage = "Value does not match pattern",
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2433,7 +2465,10 @@ is_valid_string(Prefix, pattern, Pattern) ->
                     erl_syntax:clause(
                         [erl_syntax:variable('_nomatch')],
                         none,
-                        [false_return(FunName, "Value does not match pattern.")]
+                        [
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
+                        ]
                     )
                 ]
             )
@@ -2445,6 +2480,7 @@ is_valid_string(Prefix, pattern, Pattern) ->
     );
 is_valid_string(Prefix, format, iso8601) ->
     FunName = <<Prefix/binary, ".format">>,
+    ErrorMessage = "Value is not a valid iso8601 string",
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2463,7 +2499,10 @@ is_valid_string(Prefix, format, iso8601) ->
                     erl_syntax:clause(
                         [erl_syntax:atom('false')],
                         none,
-                        [false_return(FunName, "Value is not a valid iso8601 string")]
+                        [
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
+                        ]
                     )
                 ]
             )
@@ -2475,6 +2514,7 @@ is_valid_string(Prefix, format, iso8601) ->
     );
 is_valid_string(Prefix, format, base64) ->
     FunName = <<Prefix/binary, ".format">>,
+    ErrorMessage = "Value is not a valid base64 string",
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
         none,
@@ -2574,7 +2614,7 @@ is_valid_string(Prefix, format, base64) ->
                                             none,
                                             [
                                                 false_return(
-                                                    FunName, "Value is an invalid base64 string."
+                                                    FunName, ErrorMessage
                                                 )
                                             ]
                                         )
@@ -2592,7 +2632,8 @@ is_valid_string(Prefix, format, base64) ->
                         [erl_syntax:variable('_Length')],
                         none,
                         [
-                            false_return(FunName, "Value is an invalid base64 string.")
+                            log_fun_error(FunName, ErrorMessage),
+                            false_return(FunName, ErrorMessage)
                         ]
                     )
                 ]
@@ -2665,7 +2706,10 @@ false_clause(FunName, ErrorMessage) ->
     erl_syntax:clause(
         [erl_syntax:variable('_Val')],
         none,
-        [false_return(FunName, ErrorMessage)]
+        [
+            logger_call(erlang:binary_to_list(FunName) ++ " : " ++ ErrorMessage),
+            false_return(FunName, ErrorMessage)
+        ]
     ).
 
 false_return(FunName, ErrorMessage) ->
@@ -2741,3 +2785,35 @@ type_guard(array, Var) ->
     guard(is_list, Var);
 type_guard(object, Var) ->
     guard(is_map, Var).
+
+logger_call(Message) ->
+    erl_syntax:application(
+        erl_syntax:atom(logger),
+        erl_syntax:atom(debug),
+        [
+            erl_syntax:string(
+                Message
+            )
+        ]
+    ).
+
+logger_call(Message, Args) ->
+    erl_syntax:application(
+        erl_syntax:atom(logger),
+        erl_syntax:atom(debug),
+        [
+            erl_syntax:string(
+                Message
+            ),
+            Args
+        ]
+    ).
+
+log_fun_error(FunName, ErrorMessage) ->
+    logger_call(
+        lists:flatten([
+            erlang:binary_to_list(FunName),
+            " : ",
+            unicode:characters_to_list(ErrorMessage)
+        ])
+    ).
