@@ -80,14 +80,30 @@ is_valid(Prefix, #{type := array} = Schema) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns}.
 
--spec is_valid_(Prefix, Keyword, Value) -> Result when
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
+-spec is_valid_(Prefix, Keyword, Schema) -> Result when
     Prefix :: binary(),
     Keyword :: atom(),
-    Value :: term(),
+    Schema :: ndto:array_schema(),
     Result :: {Fun, ExtraFuns},
     Fun :: erl_syntax:syntaxTree() | undefined,
     ExtraFuns :: [erl_syntax:syntaxTree()].
-is_valid_(Prefix, items, #{items := Items} = Schema) when is_map(Items) ->
+is_valid_(Prefix, items, Schema) ->
+    is_valid_items(Prefix, Schema);
+is_valid_(Prefix, min_items, Schema) ->
+    is_valid_min_items(Prefix, Schema);
+is_valid_(Prefix, max_items, Schema) ->
+    is_valid_max_items(Prefix, Schema);
+is_valid_(Prefix, unique_items, #{unique_items := true} = Schema) ->
+    is_valid_unique_items_true(Prefix, Schema);
+is_valid_(_Prefix, unique_items, #{unique_items := false}) ->
+    {undefined, []};
+is_valid_(_Prefix, _Keyword, _Schema) ->
+    {undefined, []}.
+
+is_valid_items(Prefix, #{items := Items} = Schema) when is_map(Items) ->
     FunName = <<Prefix/binary, ".items">>,
     {IsValidFun, ExtraFuns} = ndto_generator:is_valid(<<FunName/binary, "[*]">>, Items),
     OptionalClause = ndto_generator:optional_clause(Schema),
@@ -191,7 +207,7 @@ is_valid_(Prefix, items, #{items := Items} = Schema) when is_map(Items) ->
         ndto_generator:clauses([OptionalClause, TrueClause])
     ),
     {Fun, [IsValidFun | ExtraFuns]};
-is_valid_(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
+is_valid_items(Prefix, #{items := Items} = Schema) when is_list(Items) ->
     FunName = <<Prefix/binary, ".items">>,
     {_Size, IsValidFuns, ExtraFuns} = lists:foldl(
         fun(Item, {Idx, IsValidFunsAcc, ExtraFunsAcc}) ->
@@ -439,7 +455,10 @@ is_valid_(Prefix, items, #{items := Items} = Schema) when is_list(Items) ->
         [TrueClause]
     ),
     {Fun, ExtraFuns ++ [IsValidAdditionalItemsFun | AdditionalItemsExtraFuns]};
-is_valid_(Prefix, min_items, #{min_items := MinItems}) ->
+is_valid_items(_Prefix, _Schema) ->
+    {undefined, []}.
+
+is_valid_min_items(Prefix, #{min_items := MinItems}) ->
     FunName = <<Prefix/binary, ".min_items">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -460,8 +479,9 @@ is_valid_(Prefix, min_items, #{min_items := MinItems}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     ),
-    {Fun, []};
-is_valid_(Prefix, max_items, #{max_items := MaxItems}) ->
+    {Fun, []}.
+
+is_valid_max_items(Prefix, #{max_items := MaxItems}) ->
     FunName = <<Prefix/binary, ".max_items">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -482,8 +502,9 @@ is_valid_(Prefix, max_items, #{max_items := MaxItems}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
     ),
-    {Fun, []};
-is_valid_(Prefix, unique_items, #{unique_items := true}) ->
+    {Fun, []}.
+
+is_valid_unique_items_true(Prefix, #{unique_items := true}) ->
     FunName = <<Prefix/binary, ".unique_items">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -531,6 +552,4 @@ is_valid_(Prefix, unique_items, #{unique_items := true}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    {Fun, []};
-is_valid_(_Prefix, unique_items, #{unique_items := false}) ->
-    {undefined, []}.
+    {Fun, []}.

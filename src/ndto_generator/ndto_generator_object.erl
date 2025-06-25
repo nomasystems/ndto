@@ -82,6 +82,9 @@ is_valid(Prefix, #{type := object} = Schema) ->
     ),
     {Fun, IsValidFuns ++ ExtraFuns}.
 
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
 -spec is_valid_(Prefix, Keyword, Schema) -> Result when
     Prefix :: binary(),
     Keyword :: atom(),
@@ -89,7 +92,20 @@ is_valid(Prefix, #{type := object} = Schema) ->
     Result :: {Fun, ExtraFuns},
     Fun :: erl_syntax:syntaxTree() | undefined,
     ExtraFuns :: [erl_syntax:syntaxTree()].
-is_valid_(Prefix, properties, #{properties := Properties}) ->
+is_valid_(Prefix, properties, Schema) ->
+    is_valid_properties(Prefix, Schema);
+is_valid_(Prefix, required, Schema) ->
+    is_valid_required(Prefix, Schema);
+is_valid_(Prefix, min_properties, Schema) ->
+    is_valid_min_properties(Prefix, Schema);
+is_valid_(Prefix, max_properties, Schema) ->
+    is_valid_max_properties(Prefix, Schema);
+is_valid_(Prefix, pattern_properties, Schema) ->
+    is_valid_pattern_properties(Prefix, Schema);
+is_valid_(Prefix, additional_properties, Schema) ->
+    is_valid_additional_properties(Prefix, Schema).
+
+is_valid_properties(Prefix, #{properties := Properties}) ->
     FunName = <<Prefix/binary, "properties">>,
     {PropertiesFuns, ExtraFuns} = maps:fold(
         fun(PropertyName, Property, {IsValidFunsAcc, ExtraFunsAcc}) ->
@@ -143,8 +159,9 @@ is_valid_(Prefix, properties, #{properties := Properties}) ->
         [TrueClause]
     ),
     {_PropertyNames, IsValidFuns} = lists:unzip(PropertiesFuns),
-    {Fun, IsValidFuns ++ ExtraFuns};
-is_valid_(Prefix, required, #{required := Required}) ->
+    {Fun, IsValidFuns ++ ExtraFuns}.
+
+is_valid_required(Prefix, #{required := Required}) ->
     FunName = <<Prefix/binary, "required">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -249,8 +266,9 @@ is_valid_(Prefix, required, #{required := Required}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    {Fun, []};
-is_valid_(Prefix, min_properties, #{min_properties := MinProperties}) ->
+    {Fun, []}.
+
+is_valid_min_properties(Prefix, #{min_properties := MinProperties}) ->
     FunName = <<Prefix/binary, "min_properties">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -304,8 +322,9 @@ is_valid_(Prefix, min_properties, #{min_properties := MinProperties}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    {Fun, []};
-is_valid_(Prefix, max_properties, #{max_properties := MaxProperties}) ->
+    {Fun, []}.
+
+is_valid_max_properties(Prefix, #{max_properties := MaxProperties}) ->
     FunName = <<Prefix/binary, "max_properties">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -359,8 +378,9 @@ is_valid_(Prefix, max_properties, #{max_properties := MaxProperties}) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     ),
-    {Fun, []};
-is_valid_(Prefix, pattern_properties, #{pattern_properties := PatternProperties}) ->
+    {Fun, []}.
+
+is_valid_pattern_properties(Prefix, #{pattern_properties := PatternProperties}) ->
     FunName = <<Prefix/binary, "pattern_properties">>,
     {IsValidPatterns, ExtraFuns} = lists:foldl(
         fun({PropertyPattern, PropertySchema}, {IsValidPatternsAcc, ExtraFunsAcc}) ->
@@ -581,12 +601,9 @@ is_valid_(Prefix, pattern_properties, #{pattern_properties := PatternProperties}
         [TrueClause]
     ),
     IsValidFuns = [IsValidFun || {_PatternName, IsValidFun} <- IsValidPatterns],
-    {Fun, IsValidFuns ++ ExtraFuns};
-is_valid_(
-    Prefix,
-    additional_properties,
-    #{additional_properties := false} = Schema
-) ->
+    {Fun, IsValidFuns ++ ExtraFuns}.
+
+is_valid_additional_properties(Prefix, #{additional_properties := false} = Schema) ->
     FunName = <<Prefix/binary, "additional_properties">>,
     Properties = maps:get(properties, Schema, #{}),
     PatternProperties = maps:get(pattern_properties, Schema, #{}),
@@ -774,11 +791,7 @@ is_valid_(
         [TrueClause]
     ),
     {Fun, []};
-is_valid_(
-    Prefix,
-    additional_properties,
-    #{additional_properties := AdditionalProperties} = Schema
-) ->
+is_valid_additional_properties(Prefix, #{additional_properties := AdditionalProperties} = Schema) ->
     FunName = <<Prefix/binary, "additional_properties.*">>,
     {IsValidFun, ExtraFuns} = ndto_generator:is_valid(
         <<Prefix/binary, "additional_properties">>, AdditionalProperties
@@ -1022,5 +1035,5 @@ is_valid_(
         [TrueClause]
     ),
     {Fun, [IsValidFun | ExtraFuns]};
-is_valid_(_Prefix, additional_properties, _Schema) ->
+is_valid_additional_properties(_Prefix, _Schema) ->
     {undefined, []}.

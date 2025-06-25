@@ -77,12 +77,24 @@ is_valid(Prefix, #{type := string} = Schema) ->
     ),
     {Fun, ExtraFuns}.
 
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
 -spec is_valid_(Prefix, Keyword, Value) -> Result when
     Prefix :: binary(),
     Keyword :: atom(),
     Value :: term(),
     Result :: undefined | erl_syntax:syntaxTree().
 is_valid_(Prefix, min_length, MinLength) ->
+    is_valid_min_length(Prefix, MinLength);
+is_valid_(Prefix, max_length, MaxLength) ->
+    is_valid_max_length(Prefix, MaxLength);
+is_valid_(Prefix, pattern, Pattern) ->
+    is_valid_pattern(Prefix, Pattern);
+is_valid_(Prefix, format, Format) ->
+    is_valid_format(Prefix, Format).
+
+is_valid_min_length(Prefix, MinLength) ->
     FunName = <<Prefix/binary, ".min_length">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -124,8 +136,9 @@ is_valid_(Prefix, min_length, MinLength) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
-    );
-is_valid_(Prefix, max_length, MaxLength) ->
+    ).
+
+is_valid_max_length(Prefix, MaxLength) ->
     FunName = <<Prefix/binary, ".max_length">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -167,8 +180,9 @@ is_valid_(Prefix, max_length, MaxLength) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
-    );
-is_valid_(Prefix, pattern, Pattern) ->
+    ).
+
+is_valid_pattern(Prefix, Pattern) ->
     FunName = <<Prefix/binary, ".pattern">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -217,8 +231,9 @@ is_valid_(Prefix, pattern, Pattern) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
-    );
-is_valid_(Prefix, format, iso8601) ->
+    ).
+
+is_valid_format(Prefix, iso8601) ->
     FunName = <<Prefix/binary, ".format">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -257,7 +272,7 @@ is_valid_(Prefix, format, iso8601) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     );
-is_valid_(Prefix, format, base64) ->
+is_valid_format(Prefix, base64) ->
     FunName = <<Prefix/binary, ".format">>,
     TrueClause = erl_syntax:clause(
         [erl_syntax:variable('Val')],
@@ -391,5 +406,5 @@ is_valid_(Prefix, format, base64) ->
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
     );
-is_valid_(_Prefix, format, _Format) ->
+is_valid_format(_Prefix, _Format) ->
     undefined.

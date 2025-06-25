@@ -75,6 +75,9 @@ is_valid(Prefix, #{type := integer} = Schema) ->
     ),
     {Fun, ExtraFuns}.
 
+%%%-----------------------------------------------------------------------------
+%%% INTERNAL FUNCTIONS
+%%%-----------------------------------------------------------------------------
 -spec is_valid_(Prefix, Keyword, Value, Schema) -> Result when
     Prefix :: binary(),
     Keyword :: atom(),
@@ -82,6 +85,15 @@ is_valid(Prefix, #{type := integer} = Schema) ->
     Schema :: ndto:integer_schema(),
     Result :: undefined | erl_syntax:syntaxTree().
 is_valid_(Prefix, minimum, Minimum, Schema) ->
+    is_valid_minimum(Prefix, Minimum, Schema);
+is_valid_(Prefix, maximum, Maximum, Schema) ->
+    is_valid_maximum(Prefix, Maximum, Schema);
+is_valid_(Prefix, multiple_of, MultipleOf, _Schema) ->
+    is_valid_multiple_of(Prefix, MultipleOf);
+is_valid_(_Prefix, _Keyword, _Value, _Schema) ->
+    undefined.
+
+is_valid_minimum(Prefix, Minimum, Schema) ->
     FunName = <<Prefix/binary, ".minimum">>,
     MinimumSt =
         case Minimum of
@@ -123,8 +135,9 @@ is_valid_(Prefix, minimum, Minimum, Schema) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
-    );
-is_valid_(Prefix, maximum, Maximum, Schema) ->
+    ).
+
+is_valid_maximum(Prefix, Maximum, Schema) ->
     FunName = <<Prefix/binary, ".maximum">>,
     MaximumSt =
         case Maximum of
@@ -166,8 +179,9 @@ is_valid_(Prefix, maximum, Maximum, Schema) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause, FalseClause]
-    );
-is_valid_(Prefix, multiple_of, MultipleOf, _Schema) ->
+    ).
+
+is_valid_multiple_of(Prefix, MultipleOf) ->
     FunName = <<Prefix/binary, ".multiple_of">>,
     TrueClause =
         erl_syntax:clause(
@@ -205,6 +219,4 @@ is_valid_(Prefix, multiple_of, MultipleOf, _Schema) ->
     erl_syntax:function(
         erl_syntax:atom(erlang:binary_to_atom(FunName)),
         [TrueClause]
-    );
-is_valid_(_Prefix, _Keyword, _Value, _Schema) ->
-    undefined.
+    ).
