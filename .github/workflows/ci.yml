@@ -2,24 +2,30 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
 
-env:
-  OTP-VERSION: 25.2.3
-  REBAR3-VERSION: 3.20.0
-
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        combo:
+        - otp-version: '25.2'
+          rebar3-version: '3.18.0'
+        - otp-version: '26.2'
+          rebar3-version: '3.23.0'
+        - otp-version: '27.2'
+          rebar3-version: '3.24.0'
+        - otp-version: '28.0'
+          rebar3-version: '3.25.0'
     steps:
       - uses: actions/checkout@v4
 
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@v1.18
         with:
-          otp-version: ${{ env.OTP-VERSION }}
-          rebar3-version: ${{ env.REBAR3-VERSION }}
+          otp-version: ${{ matrix.combo.otp-version }}
+          rebar3-version: ${{ matrix.combo.rebar3-version }}
 
       - uses: actions/cache@v4
         id: rebar3-cache
@@ -27,18 +33,15 @@ jobs:
           path: |
             ~/.cache/rebar3
             _build
-          key: ${{ runner.os }}-${{ env.OTP-VERSION }}-${{ env.REBAR3-VERSION }}-${{ hashFiles('rebar.lock') }}
-
-      - name: Compile
-        run: |
-          rebar3 clean
-          rebar3 compile
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.combo.otp-version }}-${{ matrix.combo.rebar3-version }}-${{ hashFiles('rebar.lock') }}
 
       - run: rebar3 check
 
+      - run: rebar3 compile
+
       - run: rebar3 test
 
-      - uses: test-summary/action@v2.2
+      - uses: test-summary/action@v2
         if: always()
         with:
           paths: '_build/test/logs/**/report.xml'
