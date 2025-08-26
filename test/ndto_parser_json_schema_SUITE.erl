@@ -61,8 +61,11 @@ end_per_testcase(Case, Conf) ->
 draft_04(_Conf) ->
     SpecPath = erlang:list_to_binary(
         filename:join(
-            code:lib_dir(ndto, priv),
-            "oas/3.0/specs/oas_3_0.json"
+            [
+                code:lib_dir(ndto),
+                "priv",
+                "oas/3.0/specs/oas_3_0.json"
+            ]
         )
     ),
     {ok, Schemas} = ndto_parser:parse(
