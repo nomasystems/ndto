@@ -1,8 +1,8 @@
 [{<<"ncalendar">>,
   {git,"https://github.com/nomasystems/ncalendar.git",
-       {ref,"aa5615f6723585e45e82fa5524cb976cdfe3d7f7"}},
+       {ref,"3a36a9cfe85da197f5032ce9e4c0a4a4dea9e38e"}},
   0},
  {<<"njson">>,
   {git,"https://github.com/nomasystems/njson.git",
-       {ref,"94c586b92a7e24c403089cdbe2994b7e7c87b9cc"}},
+       {ref,"42ce1fb20f43d50b5b5fdec1f3265b79c51fb632"}},
   0}].
