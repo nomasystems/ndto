@@ -445,8 +445,11 @@ base64(_Conf) ->
 petstore(_Conf) ->
     SpecPath = erlang:list_to_binary(
         filename:join(
-            code:lib_dir(ndto, priv),
-            "oas/3.0/specs/oas_3_0.json"
+            [
+                code:lib_dir(ndto),
+                "priv",
+                "oas/3.0/specs/oas_3_0.json"
+            ]
         )
     ),
     {ok, [{PetstoreDTO, _Schema} | _Rest] = Schemas} = ndto_parser:parse(
@@ -464,8 +467,11 @@ petstore(_Conf) ->
     {ok, PetstoreBin} = file:read_file(
         erlang:list_to_binary(
             filename:join(
-                code:lib_dir(ndto, priv),
-                "oas/3.0/examples/petstore.json"
+                [
+                    code:lib_dir(ndto),
+                    "priv",
+                    "oas/3.0/examples/petstore.json"
+                ]
             )
         )
     ),
