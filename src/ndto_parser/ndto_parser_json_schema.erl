@@ -35,16 +35,24 @@
     resolved := [binary()],
     spec := spec()
 }.
+-type json_value() ::
+    null
+    | boolean()
+    | number()
+    | binary()
+    | [json_value()]
+    | #{binary() => json_value()}.
 -type opts() :: #{
     name => atom()
 }.
--type spec() :: njson:t().
+-type spec() :: json_value().
 -opaque t() :: module().
 % A parser is a module that implements the <code>ndto_parser_json_schema</code> behaviour.
 
 %%% EXPORT TYPES
 -export_type([
     ctx/0,
+    json_value/0,
     spec/0,
     t/0
 ]).
@@ -139,10 +147,11 @@ parse_spec(SpecPath) ->
         {ok, BinSpec} ->
             case filename:extension(SpecPath) of
                 JSON when JSON =:= <<".json">> orelse JSON =:= ".json" ->
-                    case njson:decode(BinSpec) of
-                        {ok, Spec} ->
-                            {ok, Spec};
-                        {error, Reason} ->
+                    try json:decode(BinSpec) of
+                        Spec ->
+                            {ok, Spec}
+                    catch
+                        error:Reason ->
                             {error, {invalid_json, Reason}}
                     end;
                 Extension ->

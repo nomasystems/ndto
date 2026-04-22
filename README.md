@@ -4,6 +4,8 @@
 
 `ndto` is an Erlang library for generating DTO (Data Transfer Object) validation modules from schemas.
 
+Requires Erlang/OTP 27 or later.
+
 ## Motivation
 
 Validating incoming data is a critical step to ensure the integrity, consistency, and security of your application's data flow. However, writing custom validation logic for each DTO can quickly become a time-consuming and error-prone task.

@@ -40,6 +40,7 @@ groups() ->
     [
         {types, [parallel], [
             any,
+            false_schema,
             ref,
             enum,
             string,
@@ -101,6 +102,17 @@ any(Conf) ->
         ndto_properties:prop_any(),
         Conf
     ).
+
+false_schema(_Conf) ->
+    DTO = ndto:generate(test_false, false),
+    ok = ndto:load(DTO),
+
+    ExpectedError = {false, {'$', <<"Unexpected value for false schema">>}},
+    ?assertEqual(ExpectedError, test_false:is_valid(42)),
+    ?assertEqual(ExpectedError, test_false:is_valid(<<"hello">>)),
+    ?assertEqual(ExpectedError, test_false:is_valid(null)),
+    ?assertEqual(ExpectedError, test_false:is_valid(#{})),
+    ?assertEqual(ExpectedError, test_false:is_valid([])).
 
 ref(Conf) ->
     ct_property_test:quickcheck(
@@ -475,7 +487,7 @@ petstore(_Conf) ->
             )
         )
     ),
-    {ok, Petstore} = njson:decode(PetstoreBin),
+    Petstore = json:decode(PetstoreBin),
 
     ?assertEqual(
         true,
