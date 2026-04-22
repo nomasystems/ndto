@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.37.3">
-    <meta name="project" content="ndto v0.3.1">
+    <meta name="generator" content="ExDoc v0.39.1">
+    <meta name="project" content="ndto v0.4.0">
 
 
-    <title>ndto — ndto v0.3.1</title>
+    <title>ndto — ndto v0.4.0</title>
 
-    <link rel="stylesheet" href="dist/html-erlang-FDBURIED.css" />
+    <link rel="stylesheet" href="dist/html-erlang-7YNYEB7F.css" />
 
-    <script defer src="dist/sidebar_items-A8389A23.js"></script>
+    <script defer src="dist/sidebar_items-067763BE.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-ALU6OERS.js"></script>
+    <script defer src="dist/html-HBZYRXZS.js"></script>
 
   </head>
   <body>
@@ -37,7 +37,7 @@
 ndto
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v0.3.1
+          v0.4.0
         </div>
       </div>
     </div>
@@ -54,16 +54,34 @@ ndto
         <form class="search-bar" action="search.html">
           <label class="search-label">
             <span class="sr-only">Search documentation of ndto</span>
-            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
           </label>
-          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
-            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
-          </button>
-          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-            <i class="ri-close-line ri-lg" title="Cancel search"></i>
-          </button>
         </form>
         <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
         </div>
         <button class="icon-settings display-settings">
           <i class="ri-settings-3-line"></i>
@@ -76,11 +94,11 @@ ndto
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">ndto</span> 
-      <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
+      <small class="app-vsn" translate="no">(ndto v0.4.0)</small>
 
     </h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L16" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -89,7 +107,7 @@ ndto
 
 
     <section id="moduledoc">
-<code>ndto</code>'s main module.
+<p><code>ndto</code>'s main module.</p>
     </section>
 
 </div>
@@ -302,7 +320,7 @@ ndto
 
       </div>
 
-        <div class="summary-synopsis">Generates an Erlang Syntax Tree of a DTO module from a schema</div>
+        <div class="summary-synopsis"><p>Generates an Erlang Syntax Tree of a DTO module from a schema</p></div>
 
     </div>
 
@@ -312,7 +330,7 @@ ndto
 
       </div>
 
-        <div class="summary-synopsis"><p>Equivalent to <a href="#load/2">load(DTO, [])</a>.</p></div>
+        <div class="summary-synopsis"><p>Equivalent to <a>load(DTO, [])</a>.</p></div>
 
     </div>
 
@@ -322,7 +340,7 @@ ndto
 
       </div>
 
-        <div class="summary-synopsis">Loads a DTO module into the Erlang Runtime System</div>
+        <div class="summary-synopsis"><p>Loads a DTO module into the Erlang Runtime System</p></div>
 
     </div>
 
@@ -332,7 +350,7 @@ ndto
 
       </div>
 
-        <div class="summary-synopsis">Writes a DTO module to a file</div>
+        <div class="summary-synopsis"><p>Writes a DTO module to a file</p></div>
 
     </div>
 
@@ -348,6 +366,7 @@ ndto
       </a>
       <span class="text">Types</span>
     </h1>
+
     <div class="types-list">
 <section class="detail" id="t:array/0">
 
@@ -359,7 +378,7 @@ ndto
       <h1 class="signature" translate="no">array/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L140" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L140" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -387,7 +406,7 @@ ndto
       <h1 class="signature" translate="no">array_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L90" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L90" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -423,7 +442,7 @@ ndto
       <h1 class="signature" translate="no">boolean_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L57" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L57" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -451,7 +470,7 @@ ndto
       <h1 class="signature" translate="no">complement_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L121" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L121" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -479,7 +498,7 @@ ndto
       <h1 class="signature" translate="no">empty_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L45" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L45" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -507,7 +526,7 @@ ndto
       <h1 class="signature" translate="no">enum_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L52" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L52" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -535,7 +554,7 @@ ndto
       <h1 class="signature" translate="no">float_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L72" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L72" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -570,7 +589,7 @@ ndto
       <h1 class="signature" translate="no">format/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L143" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L143" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -598,7 +617,7 @@ ndto
       <h1 class="signature" translate="no">integer_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L62" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L62" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -634,7 +653,7 @@ ndto
       <h1 class="signature" translate="no">intersection_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L116" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L116" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -662,7 +681,7 @@ ndto
       <h1 class="signature" translate="no">name/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L27" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L27" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -690,7 +709,7 @@ ndto
       <h1 class="signature" translate="no">null/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L141" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L141" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -718,7 +737,7 @@ ndto
       <h1 class="signature" translate="no">object/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L142" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L142" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -746,7 +765,7 @@ ndto
       <h1 class="signature" translate="no">object_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L100" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L100" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -783,7 +802,7 @@ ndto
       <h1 class="signature" translate="no">pattern/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L145" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L145" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -811,7 +830,7 @@ ndto
       <h1 class="signature" translate="no">ref_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L47" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L47" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -839,7 +858,7 @@ ndto
       <h1 class="signature" translate="no">schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L28" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L28" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -881,7 +900,7 @@ ndto
       <h1 class="signature" translate="no">string_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L81" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L81" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -916,7 +935,7 @@ ndto
       <h1 class="signature" translate="no">symmetric_difference_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L126" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L126" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -945,7 +964,7 @@ ndto
       <h1 class="signature" translate="no">t/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L43" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L43" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -956,7 +975,7 @@ ndto
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">-type</span> t() :: erl_syntax:syntaxTree().</pre>
+          <pre translate="no"><span class="attribute">-type</span> t() :: <a href="https://www.erlang.org/doc/apps/syntax_tools/erl_syntax.html#t:syntaxTree/0">erl_syntax:syntaxTree</a>().</pre>
 
       </div>
 
@@ -973,7 +992,7 @@ ndto
       <h1 class="signature" translate="no">union_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L111" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L111" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1001,7 +1020,7 @@ ndto
       <h1 class="signature" translate="no">universal_schema/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L46" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L46" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1029,7 +1048,7 @@ ndto
       <h1 class="signature" translate="no">value/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L132" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L132" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1058,6 +1077,7 @@ ndto
       </a>
       <span class="text">Functions</span>
     </h1>
+
     <div class="functions-list">
 <section class="detail" id="generate/2">
 
@@ -1069,7 +1089,7 @@ ndto
       <h1 class="signature" translate="no">generate(Name, Schema)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L179" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L179" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1084,7 +1104,7 @@ ndto
 
       </div>
 
-Generates an Erlang Syntax Tree of a DTO module from a schema
+<p>Generates an Erlang Syntax Tree of a DTO module from a schema</p>
   </section>
 </section>
 <section class="detail" id="load/1">
@@ -1097,7 +1117,7 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
       <h1 class="signature" translate="no">load(DTO)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L188" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L188" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1130,7 +1150,7 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
       <h1 class="signature" translate="no">load(DTO, Options)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L198" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L198" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1151,7 +1171,7 @@ Generates an Erlang Syntax Tree of a DTO module from a schema
 
       </div>
 
-Loads a DTO module into the Erlang Runtime System
+<p>Loads a DTO module into the Erlang Runtime System</p>
   </section>
 </section>
 <section class="detail" id="write/2">
@@ -1164,7 +1184,7 @@ Loads a DTO module into the Erlang Runtime System
       <h1 class="signature" translate="no">write(DTO, Filename)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto.erl#L227" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto.erl#L227" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -1184,7 +1204,7 @@ Loads a DTO module into the Erlang Runtime System
 
       </div>
 
-Writes a DTO module to a file
+<p>Writes a DTO module to a file</p>
   </section>
 </section>
 
@@ -1195,9 +1215,9 @@ Writes a DTO module to a file
       <p>
 
           <span class="line">
-            <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
+            <a href="https://hex.pm/packages/ndto/0.4.0" class="footer-hex-package">Hex Package</a>
 
-            <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
+            <a href="https://preview.hex.pm/preview/ndto/0.4.0">Hex Preview</a>
 
           </span>
 
@@ -1211,7 +1231,7 @@ Writes a DTO module to a file
 
       <p class="built-using">
         Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.3) for the
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.1) for the
 
           <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
 

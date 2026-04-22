@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.37.3">
-    <meta name="project" content="ndto v0.3.1">
+    <meta name="generator" content="ExDoc v0.39.1">
+    <meta name="project" content="ndto v0.4.0">
 
 
-    <title>ndto_parser — ndto v0.3.1</title>
+    <title>ndto_parser — ndto v0.4.0</title>
 
-    <link rel="stylesheet" href="dist/html-erlang-FDBURIED.css" />
+    <link rel="stylesheet" href="dist/html-erlang-7YNYEB7F.css" />
 
-    <script defer src="dist/sidebar_items-A8389A23.js"></script>
+    <script defer src="dist/sidebar_items-067763BE.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-ALU6OERS.js"></script>
+    <script defer src="dist/html-HBZYRXZS.js"></script>
 
   </head>
   <body>
@@ -37,7 +37,7 @@
 ndto
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v0.3.1
+          v0.4.0
         </div>
       </div>
     </div>
@@ -54,16 +54,34 @@ ndto
         <form class="search-bar" action="search.html">
           <label class="search-label">
             <span class="sr-only">Search documentation of ndto</span>
-            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
           </label>
-          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
-            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
-          </button>
-          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-            <i class="ri-close-line ri-lg" title="Cancel search"></i>
-          </button>
         </form>
         <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
         </div>
         <button class="icon-settings display-settings">
           <i class="ri-settings-3-line"></i>
@@ -76,11 +94,11 @@ ndto
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">ndto_parser</span> <small>behaviour</small>
-      <small class="app-vsn" translate="no">(ndto v0.3.1)</small>
+      <small class="app-vsn" translate="no">(ndto v0.4.0)</small>
 
     </h1>
 
-      <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L16" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L16" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -89,7 +107,7 @@ ndto
 
 
     <section id="moduledoc">
-An <code>ndto</code> interface and behaviour for schema parsers.
+<p>An <code>ndto</code> interface and behaviour for schema parsers.</p>
     </section>
 
 </div>
@@ -128,7 +146,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
       </div>
 
-        <div class="summary-synopsis">A parser is a module that implements the <code>ndto_parser</code> behaviour.</div>
+        <div class="summary-synopsis"><p>A parser is a module that implements the <code>ndto_parser</code> behaviour.</p></div>
 
     </div>
 
@@ -144,7 +162,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
       </div>
 
-        <div class="summary-synopsis">Parses a specification into a list of ndto:schema() values.</div>
+        <div class="summary-synopsis"></div>
 
     </div>
 
@@ -160,7 +178,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
       </div>
 
-        <div class="summary-synopsis"><p>Equivalent to <a href="#parse/3">parse(Parser, SpecPath, #{})</a>.</p></div>
+        <div class="summary-synopsis"><p>Equivalent to <a>parse(Parser, SpecPath, #{})</a>.</p></div>
 
     </div>
 
@@ -170,7 +188,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
       </div>
 
-        <div class="summary-synopsis">Parses a schema specification into a <code>ndto:schema()</code> using the given parser.</div>
+        <div class="summary-synopsis"><p>Parses a schema specification into a <code>ndto:schema()</code> using the given parser.</p></div>
 
     </div>
 
@@ -186,6 +204,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
       </a>
       <span class="text">Types</span>
     </h1>
+
     <div class="types-list">
 <section class="detail" id="t:ctx/0">
 
@@ -197,7 +216,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
       <h1 class="signature" translate="no">ctx/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L25" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L25" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -225,7 +244,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
       <h1 class="signature" translate="no">spec/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L26" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L26" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -253,7 +272,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
       <h1 class="signature" translate="no">t/0</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L27" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L27" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -268,7 +287,7 @@ An <code>ndto</code> interface and behaviour for schema parsers.
 
       </div>
 
-A parser is a module that implements the <code>ndto_parser</code> behaviour.
+<p>A parser is a module that implements the <code>ndto_parser</code> behaviour.</p>
   </section>
 </section>
 
@@ -282,6 +301,7 @@ A parser is a module that implements the <code>ndto_parser</code> behaviour.
       </a>
       <span class="text">Callbacks</span>
     </h1>
+
     <div class="callbacks-list">
 <section class="detail" id="c:parse/2">
 
@@ -293,7 +313,7 @@ A parser is a module that implements the <code>ndto_parser</code> behaviour.
       <h1 class="signature" translate="no">parse/2</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L40" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L40" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -328,6 +348,7 @@ Parses a specification into a list of ndto:schema() values.
       </a>
       <span class="text">Functions</span>
     </h1>
+
     <div class="functions-list">
 <section class="detail" id="parse/2">
 
@@ -339,7 +360,7 @@ Parses a specification into a list of ndto:schema() values.
       <h1 class="signature" translate="no">parse(Parser, SpecPath)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L58" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L58" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -373,7 +394,7 @@ Parses a specification into a list of ndto:schema() values.
       <h1 class="signature" translate="no">parse(Parser, SpecPath, Opts)</h1>
 
 
-        <a href="https://github.com/nomasystems/ndto/blob/0.3.1/src/ndto_parser.erl#L69" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/nomasystems/ndto/blob/0.4.0/src/ndto_parser.erl#L69" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -395,7 +416,7 @@ Parses a specification into a list of ndto:schema() values.
 
       </div>
 
-Parses a schema specification into a <code>ndto:schema()</code> using the given parser.
+<p>Parses a schema specification into a <code>ndto:schema()</code> using the given parser.</p>
   </section>
 </section>
 
@@ -406,9 +427,9 @@ Parses a schema specification into a <code>ndto:schema()</code> using the given 
       <p>
 
           <span class="line">
-            <a href="https://hex.pm/packages/ndto/0.3.1" class="footer-hex-package">Hex Package</a>
+            <a href="https://hex.pm/packages/ndto/0.4.0" class="footer-hex-package">Hex Package</a>
 
-            <a href="https://preview.hex.pm/preview/ndto/0.3.1">Hex Preview</a>
+            <a href="https://preview.hex.pm/preview/ndto/0.4.0">Hex Preview</a>
 
           </span>
 
@@ -422,7 +443,7 @@ Parses a schema specification into a <code>ndto:schema()</code> using the given 
 
       <p class="built-using">
         Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.37.3) for the
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.39.1) for the
 
           <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
 
