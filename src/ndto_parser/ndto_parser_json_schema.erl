@@ -38,7 +38,7 @@
 -type opts() :: #{
     name => atom()
 }.
--type spec() :: njson:t().
+-type spec() :: json:decode_value().
 -opaque t() :: module().
 % A parser is a module that implements the <code>ndto_parser_json_schema</code> behaviour.
 
@@ -139,10 +139,11 @@ parse_spec(SpecPath) ->
         {ok, BinSpec} ->
             case filename:extension(SpecPath) of
                 JSON when JSON =:= <<".json">> orelse JSON =:= ".json" ->
-                    case njson:decode(BinSpec) of
-                        {ok, Spec} ->
-                            {ok, Spec};
-                        {error, Reason} ->
+                    try json:decode(BinSpec) of
+                        Spec ->
+                            {ok, Spec}
+                    catch
+                        error:Reason ->
                             {error, {invalid_json, Reason}}
                     end;
                 Extension ->
