@@ -35,24 +35,16 @@
     resolved := [binary()],
     spec := spec()
 }.
--type json_value() ::
-    null
-    | boolean()
-    | number()
-    | binary()
-    | [json_value()]
-    | #{binary() => json_value()}.
 -type opts() :: #{
     name => atom()
 }.
--type spec() :: json_value().
+-type spec() :: json:decode_value().
 -opaque t() :: module().
 % A parser is a module that implements the <code>ndto_parser_json_schema</code> behaviour.
 
 %%% EXPORT TYPES
 -export_type([
     ctx/0,
-    json_value/0,
     spec/0,
     t/0
 ]).
